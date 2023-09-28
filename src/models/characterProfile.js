@@ -1,18 +1,15 @@
 const mongoose = require("mongoose");
 
 const characterProfile = mongoose.Schema({
-  guildUser: { type: "String", index: true },
-  guildID: { type: "String", index: true },
-  money: { type: Number },
-  id: { type: "String", index: true },
-  name: { type: "String" },
-  baseHitPoints: { type: Number },
-  bonusHitPoints: { type: Number },
-  stats: { type: [Mixed] },
-  inventory: { type: [Mixed] },
+  guildUser: { type: "String" }, //Id do Usuário dono do Perso
+  guildID: { type: "String" }, //Id do Servidor
+  money: { type: Number }, //Dracmas do perso
+  name: { type: "String" }, //Nome do Perso
+  avatar: { type: "String" }, //Avatar do Perso
+  baseHitPoints: { type: Number }, //HP Base
+  bonusHitPoints: { type: Number }, //HP bonus
+  stats: { type: [mongoose.Schema.Types.Mixed] }, //Atributos
+  inventory: { type: [mongoose.Schema.Types.Mixed] }, //Inventário do Perso
 });
 
-characterProfile.index({ guildID: 1 });
-characterProfile.index({ guildUser: 1 });
-characterProfile.index({ id: 1 });
-module.exports = model("characterProfile", characterProfile);
+module.exports = mongoose.model("characterProfile", characterProfile);

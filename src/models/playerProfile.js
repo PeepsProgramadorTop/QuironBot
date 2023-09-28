@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const playerProfile = new mongoose.Schema({
-  name: { type: String, require: true, unique: false },
+  name: { type: String, required: true, unique: false },
   userID: { type: "String", index: true },
   guildID: { type: "String", index: true },
   defaultCharacter: { type: String },

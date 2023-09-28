@@ -5,6 +5,7 @@ const {
     PermissionFlagsBits,
     EmbedBuilder,
 } = require('discord.js');
+const characterProfile = require("../../models/characterProfile");
 
 module.exports = {
     /**
@@ -15,11 +16,35 @@ module.exports = {
      */
 
     callback: async (client, interaction) => {
-        const embed = new EmbedBuilder()      
-            .setTitle(`Status do Personagem ${interaction.options.get('personagem').value}`)
-            .setDescription('SEU PERSONAGEM');
+        const slot = interaction.options.get('personagem').value - 1
+        const user = interaction.user;
+        const data = await characterProfile.find({ guildUser: user.id });
 
-        interaction.reply({ embeds: [embed] });
+        const author = client.users.cache.get(data[slot].guildUser)
+
+        const embed = new EmbedBuilder()
+            .setAuthor({ name: `${author.username}`, iconURL: `${author.displayAvatarURL({ size: 1024 })}` })
+            .setTitle(`Status de ${data[slot].name}`)
+            .setDescription(`
+## ⸻・\`📊\`・Geral:
+👤・Jogador(a): \`@${author.username}\`
+🫀・HP: \`20\`
+🏛️・Chalé: \`1\`
+## ⸻・\`🧮\`・Atributos:
+- Constituição (CON): \`0\`
+- Força (FOR): \`0\`
+- Agilidade (AGI): \`0\`
+- Inteligência (INT): \`0\`
+- Percepção (PER): \`0\`
+- Carisma (CAR): \`0\`
+            `)
+            .setThumbnail(data[slot].avatar);
+
+        if (slot > data.length - 1) {
+            interaction.reply({ content: `Você não possui um personagem nesse slot.` });
+        } else {
+            interaction.reply({ embeds: [ embed ] });
+        }
     },
 
     name: 'status',
@@ -29,7 +54,7 @@ module.exports = {
             name: 'personagem',
             description: 'O slot do personagem que você quer ver o status.',
             type: ApplicationCommandOptionType.Number,
-            required: true,
+            required: true
         }
     ]
 };
