@@ -20,16 +20,16 @@ module.exports = {
   callback: async (client, interaction) => {
     const title = interaction.options.get("titulo");
     const description = interaction.options.get("desc");
-    const narrador = interaction.author.username;
+    const narrador = interaction.user.username;
     const channel = client.channels.cache.get("1156525267934781470");
 
     const embed = new EmbedBuilder()
       .setAuthor({
         name: `${narrador}`,
-        iconURL: `${author.displayAvatarURL({ size: 1024 })}`,
       })
       .setTitle(`${title}`)
       .setDescription(`${description}`);
+
     id.send({ embeds: [embed] });
   },
 
@@ -40,11 +40,13 @@ module.exports = {
       name: "titulo",
       description: "Nome da missão em questão",
       required: true,
+      type: ApplicationCommandOptionType.String,
     },
     {
       name: "desc",
       description: "Breve resumo da missão",
       required: true,
+      type: ApplicationCommandOptionType.String,
     },
   ],
 };
