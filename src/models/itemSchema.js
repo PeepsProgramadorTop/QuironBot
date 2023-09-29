@@ -6,3 +6,5 @@ const itemSchema = new mongoose.Schema({
   description: { type: String, require: true, unique: false },
   preco: { type: Number, require: true, unique: false },
 });
+
+module.exports = mongoose.model("itemSchema", itemSchema);

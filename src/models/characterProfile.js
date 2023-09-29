@@ -7,7 +7,7 @@ const characterProfile = mongoose.Schema({
   name: { type: "String" }, //Nome do Perso
   avatar: { type: "String" }, //Avatar do Perso
   baseHitPoints: { type: Number }, //HP Base
-  bonusHitPoints: { type: Number }, //HP bonus
+  currentHitPoints: { type: Number }, //HP Atual
   stats: { type: [mongoose.Schema.Types.Mixed] }, //Atributos
   inventory: { type: [mongoose.Schema.Types.Mixed] }, //Inventário do Perso
 });
