@@ -35,8 +35,8 @@ module.exports = {
 
     channel.send({ embeds: [embed] });
   },
-  name: "criarEmbed",
-  description: "Cria Embed",
+  name: "missão",
+  description: "Cria uma missão.",
   options: [
     {
       name: "titulo",

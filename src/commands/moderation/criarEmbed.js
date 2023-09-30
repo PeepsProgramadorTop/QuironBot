@@ -18,6 +18,7 @@ module.exports = {
         const user = interaction.user;
         const guild = interaction.guild;
 
+        const channel = interaction.options.getChannel('canal');
         const author = interaction.options.get('autor');
         const authorIcon = interaction.options.getAttachment('icon-autor');
         const title = interaction.options.get('titulo');
@@ -64,11 +65,17 @@ module.exports = {
             };
         };
 
-        interaction.reply({ embeds: [embed] });
+        channel.send({ embeds: [embed] });
+        interaction.reply(`Embed enviada com sucesso em <#${channel.id}>`);
     },
     name: 'criar-embed',
     description: 'Cria uma embed.',
     options: [
+        {
+            name: 'canal',
+            description: 'Canal aonde você quer enviar a mensagem com a embed.',
+            type: ApplicationCommandOptionType.Channel
+        },
         {
             name: 'autor',
             description: 'Texto localizado acima de todo o resto da embed.',
