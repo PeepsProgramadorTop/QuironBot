@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, IntentsBitField } = require('discord.js');
+const { Client, IntentsBitField, ActivityType } = require('discord.js');
 const mongoose = require('mongoose');
 const eventHandler = require('./handlers/eventHandler');
 
@@ -12,6 +12,29 @@ const client = new Client({
   ],
 });
 
+const status = [
+  {
+    name: 'TV Hefesto',
+    type: ActivityType.Watching,
+  },
+  {
+    name: 'Banho de Lua - Ártemis',
+    type: ActivityType.Listening,
+  },
+  {
+    name: 'Erva Venenosa - Deméter',
+    type: ActivityType.Listening,
+  },
+  {
+    name: 'Lança Perfume - Afrodite',
+    type: ActivityType.Listening,
+  },
+  {
+    name: 'Estúpido Cúpido - Apolo',
+    type: ActivityType.Listening,
+  }
+];
+
 (async () => {
   try {
     mongoose.set('strictQuery', false);
@@ -23,5 +46,12 @@ const client = new Client({
     console.log(`Error: ${error}`);
   }
 })();
+
+client.on('ready', () => {
+  setInterval(() => {
+    let random = Math.floor(Math.random() * status.length);
+    client.user.setActivity(status[random]);
+  }, 10000);
+});
 
 client.login(process.env.TOKEN);
