@@ -18,15 +18,18 @@ module.exports = {
   callback: async (client, interaction) => {
     const slot = interaction.options.get("personagem").value - 1;
     const user = interaction.user;
+    const data = await characterProfile.find({
+      userID: user.id,
+    });
 
-    const author = client.users.cache.get(data[slot].guildUser);
+    const author = client.users.cache.get(data[slot].userID);
 
     const embed = new EmbedBuilder()
       .setAuthor({
         name: `${author.username}`,
         iconURL: `${author.displayAvatarURL({ size: 1024 })}`,
       })
-      .setTitle(`Status de ${data[slot].name}`)
+      .setTitle(`Status de ${data[slot].info.name}`)
       .setDescription(
         `
 ## ⸻・\`📊\`・Geral:
@@ -34,15 +37,15 @@ module.exports = {
 🫀・HP: \`20\`
 🏛️・Chalé: \`1\`
 ## ⸻・\`🧮\`・Atributos:
-- Constituição (CON): \`\`
-- Força (FOR): \`0\`
-- Agilidade (AGI): \`0\`
-- Inteligência (INT): \`0\`
-- Percepção (PER): \`0\`
-- Carisma (CAR): \`0\`
+- Constituição (CON): \`${data[slot].stats.statCON}\`
+- Força (FOR): \`${data[slot].stats.statCON}\`
+- Agilidade (AGI): \`${data[slot].stats.statCON}\`
+- Inteligência (INT): \`${data[slot].stats.statCON}\`
+- Percepção (PER): \`${data[slot].stats.statCON}\`
+- Carisma (CAR): \`${data[slot].stats.statCON}\`
             `
       )
-      .setThumbnail(data[slot].avatar);
+      .setThumbnail(data[slot].info.avatar);
 
     if (slot > data.length - 1) {
       interaction.reply({
@@ -60,6 +63,6 @@ module.exports = {
       name: "personagem",
       description: "O slot do personagem que você quer ver o status.",
       type: ApplicationCommandOptionType.Number,
-    }
+    },
   ],
 };

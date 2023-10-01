@@ -5,7 +5,8 @@ const characterProfile = mongoose.Schema({
   info: {
     name: { type: "String" }, //Nome do Personagem
     avatar: { type: "String" }, //Avatar do Personagem
-    money: { type: Number, default: 5 }, //Dracmas do Personagem
+    banner: { type: "String" }, //Avatar do Personagem
+    money: { type: Number }, //Dracmas do Personagem
     hitPoints: {
       base: { type: Number }, //HP Base
       current: { type: Number }, //HP Atual
@@ -13,11 +14,11 @@ const characterProfile = mongoose.Schema({
   },
   stats: {
     atrPoints: { type: Number }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
-    atrCON: { type: Number }, //Atributo - Constituição
-    atrFOR: { type: Number }, //Atributo - Força
-    atrAGI: { type: Number }, //Atributo - Agilidade
-    atrINT: { type: Number }, //Atributo - Inteligência
-    atrCAR: { type: Number }, //Atributo - Carisma
+    atrCON: { type: Number, default: 8 }, //Atributo - Constituição
+    atrFOR: { type: Number, default: 8 }, //Atributo - Força
+    atrAGI: { type: Number, default: 8 }, //Atributo - Agilidade
+    atrINT: { type: Number, default: 8 }, //Atributo - Inteligência
+    atrCAR: { type: Number, default: 8 }, //Atributo - Carisma
   }, //Atributos do Personagem
 });
 
