@@ -5,6 +5,7 @@ const characterProfile = mongoose.Schema({
     info: {
         name: { type: "String" }, //Nome do Personagem
         avatar: { type: "String" }, //Avatar do Personagem
+        banner: { type: "String" }, //Avatar do Personagem
         money: { type: Number }, //Dracmas do Personagem
         hitPoints: {
             base: { type: Number }, //HP Base

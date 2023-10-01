@@ -18,13 +18,15 @@ module.exports = {
     callback: async (client, interaction) => {
         const slot = interaction.options.get('personagem').value - 1
         const user = interaction.user;
-        const data = await characterProfile.find({ guildUser: user.id });
+        const data = await characterProfile.find({
+            'userID': user.id
+        });
 
-        const author = client.users.cache.get(data[slot].guildUser)
+        const author = client.users.cache.get(data[slot].userID);
 
         const embed = new EmbedBuilder()
             .setAuthor({ name: `${author.username}`, iconURL: `${author.displayAvatarURL({ size: 1024 })}` })
-            .setTitle(`Status de ${data[slot].name}`)
+            .setTitle(`Status de ${data[slot].info.name}`)
             .setDescription(`
 ## ⸻・\`📊\`・Geral:
 👤・Jogador(a): \`@${author.username}\`
@@ -38,7 +40,7 @@ module.exports = {
 - Percepção (PER): \`0\`
 - Carisma (CAR): \`0\`
             `)
-            .setThumbnail(data[slot].avatar);
+            .setThumbnail(data[slot].info.avatar);
 
         if (slot > data.length - 1) {
             interaction.reply({ content: `Você não possui um personagem nesse slot.` });
