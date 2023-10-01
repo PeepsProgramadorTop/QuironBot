@@ -7,9 +7,14 @@ const characterProfile = mongoose.Schema({
   name: { type: "String" }, //Nome do Perso
   avatar: { type: "String" }, //Avatar do Perso
   baseHitPoints: { type: Number }, //HP Base
-  currentHitPoints: { type: Number }, //HP Atual
-  stats: { type: [mongoose.Schema.Types.Mixed] }, //Atributos
-  inventory: { type: [mongoose.Schema.Types.Mixed] }, //Inventário do Perso
+  currentHitPoints: { type: Number }, //HP Atual //Atributos
+  inventory: { type: [String] }, //Inventário do Perso
+  forca: { type: Number, default: 8 },
+  destreza: { type: Number, default: 8 },
+  constituicao: { type: Number, default: 8 },
+  inteligencia: { type: Number, default: 8 },
+  sabedoria: { type: Number, default: 8 },
+  carisma: { type: Number, default: 8 },
 });
 
 module.exports = mongoose.model("characterProfile", characterProfile);
