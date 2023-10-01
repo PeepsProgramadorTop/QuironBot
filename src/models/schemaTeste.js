@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 
-const schema = new mongoose.Schema({ 
-    _id: { type: String, required: true },
-    nomeDaPropriedade: { type: String, default: "null" }
+var blogSchema = mongoose.Schema({
+    userID: { type: "String" }, //Id do Usuário dono do Perso
+    inventory: { 
+        statOne: { type: "String" },
+        statTwo: { type: "String" },
+        statThree: { type: "String" },
+    }, //Inventário do Perso
 });
 
-module.exports = mongoose.model("schemaTeste", schema);
+module.exports = mongoose.model("blogSchema", blogSchema);
