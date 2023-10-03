@@ -57,13 +57,13 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle(`${query.info.name}`)
         .setDescription(
-          `\```GERAL:\```
+          `GERAL:
 
 ❤️:dot:Pontos de Vida︰ ${query.info.hitPoints.base}/${query.info.hitPoints.current}
 🪙:dot:Dracmas︰ ${query.info.money}
 📊:dot:Nível︰ ${quary.info.contas}
 
-\```ATRIBUTOS:\```
+ATRIBUTOS:
 
 🌟:dot:Ponto(s) de Atributos Restante(s)︰ ${query.stats.atrPoints}
 
