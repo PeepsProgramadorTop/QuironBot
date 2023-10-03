@@ -19,6 +19,7 @@ module.exports = {
     const guild = interaction.guild;
     const name = interaction.options.get("nome").value;
     const avatar = interaction.options.getAttachment("avatar").url;
+    const banner = interaction.options.getAttachment("banner").url;
     const cabin = interaction.options.get("chalé").value;
 
     await characterProfile.findOneAndUpdate(
@@ -32,6 +33,7 @@ module.exports = {
           info: {
             name: name, //Nome do Personagem
             cabin: cabin, //Chalé do calango
+            banner: banner, //Chalé do calango
             avatar: avatar, //Avatar do Personagem //Dracmas do Personagem
             hitPoints: {
               base: 25, //HP Base
@@ -74,6 +76,12 @@ HP: ${data.info.hitPoints.base}/${data.info.hitPoints.current}
     {
       name: "avatar",
       description: "Avatar/imagem do personagem que você quer criar.",
+      type: ApplicationCommandOptionType.Attachment,
+      required: true,
+    },
+    {
+      name: "banner",
+      description: "Imagem decorativa localizada no perfil do personagem, retangular, 958x400px recomendados.",
       type: ApplicationCommandOptionType.Attachment,
       required: true,
     },
