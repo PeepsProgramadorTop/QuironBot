@@ -5,6 +5,7 @@ const {
   PermissionFlagsBits,
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
+const playerProfile = require("../../models/playerProfile");
 
 module.exports = {
   /**
@@ -47,6 +48,19 @@ module.exports = {
       }
     );
 
+    await playerProfile.findOneAndUpdate(
+      {
+        userID: user.id,
+      },
+      {
+        $set: {
+          userID: user.id,
+          name: user.username,
+          guildID: guild.id,
+        },
+      }
+    );
+
     const data = await characterProfile.findOne({
       userID: user.id,
       "info.name": name,
@@ -69,7 +83,7 @@ HP: ${data.info.hitPoints.base}/${data.info.hitPoints.current}
   options: [
     {
       name: "nome",
-      description: "Nome do personagem que você quer criar.",
+      description: "Nome do personagem.",
       type: ApplicationCommandOptionType.String,
       required: true,
     },
@@ -81,13 +95,14 @@ HP: ${data.info.hitPoints.base}/${data.info.hitPoints.current}
     },
     {
       name: "banner",
-      description: "Imagem decorativa localizada no perfil do personagem, retangular, 958x400px recomendados.",
+      description:
+        "Imagem decorativa localizada no perfil do personagem, retangular, 958x400px recomendados.",
       type: ApplicationCommandOptionType.Attachment,
       required: true,
     },
     {
       name: "chalé",
-      description: "Escolhe a porra do chalé seu merda",
+      description: "Chalé do personagem",
       type: ApplicationCommandOptionType.String,
       choices: [
         {

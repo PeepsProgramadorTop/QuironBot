@@ -15,7 +15,7 @@ const characterProfile = mongoose.Schema({
     }, //HP
   },
   stats: {
-    atrPoints: { type: Number, default: 0 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
+    atrPoints: { type: Number, default: 19 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
     atrCON: { type: Number, default: 8 }, //Atributo - Constituição
     atrFOR: { type: Number, default: 8 }, //Atributo - Força
     atrAGI: { type: Number, default: 8 }, //Atributo - Agilidade
