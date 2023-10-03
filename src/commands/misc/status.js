@@ -61,12 +61,12 @@ module.exports = {
             const bannerURL = query.info.banner;
             const response = await axios.get(bannerURL, { responseType: 'arraybuffer' });
             const imageBuffer = Buffer.from(response.data);
-    
+
             // Redimensiona a imagem do banner para ficar no tamanho correto.
             const resizedBuffer = await sharp(imageBuffer)
                 .resize(958, 400)
                 .toBuffer();
-    
+
             // Crie um objeto de anexo com o banner redimensionado.
             const attachment = new AttachmentBuilder(resizedBuffer, { name: 'banner.png' });
 
@@ -75,26 +75,26 @@ module.exports = {
                 .setTitle(`Status de ${query.info.name}`)
                 .setImage(`attachment://banner.png`);
             const embed = new EmbedBuilder()
-                .setDescription(
-                    `GERAL:
+                .setDescription(`\`\`\`GERAL:\`\`\`
+❤️<:dot:1158109856725733378>**Pontos de Vida︰** \`20/20HP\`
+🪙<:dot:1158109856725733378>**Dracmas︰** \`×${query.info.money}\`
+📊<:dot:1158109856725733378>**Nível︰** \`0\`
 
-❤️:dot:Pontos de Vida︰ ${query.info.hitPoints.base}/${query.info.hitPoints.current}
-🪙:dot:Dracmas︰ ${query.info.money}
+\`\`\`COLAR DE CONTAS:\`\`\`
+🔴🟡🟢🔵🟣
+                    
+\`\`\`ATRIBUTOS:\`\`\`
+🌟<:dot:1158109856725733378>**Ponto(s) de Atributos Restante(s)︰** \`×${query.stats.atrPoints}\`
 
-ATRIBUTOS:
-
-🌟:dot:Ponto(s) de Atributos Restante(s)︰ ${query.stats.atrPoints}
-
-🫀:dot:Constituição (CON)︰ ${query.stats.atrCON}
-🗡️:dot:Força (FOR)︰ ${query.stats.atrFOR}
-🦿:dot:Agilidade (AGI)︰ ${query.stats.atrAGI}
-🧠:dot:Inteligência (INT)︰ ${query.stats.atrINT}
-✨:dot:Carisma (CAR)︰ ${query.stats.atrCAR}
-`
-                )
+🫀<:dot:1158109856725733378>**Constituição (CON)︰** \`×${query.stats.atrCON}\`
+🗡️<:dot:1158109856725733378>**Força (FOR)︰** \`×${query.stats.atrFOR}\`
+🦿<:dot:1158109856725733378>**Agilidade (AGI)︰** \`×${query.stats.atrAGI}\`
+🧠<:dot:1158109856725733378>**Inteligência (INT)︰** \`×${query.stats.atrINT}\`
+✨<:dot:1158109856725733378>**Carisma (CAR)︰** \`×${query.stats.atrCAR}\`
+`)
                 .setThumbnail(query.info.avatar);
 
-            interaction.reply({ embeds: [bannerEmbed], files: [attachment] });
+            interaction.reply({ embeds: [bannerEmbed, embed], files: [attachment] });
         });
     },
 
