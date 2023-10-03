@@ -57,12 +57,22 @@ module.exports = {
       const embed = new EmbedBuilder()
         .setTitle(`${query.info.name}`)
         .setDescription(
-          `FORÇA💪: ${query.stats.atrFOR}
-        DESTREZA: ${query.stats.atrAGI}
-        CONSTITUIÇÃO: ${query.stats.atrCON}
-        INTELIGENCIA: ${query.stats.atrINT}
-        SABEDORIA: ${query.stats.atrSAB}
-        CARISMA: ${query.stats.atrCAR}`
+          `\```GERAL:\```
+
+❤️:dot:Pontos de Vida︰ ${query.info.hitPoints.base}/${query.info.hitPoints.current}
+🪙:dot:Dracmas︰ ${query.info.money}
+📊:dot:Nível︰ ${quary.info.contas}
+
+\```ATRIBUTOS:\```
+
+🌟:dot:Ponto(s) de Atributos Restante(s)︰ ${query.stats.atrPoints}
+
+🫀:dot:Constituição (CON)︰ ${query.stats.atrCON}
+🗡️:dot:Força (FOR)︰ ${query.stats.atrFOR}
+🦿:dot:Agilidade (AGI)︰ ${query.stats.atrAGI}
+🧠:dot:Inteligência (INT)︰ ${query.stats.atrINT}
+✨:dot:Carisma (CAR)︰ ${query.stats.atrCAR}
+`
         )
         .setThumbnail(query.info.avatar);
 
