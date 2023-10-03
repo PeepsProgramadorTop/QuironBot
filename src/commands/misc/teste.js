@@ -1,10 +1,14 @@
 const {
     Client,
     Interaction,
+    Attachment,
     ApplicationCommandOptionType,
     PermissionFlagsBits,
+    EmbedBuilder,
+    AttachmentBuilder
 } = require('discord.js');
-const blogSchema = require("../../models/schemaTeste");
+const sharp = require('sharp');
+const axios = require('axios');
 
 module.exports = {
     /**
@@ -13,20 +17,26 @@ module.exports = {
      * @param {Interaction} interaction
      *
      */
-
     callback: async (client, interaction) => {
         const user = interaction.user;
-        const guild = interaction.guild;
+        
+        // Baixe a imagem do avatar do usuário.
+        const avatarURL = "https://i.imgur.com/N9O1x8R.png" + Date.now();
+        const response = await axios.get(avatarURL, { responseType: 'arraybuffer' });
+        const imageBuffer = Buffer.from(response.data);
 
-        await blogSchema.findOneAndUpdate({ userID: user.id }, { $set: { "inventory": { "statOne": 'oiii', "statTwo": 'dois', "statThree": 'tres' } } }, { upsert: true });
+        // Redimensione a imagem do avatar para o tamanho desejado (por exemplo, 200x200 pixels).
+        const resizedBuffer = await sharp(imageBuffer)
+            .resize(958, 400)
+            .toBuffer();
 
-        const data = await blogSchema.findOne({ userID: user.id });
+        // Crie um objeto de anexo com a imagem redimensionada.
+        const attachment = new AttachmentBuilder(resizedBuffer, { name: 'aaaaaa.png'});
 
-        interaction.reply({
-            content: `${data.inventory.statOne}${data.inventory.statTwo}${data.inventory.statThree}`
-        });
+        // Responda à interação com a imagem redimensionada.
+        interaction.reply({ content: "Aqui está a imagem redimensionada:", files: [attachment] });
     },
 
     name: 'teste',
-    description: 'testeee'
+    description: 'Redimensiona a imagem do avatar do usuário.'
 };

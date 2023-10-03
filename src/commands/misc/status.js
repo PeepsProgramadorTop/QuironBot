@@ -1,67 +1,85 @@
 const {
-  ApplicationCommandOptionType,
-  PermissionFlagsBits,
-  EmbedBuilder,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
-  ComponentType,
+    ApplicationCommandOptionType,
+    PermissionFlagsBits,
+    EmbedBuilder,
+    AttachmentBuilder,
+    ActionRowBuilder,
+    StringSelectMenuBuilder,
+    StringSelectMenuOptionBuilder,
+    ComponentType,
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
+const sharp = require('sharp');
+const axios = require('axios');
 
 module.exports = {
-  callback: async (client, interaction) => {
-    const user = interaction.user;
-    const characterGroup = await characterProfile.find({ userID: user.id });
+    callback: async (client, interaction) => {
+        const user = interaction.user;
 
-    const names = [];
-    characterGroup.forEach((data) => {
-      names.push({ name: `${data.info.name}` });
-    });
+        const characterGroup = await characterProfile.find({ userID: user.id });
 
-    const charSelectMenu = new StringSelectMenuBuilder()
-      .setCustomId(interaction.id)
-      .setPlaceholder("Selecione o personagem que você quer ver o status.")
-      .setMinValues(0)
-      .setMaxValues(1)
-      .addOptions(
-        names.map((characters) =>
-          new StringSelectMenuOptionBuilder()
-            .setLabel(characters.name)
-            .setDescription("Personagem.")
-            .setValue(characters.name)
-        )
-      );
+        const names = [];
+        characterGroup.forEach((data) => {
+            names.push({ name: `${data.info.name}` });
+        });
 
-    const actionRow = new ActionRowBuilder().addComponents(charSelectMenu);
+        const charSelectMenu = new StringSelectMenuBuilder()
+            .setCustomId(interaction.id)
+            .setPlaceholder("Selecione o personagem que você quer ver o status.")
+            .setMinValues(0)
+            .setMaxValues(1)
+            .addOptions(
+                names.map((characters) =>
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel(characters.name)
+                        .setDescription("Personagem.")
+                        .setValue(characters.name)
+                )
+            );
 
-    const reply = await interaction.reply({
-      components: [actionRow],
-    });
+        const actionRow = new ActionRowBuilder().addComponents(charSelectMenu);
 
-    const collector = reply.createMessageComponentCollector({
-      componentType: ComponentType.StringSelect,
-      filter: (i) =>
-        i.user.id === interaction.user.id && i.customId === interaction.id,
-      time: 60_000,
-    });
+        const reply = await interaction.reply({
+            components: [actionRow],
+        });
 
-    collector.on("collect", async (interaction) => {
-      const character = interaction.values[0];
+        const collector = reply.createMessageComponentCollector({
+            componentType: ComponentType.StringSelect,
+            filter: (i) =>
+                i.user.id === interaction.user.id && i.customId === interaction.id,
+            time: 60_000,
+        });
 
-      const query = await characterProfile.findOne({
-        userID: user.id,
-        "info.name": character,
-      });
+        collector.on("collect", async (interaction) => {
+            const character = interaction.values[0];
 
-      const embed = new EmbedBuilder()
-        .setTitle(`${query.info.name}`)
-        .setDescription(
-          `GERAL:
+            const query = await characterProfile.findOne({
+                userID: user.id,
+                "info.name": character,
+            });
+
+            const bannerURL = query.info.banner;
+            const response = await axios.get(bannerURL, { responseType: 'arraybuffer' });
+            const imageBuffer = Buffer.from(response.data);
+    
+            // Redimensiona a imagem do banner para ficar no tamanho correto.
+            const resizedBuffer = await sharp(imageBuffer)
+                .resize(958, 400)
+                .toBuffer();
+    
+            // Crie um objeto de anexo com o banner redimensionado.
+            const attachment = new AttachmentBuilder(resizedBuffer, { name: 'banner.png' });
+
+            const bannerEmbed = new EmbedBuilder()
+                .setAuthor({ name: `${user.username}`, iconURL: user.displayAvatarURL({ size: 1024 }) })
+                .setTitle(`Status de ${query.info.name}`)
+                .setImage(`attachment://banner.png`);
+            const embed = new EmbedBuilder()
+                .setDescription(
+                    `GERAL:
 
 ❤️:dot:Pontos de Vida︰ ${query.info.hitPoints.base}/${query.info.hitPoints.current}
 🪙:dot:Dracmas︰ ${query.info.money}
-📊:dot:Nível︰ ${quary.info.contas}
 
 ATRIBUTOS:
 
@@ -73,13 +91,13 @@ ATRIBUTOS:
 🧠:dot:Inteligência (INT)︰ ${query.stats.atrINT}
 ✨:dot:Carisma (CAR)︰ ${query.stats.atrCAR}
 `
-        )
-        .setThumbnail(query.info.avatar);
+                )
+                .setThumbnail(query.info.avatar);
 
-      interaction.reply({ embeds: [embed] });
-    });
-  },
+            interaction.reply({ embeds: [bannerEmbed], files: [attachment] });
+        });
+    },
 
-  name: "status",
-  description: "Pega os personagem aí doidão",
+    name: "status",
+    description: "Pega os personagem aí doidão",
 };
