@@ -1,7 +1,5 @@
 const { Client, Interaction, EmbedBuilder } = require("discord.js");
-
 const characterProfile = require("../../models/characterProfile.js");
-const { description } = require("./registrar.js");
 
 module.exports = {
   callback: async (client, interaction) => {
@@ -9,22 +7,23 @@ module.exports = {
     const guild = interaction.guild;
 
     const characterGroup = await characterProfile.find({
-      UserID: user.id,
+      userID: user.id,
     });
 
     const names = [];
     characterGroup.forEach((data) => {
-      names.push({ name: `${data.info.name}` });
+      names.push({ inline: false, name: `${data.info.name}` });
     });
 
+    const fields = names.map(nameObj => {
+      return { name: nameObj.name, inline: nameObj.inline, value: '** **' };
+    });
+    console.log(fields)
+    
     const embed = new EmbedBuilder()
       .setTitle(`Personagens de: ${user.id}`)
-      .addFields(
-        names.map((characters, i) => ({
-          inline: false,
-          name: `${i + 1}`,
-        }))
-      );
+      .setFields(fields);
+
     console.log(embed);
 
     interaction.reply({ embeds: [embed] });
