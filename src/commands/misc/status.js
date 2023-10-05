@@ -94,7 +94,7 @@ ATRIBUTOS:
                 )
                 .setThumbnail(query.info.avatar);
 
-            interaction.reply({ embeds: [bannerEmbed], files: [attachment] });
+            interaction.reply({ embeds: [bannerEmbed, embed], files: [attachment] });
         });
     },
 

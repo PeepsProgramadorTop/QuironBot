@@ -32,8 +32,11 @@ module.exports = {
     if (imagem != null) {
       embed.setImage(imagem.url);
     }
-
-    channel.send({ embeds: [embed] });
+    if (user.roles.cache.has("1156367995262730440")) {
+      channel.send({ embeds: [embed] });
+    } else {
+      interaction.reply("Você não possui permissão para usar esse comando.");
+    }
   },
   name: "missão",
   description: "Cria uma missão.",
