@@ -1,14 +1,16 @@
 const mongoose = require("mongoose");
 
 const characterProfile = mongoose.Schema({
-  userID: { type: "String" }, //ID do Usuário dono do Personagem
+  userID: { type: "String" }, //ID do Usuário - Utilizado para identificar a quem este personagem pertence.
   info: {
-    name: { type: "String", required: true }, //Nome do Personagem
-    cabin: { type: "String", required: true }, //Chalé do Personagem
-    necklace_beads: { type: "String", default: "Nenhuma." }, //Colar de Contas do Personagem
-    avatar: { type: "String" }, //Avatar do Personagem
-    banner: { type: "String" }, //Banner do Personagem
-    money: { type: Number, default: 5 }, //Dracmas do Personagem
+    prefix: { type: "String", required: true }, //Prefixo - Utilizado para enviar mensagens com o personagem.
+    name: { type: "String", required: true }, //Nome - Utilizado para identificar o personagem, uma vez setado não pode ser alterado.
+    displayName: { type: "String", required: true }, //Nome de Exibição - Nome exibido em qualquer coisa sobre o personagem, pode ser alterado.
+    cabin: { type: "String", required: true }, //Chalé - O chalé do personagem
+    necklace_beads: { type: "String", default: "Nenhuma." }, //Colar de Contas do Personagem.
+    avatar: { type: "String" }, //Avatar - Imagem de perfil do personagem, pode ser alterada. (Não é obrigatório.)
+    banner: { type: "String" }, //Banner - imagem que normalmente representa o personagem, utilizada no status, pode ser alterada. (Não é obrigatório.)
+    money: { type: Number, default: 5 }, //Dracmas - Moeda utilizada na economia do servidor.
     hitPoints: {
       base: { type: Number, default: 0 }, //HP Base
       current: { type: Number, default: 0 }, //HP Atual
