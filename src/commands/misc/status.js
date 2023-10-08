@@ -1,12 +1,11 @@
 const {
-    ApplicationCommandOptionType,
-    PermissionFlagsBits,
+    SlashCommandBuilder,
     EmbedBuilder,
     AttachmentBuilder,
     ActionRowBuilder,
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder,
-    ComponentType,
+    ComponentType
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const axios = require('axios');
@@ -15,18 +14,21 @@ const Canvas = require('@napi-rs/canvas');
 const { join } = require('path')
 
 const applyText = (canvas, text) => {
-	const context = canvas.getContext('2d');
-	let fontSize = 52;
+    const context = canvas.getContext('2d');
+    let fontSize = 52;
 
-	do {
-		context.font = `${fontSize -= 10}px Windlass`;
-	} while (context.measureText(text).width > canvas.width - 400);
+    do {
+        context.font = `${fontSize -= 10}px Windlass`;
+    } while (context.measureText(text).width > canvas.width - 400);
 
-	return context.font;
+    return context.font;
 };
 
 module.exports = {
-    callback: async (client, interaction) => {
+    data: new SlashCommandBuilder()
+        .setName('status')
+        .setDescription('Retorna o perfil do personagem escolhido.'),
+    run: async ({ interaction }) => {
         const user = interaction.user;
 
         const characterGroup = await characterProfile.find({ userID: user.id });
@@ -83,6 +85,7 @@ module.exports = {
             const response = await axios.get(bannerURL, { responseType: 'arraybuffer' });
             const imageBuffer = Buffer.from(response.data);
             Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'windlass.ttf'), 'Windlass');
+            Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'montserrat.ttf'), 'Montserrat');
 
             //Criação do background
             const resizedBanner = await sharp(imageBuffer) //pega o banner e redimensiona ele
@@ -116,7 +119,7 @@ module.exports = {
             layerContext.font = applyText(layerCanvas, `${query.info.displayName}`); //seta a fonte e o tamanho
             layerContext.fillStyle = '#FFFFFF'; //seta a cor
             layerContext.fillText(`${query.info.displayName}`, 290, 420); //cria um texto com o nome do personagem
-            layerContext.font = '29px Calibri'; //seta a fonte e o tamanho
+            layerContext.font = '29px Montserrat'; //seta a fonte e o tamanho
             layerContext.fillStyle = '#4E4F54'; //seta a cor
             layerContext.fillText(`@${user.username}`, 290, 447); //cria um texto com o username do player dono do personagem
 
@@ -146,7 +149,7 @@ module.exports = {
 
 \`\`\`COLAR DE CONTAS:\`\`\`
 <:necklace_bead:1158791462922748034><:necklace_bead:1158791462922748034><:necklace_bead:1158791462922748034><:necklace_bead:1158791462922748034><:necklace_bead:1158791462922748034>
-                    
+                   
 \`\`\`ATRIBUTOS:\`\`\`
 🌟<:dot:1158109856725733378>**Ponto(s) de Atributos Restante(s)︰** \`×${query.stats.atrPoints}\`
 
@@ -165,8 +168,5 @@ module.exports = {
                 components: []
             });
         });
-    },
-
-    name: "status",
-    description: "Pega os personagem aí doidão"
+    }
 };

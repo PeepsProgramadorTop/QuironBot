@@ -1,24 +1,53 @@
-const {
-    Client,
-    Interaction,
-    ApplicationCommandOptionType,
-    PermissionFlagsBits,
-    EmbedBuilder,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 
 module.exports = {
-    /**
-     *
-     * @param {Client} client
-     * @param {Interaction} interaction
-     *
-    */
-
-    callback: async (client, interaction) => {
+    data: new SlashCommandBuilder()
+        .setName('criar-embed')
+        .setDescription('Cria uma embed.').addChannelOption((option) => option
+            .setName('canal')
+            .setDescription('Canal aonde você quer enviar a mensagem com a embed.')
+        )
+        .addStringOption((option) => option
+            .setName('autor')
+            .setDescription('Texto localizado acima de todo o resto da embed.')
+        )
+        .addAttachmentOption((option) => option
+            .setName('icon-autor')
+            .setDescription('Texto pequeno que fica acima de todo o resto da embed, ao lado do texto do autor.')
+        )
+        .addStringOption((option) => option
+            .setName('titulo')
+            .setDescription('Título da embed.')
+        )
+        .addStringOption((option) => option
+            .setName('desc')
+            .setDescription('Descrição da embed.')
+        )
+        .addAttachmentOption((option) => option
+            .setName('imagem')
+            .setDescription('Imagem anexada à embed, localizada abaixo do texto.')
+        )
+        .addAttachmentOption((option) => option
+            .setName('thumbnail')
+            .setDescription('Imagem pequena localizada ao lado do texto.')
+        )
+        .addStringOption((option) => option
+            .setName('cor')
+            .setDescription('Cor da embed em código HEX (#000000).')
+        )
+        .addStringOption((option) => option
+            .setName('footer')
+            .setDescription('Texto pequeno que fica abaixo de todo o resto da embed.')
+        )
+        .addAttachmentOption((option) => option
+            .setName('icon-footer')
+            .setDescription('Imagem pequena que fica abaixo de todo o resto da embed, ao lado do texto footer.')
+        ),
+    run: ({ interaction }) => {
         const user = interaction.user;
         const guild = interaction.guild;
 
-        const channel = interaction.options.getChannel('canal');
+        const channel = interaction.options.getChannel('canal') == null ? interaction.channel : interaction.options.getChannel('canal');
         const author = interaction.options.get('autor');
         const authorIcon = interaction.options.getAttachment('icon-autor');
         const title = interaction.options.get('titulo');
@@ -67,59 +96,5 @@ module.exports = {
 
         channel.send({ embeds: [embed] });
         interaction.reply(`Embed enviada com sucesso em <#${channel.id}>`);
-    },
-    name: 'criar-embed',
-    description: 'Cria uma embed.',
-    options: [
-        {
-            name: 'canal',
-            description: 'Canal aonde você quer enviar a mensagem com a embed.',
-            type: ApplicationCommandOptionType.Channel
-        },
-        {
-            name: 'autor',
-            description: 'Texto localizado acima de todo o resto da embed.',
-            type: ApplicationCommandOptionType.String
-        },
-        {
-            name: 'icon-autor',
-            description: 'Texto pequeno que fica acima de todo o resto da embed, ao lado do texto do autor.',
-            type: ApplicationCommandOptionType.Attachment
-        },
-        {
-            name: 'titulo',
-            description: 'Título da embed.',
-            type: ApplicationCommandOptionType.String
-        },
-        {
-            name: 'desc',
-            description: 'Descrição da embed.',
-            type: ApplicationCommandOptionType.String
-        },
-        {
-            name: 'imagem',
-            description: 'Imagem anexada à embed, localizada abaixo do texto.',
-            type: ApplicationCommandOptionType.Attachment
-        },
-        {
-            name: 'thumbnail',
-            description: 'Imagem pequena localizada ao lado do texto.',
-            type: ApplicationCommandOptionType.Attachment
-        },
-        {
-            name: 'cor',
-            description: 'Cor da embed em código HEX (#000000).',
-            type: ApplicationCommandOptionType.String
-        },
-        {
-            name: 'footer',
-            description: 'Texto pequeno que fica abaixo de todo o resto da embed.',
-            type: ApplicationCommandOptionType.String
-        },
-        {
-            name: 'icon-footer',
-            description: 'Imagem pequena que fica abaixo de todo o resto da embed, ao lado do texto footer.',
-            type: ApplicationCommandOptionType.Attachment
-        }
-    ]
+    }
 };

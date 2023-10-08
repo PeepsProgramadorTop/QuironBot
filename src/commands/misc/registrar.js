@@ -1,21 +1,63 @@
-const {
-    Client,
-    Interaction,
-    ApplicationCommandOptionType,
-    PermissionFlagsBits,
-} = require("discord.js");
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const playerProfile = require("../../models/playerProfile");
 
 module.exports = {
-    /**
-     *
-     * @param {Client} client
-     * @param {Interaction} interaction
-     *
-     */
-
-    callback: async (client, interaction) => {
+    data: new SlashCommandBuilder()
+        .setName('registrar')
+        .setDescription('Registra um novo personagem para você.')
+        //Opção - Prefixo
+        .addStringOption((option) => option
+            .setName('prefixo')
+            .setDescription('Prefixo utilizado para enviar mensagens com o personagem.')
+            .setRequired(true)
+        )
+        //Opção - Nome
+        .addStringOption((option) => option
+            .setName('nome')
+            .setDescription('Nome do personagem que você quer criar.')
+            .setRequired(true)
+        )
+        //Opção - Chalé
+        .addStringOption((option) => option
+            .setName('chalé')
+            .setDescription('Chalé do personagem que você que criar.')
+            .addChoices(
+                { name: "Zeus", value: "Zeus" },
+                { name: "Poseidon", value: "Poseidon" },
+                { name: "Deméter", value: "Demeter" },
+                { name: "Ares", value: "Ares" },
+                { name: "Atena", value: "Atena" },
+                { name: "Apolo", value: "Apolo" },
+                { name: "Ártemis", value: "Ártemis" },
+                { name: "Hefesto", value: "Hefesto" },
+                { name: "Afrodite", value: "Afrodite" },
+                { name: "Hermes", value: "Hermes" },
+                { name: "Dionísio", value: "Dionísio" },
+                { name: "Hades", value: "Hades" },
+                { name: "Íris", value: "Íris" },
+                { name: "Hipnos", value: "Hipnos" },
+                { name: "Nêmesis", value: "Nêmesis" },
+                { name: "Nike", value: "Nike" },
+                { name: "Hebe", value: "Hebe" },
+                { name: "Tique", value: "Tique" },
+                { name: "Hécate", value: "Hécate" }
+            )
+            .setRequired(true)
+        )
+        //Opção - Avatar
+        .addAttachmentOption((option) => option
+            .setName('avatar')
+            .setDescription('Avatar/imagem do personagem que você quer criar.')
+            .setRequired(false)
+        )
+        //Opção - Banner
+        .addAttachmentOption((option) => option
+            .setName('banner')
+            .setDescription('Imagem decorativa localizada no perfil do personagem, retangular, 958x400px recomendados.')
+            .setRequired(false)
+        ),
+    run: async ({ interaction }) => {
         //Consts gerais
         const user = interaction.user;
         const guild = interaction.guild;
@@ -27,7 +69,7 @@ module.exports = {
         const banner = interaction.options.getAttachment("banner") == null ? 'https://i.imgur.com/9WzYDnk.png' : interaction.options.getAttachment("banner").url;
 
         //Checa se você já tem um personagem com esse nome.
-        const check = await characterProfile.findOne({ userID: user.id, "info.prefix": prefix, "info.name": name, });
+        const check = await characterProfile.findOne({ userID: user.id, "info.name": name, });
         if (check != null && check.info.name == name) {
             interaction.reply('voce já tem esse personagem');
             return;
@@ -37,7 +79,6 @@ module.exports = {
         await characterProfile.findOneAndUpdate(
             {
                 userID: user.id,
-                "info.prefix": prefix,
                 "info.name": name,
             },
             {
@@ -61,7 +102,7 @@ module.exports = {
                 upsert: true,
             }
         );
-        
+
         //Seta o playerProfile
         await playerProfile.findOneAndUpdate(
             {
@@ -83,130 +124,16 @@ module.exports = {
             "info.name": name,
         });
 
-        //Responde com as infos
-        interaction.reply({
-            content: `
-Usuário: <@${data.userID}>
-Nome: ${data.info.displayName} (${data.info.name})
-Chalé: ${data.info.cabin}
-Dracmas: ${data.info.money}
-Avatar: ${data.info.avatar}
-Banner: ${data.info.banner}
-HP: ${data.info.hitPoints.base}/${data.info.hitPoints.current}
-`,
-        });
-    },
+        const embed = new EmbedBuilder()
+            .setAuthor({ name: `Personagem criado com sucesso!`, iconURL: 'https://i.imgur.com/hss9I60.png' })
+            .setTitle(`Olá, ${data.info.displayName}!`)
+            .setDescription(`Pelo visto um(a) novo(a) campista chegou no acampamento! Seja bem-vindo(a) jovem meio-sangue, eu espero que sua aventura aqui seja épica.`)
+            .setThumbnail(data.info.avatar)
+            .setImage(data.info.banner)
+            .setFooter({ text: `Nome Registrado: ${data.info.name}` })
+            .setColor('#1BB76E');
 
-    name: "registrar",
-    description: "Registra um novo personagem para você.",
-    options: [
-        {
-            name: "prefixo",
-            description: "Prefixo utilizado para enviar mensagens com o personagem.",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        },
-        {
-            name: "nome",
-            description: "Nome do personagem que você quer criar.",
-            type: ApplicationCommandOptionType.String,
-            required: true,
-        },
-        {
-            name: "chalé",
-            description: "Chalé do personagem que você que criar.",
-            type: ApplicationCommandOptionType.String,
-            choices: [
-                {
-                    name: "Zeus",
-                    value: "Zeus",
-                },
-                {
-                    name: "Poseidon",
-                    value: "Poseidon",
-                },
-                {
-                    name: "Deméter",
-                    value: "Demeter",
-                },
-                {
-                    name: "Ares",
-                    value: "Ares",
-                },
-                {
-                    name: "Atena",
-                    value: "Atena",
-                },
-                {
-                    name: "Apolo",
-                    value: "Apolo",
-                },
-                {
-                    name: "Ártemis",
-                    value: "Ártemis",
-                },
-                {
-                    name: "Hefesto",
-                    value: "Hefesto",
-                },
-                {
-                    name: "Afrodite",
-                    value: "Afrodite",
-                },
-                {
-                    name: "Hermes",
-                    value: "Hermes",
-                },
-                {
-                    name: "Dionísio",
-                    value: "Dionísio",
-                },
-                {
-                    name: "Hades",
-                    value: "Hades",
-                },
-                {
-                    name: "Íris",
-                    value: "Íris",
-                },
-                {
-                    name: "Hipnos",
-                    value: "Hipnos",
-                },
-                {
-                    name: "Nêmesis",
-                    value: "Nêmesis",
-                },
-                {
-                    name: "Nike",
-                    value: "Nike",
-                },
-                {
-                    name: "Hebe",
-                    value: "Hebe",
-                },
-                {
-                    name: "Tique",
-                    value: "Tique",
-                },
-                {
-                    name: "Hécate",
-                    value: "Hécate",
-                },
-            ],
-            required: true,
-        },
-        {
-            name: "avatar",
-            description: "Avatar/imagem do personagem que você quer criar.",
-            type: ApplicationCommandOptionType.Attachment,
-            required: false,
-        },
-        {
-            name: "banner",
-            description: "Imagem decorativa localizada no perfil do personagem, retangular, 958x400px recomendados.",
-            type: ApplicationCommandOptionType.Attachment,
-            required: false,
-        },
-    ],
+        //Responde com as infos
+        interaction.reply({ embeds: [embed] });
+    }
 };
