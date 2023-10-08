@@ -11,14 +11,14 @@ const characterProfile = require("../../models/characterProfile");
 const axios = require('axios');
 const sharp = require('sharp');
 const Canvas = require('@napi-rs/canvas');
-const { join } = require('path')
+const { join } = require('path');
 
 const applyText = (canvas, text) => {
     const context = canvas.getContext('2d');
     let fontSize = 52;
 
     do {
-        context.font = `${fontSize -= 10}px Windlass`;
+        context.font = `${fontSize -= 10}px JMH Typewriter`;
     } while (context.measureText(text).width > canvas.width - 400);
 
     return context.font;
@@ -53,8 +53,19 @@ module.exports = {
             const characterAvatarURL = query.info.avatar;
             const response = await axios.get(bannerURL, { responseType: 'arraybuffer' });
             const imageBuffer = Buffer.from(response.data);
+            const stripSpecial = (str) => str
+                .replace(
+                    /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+                    ''
+                )
+                .replace(/\s+/g, ' ')
+                .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ\s]/g, '')
+                .trim();
+
+            //Registrando Fontes
             Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'windlass.ttf'), 'Windlass');
             Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'montserrat.ttf'), 'Montserrat');
+            Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'typewriter.ttf'), 'JMH Typewriter');
 
             //Criação do background
             const resizedBanner = await sharp(imageBuffer) //pega o banner e redimensiona ele
@@ -85,9 +96,9 @@ module.exports = {
 
             layerContext.drawImage(backgroundBuffer, 0, 0, layerCanvas.width, layerCanvas.height); //desenha o background do banner
             layerContext.drawImage(bannerLayer, 0, 0, layerCanvas.width, layerCanvas.height); //desenha a layer superior do banner
-            layerContext.font = applyText(layerCanvas, `${query.info.displayName}`); //seta a fonte e o tamanho
+            layerContext.font = applyText(layerCanvas, `${stripSpecial(query.info.displayName)}`); //seta a fonte e o tamanho
             layerContext.fillStyle = '#FFFFFF'; //seta a cor
-            layerContext.fillText(`${query.info.displayName}`, 290, 420); //cria um texto com o nome do personagem
+            layerContext.fillText(`${stripSpecial(query.info.displayName)}`, 290, 420); //cria um texto com o nome do personagem
             layerContext.font = '29px Montserrat'; //seta a fonte e o tamanho
             layerContext.fillStyle = '#4E4F54'; //seta a cor
             layerContext.fillText(`@${user.username}`, 290, 447); //cria um texto com o username do player dono do personagem
@@ -183,8 +194,20 @@ module.exports = {
                 const characterAvatarURL = query.info.avatar;
                 const response = await axios.get(bannerURL, { responseType: 'arraybuffer' });
                 const imageBuffer = Buffer.from(response.data);
+                const stripSpecial = (str) => str
+                    .replace(
+                        /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
+                        ''
+                    )
+                    .replace(/\s+/g, ' ')
+                    .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ\s]/g, '')
+                    .trim();
+    
+                //Registrando Fontes
                 Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'windlass.ttf'), 'Windlass');
                 Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'montserrat.ttf'), 'Montserrat');
+                Canvas.GlobalFonts.registerFromPath(join(__dirname, '../..', 'fonts', 'typewriter.ttf'), 'JMH Typewriter');
+    
 
                 //Criação do background
                 const resizedBanner = await sharp(imageBuffer) //pega o banner e redimensiona ele
@@ -215,9 +238,9 @@ module.exports = {
 
                 layerContext.drawImage(backgroundBuffer, 0, 0, layerCanvas.width, layerCanvas.height); //desenha o background do banner
                 layerContext.drawImage(bannerLayer, 0, 0, layerCanvas.width, layerCanvas.height); //desenha a layer superior do banner
-                layerContext.font = applyText(layerCanvas, `${query.info.displayName}`); //seta a fonte e o tamanho
+                layerContext.font = applyText(layerCanvas, `${stripSpecial(query.info.displayName)}`); //seta a fonte e o tamanho
                 layerContext.fillStyle = '#FFFFFF'; //seta a cor
-                layerContext.fillText(`${query.info.displayName}`, 290, 420); //cria um texto com o nome do personagem
+                layerContext.fillText(`${stripSpecial(query.info.displayName)}`, 290, 420); //cria um texto com o nome do personagem
                 layerContext.font = '29px Montserrat'; //seta a fonte e o tamanho
                 layerContext.fillStyle = '#4E4F54'; //seta a cor
                 layerContext.fillText(`@${user.username}`, 290, 447); //cria um texto com o username do player dono do personagem

@@ -18,6 +18,7 @@
         "discord.js": "^14.13.0",
         "djs-commander": "^0.0.50",
         "dotenv": "^16.0.3",
+        "emoji-strip": "^1.0.1",
         "gifwrap": "^0.10.1",
         "jimp": "^0.22.10",
         "mongodb": "^6.1.0",
