@@ -9,7 +9,7 @@ const client = new Client({
         IntentsBitField.Flags.Guilds,
         IntentsBitField.Flags.GuildMembers,
         IntentsBitField.Flags.GuildMessages,
-        IntentsBitField.Flags.MessageContent,
+        IntentsBitField.Flags.MessageContent
     ],
 });
 
@@ -38,7 +38,8 @@ const status = [
 
 new CommandHandler({
     client,
-    commandsPath: path.join(__dirname, 'commands')
+    commandsPath: path.join(__dirname, 'commands'),
+    eventsPath: path.join(__dirname, 'events')
 });
 
 (async () => {
