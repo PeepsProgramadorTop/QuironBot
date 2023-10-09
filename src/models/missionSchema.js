@@ -9,6 +9,7 @@ const missionSchema = mongoose.Schema({
   image: { type: "String", required: false },
   bead: { type: "String", required: true },
   progress: { type: Boolean, required: true },
+  embedID: { type: String, required: true },
 });
 
 module.exports = mongoose.model("missionSchema", missionSchema);
