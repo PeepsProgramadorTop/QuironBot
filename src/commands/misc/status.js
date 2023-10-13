@@ -116,27 +116,11 @@ module.exports = {
             ); //carrega a layer superior do banner
             const characterAvatar = await Canvas.loadImage(characterAvatarURL); //carrega o avatar do personagem
 
-            layerContext.drawImage(
-                backgroundBuffer,
-                0,
-                0,
-                layerCanvas.width,
-                layerCanvas.height
-            ); //desenha o background do banner
-            layerContext.drawImage(
-                bannerLayer,
-                0,
-                0,
-                layerCanvas.width,
-                layerCanvas.height
-            ); //desenha a layer superior do banner
-            layerContext.font = applyText(
-                layerCanvas,
-                `${stripSpecial(query.info.displayName)}`
-            ); //seta a fonte e o tamanho
+            layerContext.drawImage(backgroundBuffer, 0, 0, layerCanvas.width, layerCanvas.height); //desenha o background do banner
+            layerContext.drawImage(bannerLayer, 0, 0, layerCanvas.width, layerCanvas.height); //desenha a layer superior do banner
+            layerContext.font = applyText(layerCanvas, `${stripSpecial(query.info.displayName)}`); //seta a fonte e o tamanho
             layerContext.fillStyle = "#FFFFFF"; //seta a cor
-            layerContext.fillText(
-                `${stripSpecial(query.info.displayName)}`,
+            layerContext.fillText(`${stripSpecial(query.info.displayName)}`,
                 290,
                 420
             ); //cria um texto com o nome do personagem
@@ -264,18 +248,6 @@ module.exports = {
 
                 context.drawImage(bannerLayer, 0, 0, canvas.width, canvas.height);
 
-                context.font = "40px GG Sans Medium";
-                context.fillStyle = "#f7f7f7";
-                context.fillText(`${query.info.displayName}`, 296, 287);
-
-                context.font = "35px GG Sans Medium";
-                context.fillStyle = "#76787b";
-                context.fillText(`Nenhum apelido.`, 296, 325);
-
-                context.font = "29px GG Sans Medium";
-                context.fillStyle = "#828487";
-                context.fillText(`@${user.username}`, 338, 366);
-
                 context.save(); //Salva o estado anterior
                 context.beginPath();
                 context.arc(163, 235, 116, 0, Math.PI * 2, true);
@@ -291,6 +263,18 @@ module.exports = {
                 context.clip();
                 context.drawImage(playerAvatar, 294, 339, 35, 35);
                 context.restore(); //Restaura o estado anterior, para que possamos desenhar outras coisas depois disto.
+
+                context.font = "40px GG Sans Medium";
+                context.fillStyle = "#f7f7f7";
+                context.fillText(`${query.info.displayName}`, 296, 287);
+
+                context.font = "35px GG Sans Medium";
+                context.fillStyle = "#76787b";
+                context.fillText(`Nenhum apelido.`, 296, 325);
+
+                context.font = "29px GG Sans Medium";
+                context.fillStyle = "#828487";
+                context.fillText(`@${user.username}`, 338, 366);
 
                 const resizedBuffer = await canvas.encode("png");
 
