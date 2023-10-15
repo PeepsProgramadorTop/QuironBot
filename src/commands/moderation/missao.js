@@ -188,15 +188,22 @@ module.exports = {
         break;
       case "cancelar":
         const mission = interaction.options.get("id").value;
+        const missionData = await missionSchema.find({ missionID: mission });
 
         try {
           await missionSchema.deleteOne({ missionID: mission });
+          if (!missionSchema.find({ missionID: mission })) {
+            interaction.reply("Missão deletada com sucesso.");
+            channel
+              .fetchMessage(missionData.embedID)
+              .then((msg) => msg.delete());
+          } else {
+            interaction.reply("Houve um erro ao tentar deletar a missão.");
+          }
         } catch (err) {
           console.log(err);
         }
 
-        interaction.reply("Missão deletada com sucesso.");
-        break;
       case "player":
         switch (subcommand) {
           case "adicionar":
