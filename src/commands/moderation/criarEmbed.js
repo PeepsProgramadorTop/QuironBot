@@ -3,7 +3,8 @@ const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('criar-embed')
-        .setDescription('Cria uma embed.').addChannelOption((option) => option
+        .setDescription('Cria uma embed.')
+        .addChannelOption((option) => option
             .setName('canal')
             .setDescription('Canal aonde você quer enviar a mensagem com a embed.')
         )
@@ -44,9 +45,6 @@ module.exports = {
             .setDescription('Imagem pequena que fica abaixo de todo o resto da embed, ao lado do texto footer.')
         ),
     run: ({ interaction }) => {
-        const user = interaction.user;
-        const guild = interaction.guild;
-
         const channel = interaction.options.getChannel('canal') == null ? interaction.channel : interaction.options.getChannel('canal');
         const author = interaction.options.get('autor');
         const authorIcon = interaction.options.getAttachment('icon-autor');
@@ -63,36 +61,14 @@ module.exports = {
             return;
         };
 
-        const embed = new EmbedBuilder();
-        if (author != null) {
-            if (authorIcon != null) {
-                embed.setAuthor({ name: author.value, iconURL: authorIcon.url });
-            } else {
-                embed.setAuthor({ name: author.value });
-            };
-        };
-        if (title != null) {
-            embed.setTitle(title.value);
-        };
-        if (description != null) {
-            embed.setDescription(description.value);
-        };
-        if (image != null) {
-            embed.setImage(image.url)
-        };
-        if (thumbnail != null) {
-            embed.setThumbnail(thumbnail.url)
-        };
-        if (color != null) {
-            embed.setColor(color.value)
-        };
-        if (footer != null) {
-            if (footerIcon != null) {
-                embed.setFooter({ text: footer.value, iconURL: footerIcon.url });
-            } else {
-                embed.setFooter({ text: footer.value });
-            };
-        };
+        const embed = new EmbedBuilder()
+            .setAuthor(authorIcon ? { name: author.value, iconURL: authorIcon.url } : (author ? { name: author.value } : null))
+            .setTitle(title ? title.value : null)
+            .setDescription(description ? description.value : null)
+            .setImage(image ? image.url : null)
+            .setThumbnail(thumbnail ? thumbnail.url : null)
+            .setColor(color ? color.value : null)
+            .setFooter(footerIcon ? { text: footer.value, iconURL: footerIcon.url } : (footer ? { text: footer.value } : null));
 
         channel.send({ embeds: [embed] });
         interaction.reply(`Embed enviada com sucesso em <#${channel.id}>`);

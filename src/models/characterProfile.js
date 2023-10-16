@@ -10,7 +10,8 @@ const characterProfile = mongoose.Schema({
     necklace_beads: { type: "String", default: "Nenhuma." }, //Colar de Contas do Personagem.
     avatar: { type: "String" }, //Avatar - Imagem de perfil do personagem, pode ser alterada. (Não é obrigatório.)
     banner: { type: "String" }, //Banner - imagem que normalmente representa o personagem, utilizada no status, pode ser alterada. (Não é obrigatório.)
-    money: { type: Number, default: 5 }, //Dracmas - Moeda utilizada na economia do servidor.
+    money: { type: Number, default: 1 }, //Dracmas - Moeda utilizada na economia do servidor.
+    mana: { type: Number, default: 0 }, //Mana - Poder utilizado em situações mágicas, principalmente por feitiços.
     hitPoints: {
       base: { type: Number, default: 0 }, //HP Base
       current: { type: Number, default: 0 }, //HP Atual

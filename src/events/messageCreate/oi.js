@@ -13,6 +13,7 @@ module.exports = async (message) => {
 
     if (prefixes.some(prefix => message.content.startsWith(prefix)) || message.attachments.size > 0) {
         const prefixUsed = prefixes.find(prefix => message.content.startsWith(prefix));
+        if (!prefixUsed) return;
         const contentWithoutPrefix = message.content.slice(prefixUsed.length).trim();
 
         if (contentWithoutPrefix === "" && message.attachments.size === 0) return; // Retorna se não houver conteúdo nem anexos

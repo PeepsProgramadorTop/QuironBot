@@ -238,9 +238,19 @@ module.exports = {
                 const characterAvatar = await Canvas.loadImage(characterAvatarURL);
                 const playerAvatar = await Canvas.loadImage(playerAvatarURL);
 
+                const zeusCabin = await Canvas.loadImage("./src/images/chalé_zeus.png");
+                const poseidonCabin = await Canvas.loadImage("./src/images/chalé_poseidon.png");
+                const demeterCabin = await Canvas.loadImage("./src/images/chalé_deméter.png");
+                const aresCabin = await Canvas.loadImage("./src/images/chalé_ares.png");
+                const athenaCabin = await Canvas.loadImage("./src/images/chalé_atena.png");
+                const apolloCabin = await Canvas.loadImage("./src/images/chalé_apolo.png");
+                const arthemisCabin = await Canvas.loadImage("./src/images/chalé_ártemis.png");
+                const aphroditeCabin = await Canvas.loadImage("./src/images/chalé_afrodite.png");
+                const hadesCabin = await Canvas.loadImage("./src/images/chalé_hades.png");
+
                 context.save(); //Salva o estado anterior
                 context.beginPath();
-                context.roundRect(0, 0, 1306, 270, 21);
+                context.roundRect(0, 0, 1306, 270, 14);
                 context.closePath();
                 context.clip();
                 context.drawImage(background, 0, 0, 1306, 400);
@@ -250,31 +260,71 @@ module.exports = {
 
                 context.save(); //Salva o estado anterior
                 context.beginPath();
-                context.arc(163, 235, 116, 0, Math.PI * 2, true);
+                context.arc(163, 246, 116, 0, Math.PI * 2, true);
                 context.closePath();
                 context.clip();
-                context.drawImage(characterAvatar, 47, 119, 232, 232);
+                context.drawImage(characterAvatar, 47, 130, 232, 232);
                 context.restore(); //Restaura o estado anterior, para que possamos desenhar outras coisas depois disto.
 
                 context.save(); //Salva o estado anterior
                 context.beginPath();
-                context.arc(311.5, 356.5, 17.5, 0, Math.PI * 2, true);
+                context.arc(311.5, 367.5, 17.5, 0, Math.PI * 2, true);
                 context.closePath();
                 context.clip();
-                context.drawImage(playerAvatar, 294, 339, 35, 35);
+                context.drawImage(playerAvatar, 294, 350, 35, 35);
                 context.restore(); //Restaura o estado anterior, para que possamos desenhar outras coisas depois disto.
 
                 context.font = "40px GG Sans Medium";
                 context.fillStyle = "#f7f7f7";
-                context.fillText(`${query.info.displayName}`, 296, 287);
+                context.fillText(`${query.info.displayName}`, 296, 298);
 
                 context.font = "35px GG Sans Medium";
                 context.fillStyle = "#76787b";
-                context.fillText(`Nenhum apelido.`, 296, 325);
+                context.fillText(`Nenhum apelido.`, 296, 335);
 
                 context.font = "29px GG Sans Medium";
                 context.fillStyle = "#828487";
-                context.fillText(`@${user.username}`, 338, 366);
+                context.fillText(`@${user.username}`, 338, 377);
+
+                //ATRs & Stats
+                let font = context.font = "24px GG Sans Medium";
+                let styleGrey = context.fillStyle = "#828487";
+                let styleWhite = context.fillStyle = "#f7f7f7";
+                
+                font; styleWhite;
+                context.fillText(`${query.info.hitPoints.current}/${query.info.hitPoints.base}HP`, 802, 636);
+                font; styleWhite;
+                context.fillText(`${query.info.money} dracma${query.info.money > 1 ? 's' : ''}`, 1065, 636);
+
+                font; styleGrey;
+                context.fillText(`×${query.stats.atrPoints}`, 305, 531);
+                font; styleGrey;
+                context.fillText(`×${query.stats.atrCON}`, 305, 604);
+                font; styleGrey;
+                context.fillText(`×${query.stats.atrFOR}`, 228, 652);
+                font; styleGrey;
+                context.fillText(`×${query.stats.atrAGI}`, 260, 700);
+                font; styleGrey;
+                context.fillText(`×${query.stats.atrINT}`, 637, 604);
+                font; styleGrey;
+                context.fillText(`×${query.stats.atrSAB}`, 631, 652);
+                font; styleGrey;
+                context.fillText(`×${query.stats.atrCAR}`, 613, 700);
+
+                switch (query.info.cabin) {
+                    case 'Zeus':
+                        context.drawImage(zeusCabin, 308, 175, 336, 59);
+                        break;
+                    case 'Poseidon':
+                        context.drawImage(poseidonCabin, 308, 175, 336, 59);
+                        break;
+                    case 'Hades':
+                        context.drawImage(hadesCabin, 308, 175, 336, 59);
+                        break;
+                    case 'Atena':
+                        context.drawImage(athenaCabin, 308, 175, 336, 59);
+                        break;
+                }
 
                 const resizedBuffer = await canvas.encode("png");
 
