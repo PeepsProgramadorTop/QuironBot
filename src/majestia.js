@@ -41,57 +41,63 @@ await utils.mongo.set('../../models/item.js',  { name: "espada" }, { $set: { dan
 
 */
 
-
 const utils = {
-    newCommand: (command) => {
+  newCommand: (command) => {
+    try {
+      if (command.name === "#mention") {
+        const { clientId } = require("../config.json");
+
+        if (
+          command.message.content.startsWith(`<@${clientId}>`) ||
+          command.message.content.startsWith(`<@!${clientId}>`)
+        ) {
+          command.callback(command);
+        }
+      } else {
+        let already = false;
+        let checker = [command.message.content, command.name];
+        if (!command.caseSensitive) {
+          checker.forEach((v, i) => (checker[i] = checker[i].toLowerCase()));
+        }
+
+        if (checker[0].startsWith(command.prefix + checker[1])) {
+          command.callback(command);
+          already = true;
+        }
         try {
-            if (command.name === "#mention") {
-
-                const { clientId } = require("../config.json");
-
-                if (command.message.content.startsWith(`<@${clientId}>`) || command.message.content.startsWith(`<@!${clientId}>`)) {
-                    command.callback(command);
-                }
-            } else {
-                let already = false;
-                let checker = [command.message.content, command.name];
-                if (!command.caseSensitive) {
-                    checker.forEach((v, i) => checker[i] = checker[i].toLowerCase())
-                }
-
-                if (checker[0].startsWith(command.prefix + checker[1])) {
-                    command.callback(command)
-                    already = true;
-                }
-                try {
-                    command.aliases.forEach((v) => {
-                        let checker = [command.message.content, v];
-                        if (!command.caseSensitive) {
-                            checker.forEach((v, i) => checker[i] = checker[i].toLowerCase())
-                        }
-                        if (checker[0].startsWith(command.prefix + checker[1]) && !already) {
-                            command.callback(command)
-                            already = true;
-                        }
-                    })
-                } catch { }
+          command.aliases.forEach((v) => {
+            let checker = [command.message.content, v];
+            if (!command.caseSensitive) {
+              checker.forEach(
+                (v, i) => (checker[i] = checker[i].toLowerCase()),
+              );
             }
-        } catch (error) {
-            console.log(`Erro ao executar comando ${command.name}: ${error}`)
-        }
-    },
-    mongo: {
-        get: async (path, key) => {
-            let model = require(path);
-            let result = await model.findOne(key).clone();
-
-            return result;
-        },
-        set: async (path, key, newList, options) => {
-            let model = require(path);
-            return await model.findOneAndUpdate(key, newList, options).clone();
-        }
+            if (
+              checker[0].startsWith(command.prefix + checker[1]) &&
+              !already
+            ) {
+              command.callback(command);
+              already = true;
+            }
+          });
+        } catch {}
+      }
+    } catch (error) {
+      console.log(`Erro ao executar comando ${command.name}: ${error}`);
     }
-}
+  },
+  mongo: {
+    get: async (path, key) => {
+      let model = require(path);
+      let result = await model.findOne(key).clone();
+
+      return result;
+    },
+    set: async (path, key, newList, options) => {
+      let model = require(path);
+      return await model.findOneAndUpdate(key, newList, options).clone();
+    },
+  },
+};
 
 module.exports = utils;

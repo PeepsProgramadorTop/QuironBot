@@ -14,28 +14,28 @@ module.exports = {
           option
             .setName("titulo")
             .setDescription("Nome da missão em questão.")
-            .setRequired(true)
+            .setRequired(true),
         )
         .addStringOption((option) =>
           option
             .setName("desc")
             .setDescription("Breve resumo da missão.")
-            .setRequired(true)
+            .setRequired(true),
         )
         .addAttachmentOption((option) =>
           option
             .setName("conta")
             .setDescription(
-              "Imagem da conta que os personagens ganharão quando essa missão acabar."
+              "Imagem da conta que os personagens ganharão quando essa missão acabar.",
             )
-            .setRequired(true)
+            .setRequired(true),
         )
         .addAttachmentOption((option) =>
           option
             .setName("imagem")
             .setDescription("Imagem que ilustre a missão.")
-            .setRequired(false)
-        )
+            .setRequired(false),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -45,8 +45,8 @@ module.exports = {
           option
             .setName("id")
             .setDescription("ID da missão para cancelar")
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     )
     .addSubcommandGroup((subcommandGroup) =>
       subcommandGroup
@@ -60,20 +60,20 @@ module.exports = {
               option
                 .setName("jogador")
                 .setDescription("Selecione o jogador.")
-                .setRequired(true)
+                .setRequired(true),
             )
             .addStringOption((option) =>
               option
                 .setName("personagem")
                 .setDescription("Coloque o nome do personagem do jogador.")
-                .setRequired(true)
+                .setRequired(true),
             )
             .addStringOption((option) =>
               option
                 .setName("id")
                 .setDescription("ID da missão")
-                .setRequired(true)
-            )
+                .setRequired(true),
+            ),
         )
         .addSubcommand((subcommand) =>
           subcommand
@@ -83,9 +83,9 @@ module.exports = {
               option
                 .setName("jogador")
                 .setDescription("Selecione o jogador que você quer remover.")
-                .setRequired(true)
-            )
-        )
+                .setRequired(true),
+            ),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -95,8 +95,8 @@ module.exports = {
           option
             .setName("id")
             .setDescription("Adicione o ID da missão")
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -106,8 +106,8 @@ module.exports = {
           option
             .setName("id")
             .setDescription("Adicione o ID da missão")
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     ),
   run: async ({ client, interaction }) => {
     const subcommand = interaction.options.getSubcommand();
@@ -156,7 +156,7 @@ module.exports = {
           },
           {
             upsert: true,
-          }
+          },
         );
 
         const data = await missionSchema.findOne({
@@ -178,11 +178,11 @@ module.exports = {
 
         await missionSchema.findOneAndUpdate(
           { missionID: missionID },
-          { $set: { embedID: messageID } }
+          { $set: { embedID: messageID } },
         );
 
         interaction.reply(
-          `Missão enviada com sucesso em <#${channel.id}>! O ID da missão é: \`${data.missionID}\``
+          `Missão enviada com sucesso em <#${channel.id}>! O ID da missão é: \`${data.missionID}\``,
         );
 
         break;
@@ -257,14 +257,14 @@ module.exports = {
                       userID: player,
                     },
                   },
-                }
+                },
               );
 
               const names = missionData.players;
               console.log(names);
               names.toString().replace(",", ", ");
               const missionMessage = await channel.messages.fetch(
-                missionData.embedID
+                missionData.embedID,
               );
 
               if (!missionMessage) {
@@ -288,7 +288,7 @@ module.exports = {
               missionMessage.edit({ embeds: [updatedEmbed] });
 
               interaction.reply(
-                `Jogador ${characterData.info.name} adicionado à missão ${mission} com sucesso!`
+                `Jogador ${characterData.info.name} adicionado à missão ${mission} com sucesso!`,
               );
             } catch (error) {
               console.error(error);

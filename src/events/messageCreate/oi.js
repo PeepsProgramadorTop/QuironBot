@@ -14,7 +14,7 @@ module.exports = async (message) => {
     message.attachments.size > 0
   ) {
     const prefixUsed = prefixes.find((prefix) =>
-      message.content.startsWith(prefix)
+      message.content.startsWith(prefix),
     );
     if (!prefixUsed) return;
     const contentWithoutPrefix = message.content
@@ -65,7 +65,7 @@ module.exports = async (message) => {
           if (message.reference) {
             try {
               const repliedMessage = await message.channel.messages.fetch(
-                message.reference.messageID
+                message.reference.messageID,
               );
               if (repliedMessage) {
                 webhookMessage.content += `\n\nIn response to: [Original Message](${repliedMessage.url})`;
@@ -108,7 +108,7 @@ module.exports = async (message) => {
       if (message.reference) {
         try {
           const repliedMessage = await message.channel.messages.fetch(
-            message?.reference?.messageId
+            message?.reference?.messageId,
           );
           if (repliedMessage) {
             webhookMessage.content += `\n\nIn response to: [Original Message](${repliedMessage.url})`;

@@ -26,7 +26,7 @@ const applyText = (canvas, text) => {
 
 Canvas.GlobalFonts.registerFromPath(
   join(__dirname, "../..", "fonts", "gg_sans_medium.ttf"),
-  "GG Sans Medium"
+  "GG Sans Medium",
 );
 
 module.exports = {
@@ -67,7 +67,7 @@ module.exports = {
         str
           .replace(
             /([\u2700-\u27BF]|[\uE000-\uF8FF]|\uD83C[\uDC00-\uDFFF]|\uD83D[\uDC00-\uDFFF]|[\u2011-\u26FF]|\uD83E[\uDD10-\uDDFF])/g,
-            ""
+            "",
           )
           .replace(/\s+/g, " ")
           .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚâêîôÂÊÎÔãõÃÕçÇ\s]/g, "")
@@ -76,15 +76,15 @@ module.exports = {
       //Registrando Fontes
       Canvas.GlobalFonts.registerFromPath(
         join(__dirname, "../..", "fonts", "windlass.ttf"),
-        "Windlass"
+        "Windlass",
       );
       Canvas.GlobalFonts.registerFromPath(
         join(__dirname, "../..", "fonts", "montserrat.ttf"),
-        "Montserrat"
+        "Montserrat",
       );
       Canvas.GlobalFonts.registerFromPath(
         join(__dirname, "../..", "fonts", "typewriter.ttf"),
-        "JMH Typewriter"
+        "JMH Typewriter",
       );
 
       //Criação do background
@@ -112,7 +112,7 @@ module.exports = {
 
       const backgroundBuffer = await Canvas.loadImage(bannerBackground); //carrega o background do banner
       const bannerLayer = await Canvas.loadImage(
-        "./src/images/banner_layer.png"
+        "./src/images/banner_layer.png",
       ); //carrega a layer superior do banner
       const characterAvatar = await Canvas.loadImage(characterAvatarURL); //carrega o avatar do personagem
 
@@ -121,24 +121,24 @@ module.exports = {
         0,
         0,
         layerCanvas.width,
-        layerCanvas.height
+        layerCanvas.height,
       ); //desenha o background do banner
       layerContext.drawImage(
         bannerLayer,
         0,
         0,
         layerCanvas.width,
-        layerCanvas.height
+        layerCanvas.height,
       ); //desenha a layer superior do banner
       layerContext.font = applyText(
         layerCanvas,
-        `${stripSpecial(query.info.displayName)}`
+        `${stripSpecial(query.info.displayName)}`,
       ); //seta a fonte e o tamanho
       layerContext.fillStyle = "#FFFFFF"; //seta a cor
       layerContext.fillText(
         `${stripSpecial(query.info.displayName)}`,
         290,
-        420
+        420,
       ); //cria um texto com o nome do personagem
       layerContext.font = "29px Montserrat"; //seta a fonte e o tamanho
       layerContext.fillStyle = "#4E4F54"; //seta a cor
@@ -185,7 +185,7 @@ module.exports = {
 🦿<:dot:1158109856725733378>**Agilidade (AGI)︰** \`×${query.stats.atrAGI}\`
 🧠<:dot:1158109856725733378>**Inteligência (INT)︰** \`×${query.stats.atrINT}\`
 ✨<:dot:1158109856725733378>**Carisma (CAR)︰** \`×${query.stats.atrCAR}\`
-`
+`,
         )
         .setImage("https://i.imgur.com/rg4KxSi.png");
 
@@ -207,8 +207,8 @@ module.exports = {
               .setLabel(characters.displayName)
               .setDescription(`Veja o status de ${characters.displayName}!`)
               .setValue(characters.name)
-              .setEmoji("1158791462922748034")
-          )
+              .setEmoji("1158791462922748034"),
+          ),
         );
       const actionRow = new ActionRowBuilder().addComponents(charSelectMenu);
 
@@ -257,33 +257,33 @@ module.exports = {
 
         const background = await Canvas.loadImage(resizedBanner);
         const bannerLayer = await Canvas.loadImage(
-          "./src/images/status_layer.png"
+          "./src/images/status_layer.png",
         );
         const characterAvatar = await Canvas.loadImage(characterAvatarURL);
         const playerAvatar = await Canvas.loadImage(playerAvatarURL);
 
         const zeusCabin = await Canvas.loadImage("./src/images/chalé_zeus.png");
         const poseidonCabin = await Canvas.loadImage(
-          "./src/images/chalé_poseidon.png"
+          "./src/images/chalé_poseidon.png",
         );
         const demeterCabin = await Canvas.loadImage(
-          "./src/images/chalé_deméter.png"
+          "./src/images/chalé_deméter.png",
         );
         const aresCabin = await Canvas.loadImage("./src/images/chalé_ares.png");
         const athenaCabin = await Canvas.loadImage(
-          "./src/images/chalé_atena.png"
+          "./src/images/chalé_atena.png",
         );
         const apolloCabin = await Canvas.loadImage(
-          "./src/images/chalé_apolo.png"
+          "./src/images/chalé_apolo.png",
         );
         const arthemisCabin = await Canvas.loadImage(
-          "./src/images/chalé_ártemis.png"
+          "./src/images/chalé_ártemis.png",
         );
         const aphroditeCabin = await Canvas.loadImage(
-          "./src/images/chalé_afrodite.png"
+          "./src/images/chalé_afrodite.png",
         );
         const hadesCabin = await Canvas.loadImage(
-          "./src/images/chalé_hades.png"
+          "./src/images/chalé_hades.png",
         );
 
         context.save(); //Salva o estado anterior
@@ -334,14 +334,14 @@ module.exports = {
         context.fillText(
           `${query.info.hitPoints.current}/${query.info.hitPoints.base}HP`,
           802,
-          636
+          636,
         );
         font;
         styleWhite;
         context.fillText(
           `${query.info.money} dracma${query.info.money > 1 ? "s" : ""}`,
           1065,
-          636
+          636,
         );
 
         font;
