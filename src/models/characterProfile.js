@@ -10,6 +10,7 @@ const characterProfile = mongoose.Schema({
     necklace_beads: { type: "String", default: "Nenhuma." }, //Colar de Contas do Personagem.
     avatar: { type: "String" }, //Avatar - Imagem de perfil do personagem, pode ser alterada. (Não é obrigatório.)
     banner: { type: "String" }, //Banner - imagem que normalmente representa o personagem, utilizada no status, pode ser alterada. (Não é obrigatório.)
+    xp: { type: Number, default: 0 },
     money: { type: Number, default: 5 }, //Dracmas - Moeda utilizada na economia do servidor.
     hitPoints: {
       base: { type: Number, default: 0 }, //HP Base
@@ -18,12 +19,12 @@ const characterProfile = mongoose.Schema({
   },
   stats: {
     atrPoints: { type: Number, default: 19 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
-    atrCON: { type: Number, default: 8 }, //Atributo - Constituição
-    atrFOR: { type: Number, default: 8 }, //Atributo - Força
-    atrAGI: { type: Number, default: 8 }, //Atributo - Agilidade
-    atrINT: { type: Number, default: 8 }, //Atributo - Inteligência
-    atrSAB: { type: Number, default: 8 }, //Atributo - Sabedoria
-    atrCAR: { type: Number, default: 8 }, //Atributo - Carisma
+    atrCON: { type: Number, default: 0 }, //Atributo - Constituição
+    atrFOR: { type: Number, default: 0 }, //Atributo - Força
+    atrAGI: { type: Number, default: 0 }, //Atributo - Agilidade
+    atrINT: { type: Number, default: 0 }, //Atributo - Inteligência
+    atrSAB: { type: Number, default: 0 }, //Atributo - Sabedoria
+    atrCAR: { type: Number, default: 0 }, //Atributo - Carisma
   }, //Atributos do Personagem
 });
 

@@ -188,21 +188,40 @@ module.exports = {
         break;
       case "cancelar":
         const mission = interaction.options.get("id").value;
-        const missionData = await missionSchema.find({ missionID: mission });
+        let replyMessage;
 
         try {
-          await missionSchema.deleteOne({ missionID: mission });
-          if (!missionSchema.find({ missionID: mission })) {
-            interaction.reply("Missão deletada com sucesso.");
-            channel
-              .fetchMessage(missionData.embedID)
-              .then((msg) => msg.delete());
+          const deleteResult = await missionSchema.deleteOne({
+            missionID: mission,
+          });
+
+          if (deleteResult.deletedCount > 0) {
+            const missionData = await missionSchema.findOne({
+              missionID: mission,
+            });
+            const channel = client.channels.cache.get("1156525267934781470");
+
+            const message = await channel.messages.fetch(missionData.embedID);
+
+            message
+              .delete()
+              .then(() => console.log(`Mensagem deletada com sucesso`))
+              .catch(console.error);
+
+            replyMessage = "Missão deletada com sucesso.";
           } else {
-            interaction.reply("Houve um erro ao tentar deletar a missão.");
+            replyMessage = "Missão não encontrada.";
           }
-        } catch (err) {
-          console.log(err);
+        } catch (error) {
+          console.error(error);
+          replyMessage = "Houve um erro ao tentar deletar a missão.";
+        } finally {
+          if (replyMessage) {
+            interaction.reply(replyMessage);
+          }
         }
+
+        break;
 
       case "player":
         switch (subcommand) {
