@@ -13,10 +13,10 @@ module.exports = async (message) => {
     prefixes.some((prefix) => message.content.startsWith(prefix)) ||
     message.attachments.size > 0
   ) {
-    if (message.author.bot) return;
     const prefixUsed = prefixes.find((prefix) =>
       message.content.startsWith(prefix)
     );
+    if (!prefixUsed) return;
     const contentWithoutPrefix = message.content
       .slice(prefixUsed.length)
       .trim();

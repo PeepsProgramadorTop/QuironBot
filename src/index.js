@@ -3,6 +3,7 @@ const { Client, IntentsBitField, ActivityType } = require('discord.js');
 const { CommandHandler } = require('djs-commander');
 const mongoose = require('mongoose');
 const path = require('path');
+const utils = require('./majestia.js');
 
 const client = new Client({
     intents: [
@@ -11,6 +12,28 @@ const client = new Client({
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent
     ],
+});
+
+client.on('messageCreate', (message) => {
+    utils.newCommand({
+        name: "ping",
+        prefix: "q!",
+        aliases: ["ms", "latência"],
+        caseSensitive: false,
+        message: message,
+        callback: (cmd) => {
+            cmd.message.reply(`oi bb a latência é ${client.ws.ping}`)
+        },
+    })
+});
+client.on('messageCreate', (message) => {
+    utils.newCommand({
+        name: "#mention",
+        message: message,
+        callback: (cmd) => {
+            cmd.message.reply(`OIII`)
+        },
+    })
 });
 
 const status = [
