@@ -1,4 +1,5 @@
 const {
+<<<<<<< HEAD
     SlashCommandBuilder,
     AttachmentBuilder,
     ActionRowBuilder,
@@ -9,6 +10,15 @@ const {
     ModalBuilder,
     TextInputBuilder,
     TextInputStyle
+=======
+  SlashCommandBuilder,
+  AttachmentBuilder,
+  ActionRowBuilder,
+  StringSelectMenuBuilder,
+  StringSelectMenuOptionBuilder,
+  ComponentType,
+  ButtonBuilder,
+>>>>>>> 0348f8103e0f04546ee9e1c94eb88c7d736ac100
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const axios = require("axios");
@@ -16,7 +26,10 @@ const sharp = require("sharp");
 const Canvas = require("@napi-rs/canvas");
 const { join } = require("path");
 
-Canvas.GlobalFonts.registerFromPath(join(__dirname, "../..", "fonts", "gg_sans_medium.ttf"), "GG Sans Medium");
+Canvas.GlobalFonts.registerFromPath(
+    join(__dirname, "../..", "fonts", "gg_sans_medium.ttf"),
+    "GG Sans Medium",
+);
 
 const createBanner = async (query, user) => {
     const bannerURL = query.info.banner;
@@ -39,9 +52,7 @@ const createBanner = async (query, user) => {
     const context = canvas.getContext("2d");
 
     const background = await Canvas.loadImage(resizedBanner);
-    const bannerLayer = await Canvas.loadImage(
-        "./src/images/status_layer.png",
-    );
+    const bannerLayer = await Canvas.loadImage("./src/images/status_layer.png");
     const characterAvatar = await Canvas.loadImage(characterAvatarURL);
     const playerAvatar = await Canvas.loadImage(playerAvatarURL);
 
@@ -49,25 +60,17 @@ const createBanner = async (query, user) => {
     const poseidonCabin = await Canvas.loadImage(
         "./src/images/chalé_poseidon.png",
     );
-    const demeterCabin = await Canvas.loadImage(
-        "./src/images/chalé_deméter.png",
-    );
+    const demeterCabin = await Canvas.loadImage("./src/images/chalé_deméter.png");
     const aresCabin = await Canvas.loadImage("./src/images/chalé_ares.png");
-    const athenaCabin = await Canvas.loadImage(
-        "./src/images/chalé_atena.png",
-    );
-    const apolloCabin = await Canvas.loadImage(
-        "./src/images/chalé_apolo.png",
-    );
+    const athenaCabin = await Canvas.loadImage("./src/images/chalé_atena.png");
+    const apolloCabin = await Canvas.loadImage("./src/images/chalé_apolo.png");
     const arthemisCabin = await Canvas.loadImage(
         "./src/images/chalé_ártemis.png",
     );
     const aphroditeCabin = await Canvas.loadImage(
         "./src/images/chalé_afrodite.png",
     );
-    const hadesCabin = await Canvas.loadImage(
-        "./src/images/chalé_hades.png",
-    );
+    const hadesCabin = await Canvas.loadImage("./src/images/chalé_hades.png");
 
     context.save(); //Salva o estado anterior
     context.beginPath();
@@ -97,7 +100,13 @@ const createBanner = async (query, user) => {
 
     context.font = "40px GG Sans Medium";
     context.fillStyle = "#f7f7f7";
-    context.fillText(`${query.info.displayName.replace(/[^a-zA-Z0-9\s\-—]+/g, "").replace(/^(?:\s|\p{Emoji})+/gu, '')}`, 296, 298);
+    context.fillText(
+        `${query.info.displayName
+            .replace(/[^a-zA-Z0-9\s\-—]+/g, "")
+            .replace(/^(?:\s|\p{Emoji})+/gu, "")}`,
+        296,
+        298,
+    );
 
     context.font = "35px GG Sans Medium";
     context.fillStyle = "#76787b";
@@ -120,11 +129,7 @@ const createBanner = async (query, user) => {
         1065,
         636,
     );
-    context.fillText(
-        `Nível ${query.info.xp}`,
-        802,
-        695,
-    );
+    context.fillText(`Nível ${query.info.xp}`, 802, 695);
     context.fillText(
         `${query.info.mana.current}/${query.info.mana.base} Mana`,
         1065,
@@ -165,13 +170,21 @@ module.exports = {
     run: async ({ interaction }) => {
         const user = interaction.user;
         const characterGroup = await characterProfile.find({ userID: user.id });
-        const names = characterGroup.map((data) => ({ name: data.info.name, displayName: data.info.displayName }));
+        const names = characterGroup.map((data) => ({
+            name: data.info.name,
+            displayName: data.info.displayName,
+        }));
 
         if (names.length == 1) {
-            const query = await characterProfile.findOne({ userID: user.id, "info.name": names[0].name });
+            const query = await characterProfile.findOne({
+                userID: user.id,
+                "info.name": names[0].name,
+            });
             const resizedBuffer = await createBanner(query, user);
 
-            const attachment = new AttachmentBuilder(resizedBuffer, { name: `banner.png` });
+            const attachment = new AttachmentBuilder(resizedBuffer, {
+                name: `banner.png`,
+            });
 
             interaction.reply({
                 content: "",
@@ -190,8 +203,8 @@ module.exports = {
                             .setLabel(characters.displayName)
                             .setDescription(`Veja o status de ${characters.displayName}!`)
                             .setValue(characters.name)
-                            .setEmoji("1158791462922748034")
-                    )
+                            .setEmoji("1158791462922748034"),
+                    ),
                 );
             const actionRow = new ActionRowBuilder().addComponents(charSelectMenu);
 
@@ -202,16 +215,23 @@ module.exports = {
 
             const collector = reply.createMessageComponentCollector({
                 componentType: ComponentType.StringSelect,
-                filter: (i) => i.user.id === interaction.user.id && i.customId === "selectCharacterMenu",
+                filter: (i) =>
+                    i.user.id === interaction.user.id &&
+                    i.customId === "selectCharacterMenu",
                 time: 60_000,
             });
 
             collector.on("collect", async (interaction) => {
                 const character = interaction.values[0];
-                const query = await characterProfile.findOne({ userID: user.id, "info.name": character });
+                const query = await characterProfile.findOne({
+                    userID: user.id,
+                    "info.name": character,
+                });
                 const resizedBuffer = await createBanner(query, user);
 
-                const attachment = new AttachmentBuilder(resizedBuffer, { name: "banner.png" });
+                const attachment = new AttachmentBuilder(resizedBuffer, {
+                    name: "banner.png",
+                });
 
                 const editButton = new ButtonBuilder()
                     .setCustomId("editButton")

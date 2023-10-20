@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
+const { v4: uuidv4 } = require("uuid");
 
 const missionSchema = mongoose.Schema({
-  missionID: { type: "String", required: true },
+  missionID: { type: "String", default: uuidv4, unique: true },
   masterID: { type: "String", required: true },
   title: { type: "String", required: true },
   description: { type: "String", required: true },

@@ -1,3 +1,3 @@
 module.exports = async (interaction) => {
-    const user = interaction.user;
+  const user = interaction.user;
 };

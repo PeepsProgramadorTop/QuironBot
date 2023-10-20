@@ -43,7 +43,9 @@ module.exports = async (message) => {
           });
 
           const webhookMessage = {
-            username: character.info.displayName + ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
+            username:
+              character.info.displayName +
+              ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
             avatarURL: character.info.avatar,
           };
 
@@ -86,7 +88,9 @@ module.exports = async (message) => {
       });
 
       const webhookMessage = {
-        username: character.info.displayName + ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
+        username:
+          character.info.displayName +
+          ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
         avatarURL: character.info.avatar,
       };
 
