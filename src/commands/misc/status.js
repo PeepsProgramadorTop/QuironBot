@@ -1,5 +1,4 @@
 const {
-<<<<<<< HEAD
     SlashCommandBuilder,
     AttachmentBuilder,
     ActionRowBuilder,
@@ -10,15 +9,6 @@ const {
     ModalBuilder,
     TextInputBuilder,
     TextInputStyle
-=======
-  SlashCommandBuilder,
-  AttachmentBuilder,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  StringSelectMenuOptionBuilder,
-  ComponentType,
-  ButtonBuilder,
->>>>>>> 0348f8103e0f04546ee9e1c94eb88c7d736ac100
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const axios = require("axios");
