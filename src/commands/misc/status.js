@@ -5,7 +5,10 @@ const {
     StringSelectMenuBuilder,
     StringSelectMenuOptionBuilder,
     ComponentType,
-    ButtonBuilder
+    ButtonBuilder,
+    ModalBuilder,
+    TextInputBuilder,
+    TextInputStyle
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const axios = require("axios");
@@ -212,16 +215,81 @@ module.exports = {
 
                 const editButton = new ButtonBuilder()
                     .setCustomId("editButton")
-                    .setLabel("Editar Informações")
+                    .setLabel("Editar Nome e Apelidos")
+                    .setEmoji("📝")
                     .setStyle("Primary");
 
                 const newActionRow = new ActionRowBuilder().addComponents(editButton);
-                
+
                 await interaction.deferUpdate();
-                interaction.message.edit({
+                const reply = await interaction.message.edit({
                     content: "",
                     files: [attachment],
                     components: [newActionRow],
+                });
+
+                const collector = reply.createMessageComponentCollector({
+                    componentType: ComponentType.Button,
+                    filter: (i) => i.user.id === interaction.user.id && i.customId === "editButton",
+                });
+                collector.on("collect", async (interaction) => {
+                    const updatedQuery = await characterProfile.findOne({ userID: user.id, "info.name": character });
+
+                    const modal = new ModalBuilder()
+                        .setCustomId('editCharModal')
+                        .setTitle('Editar Personagem');
+
+                    const nameInput = new TextInputBuilder()
+                        .setCustomId('nameInput')
+                        .setLabel("Nome:")
+                        .setPlaceholder('Digite o novo nome para seu personagem aqui.')
+                        .setValue(`${updatedQuery.info.displayName}`)
+                        .setStyle(TextInputStyle.Short);
+
+                    const nicknamesInput = new TextInputBuilder()
+                        .setCustomId('nicknamesInput')
+                        .setLabel("Apelidos:")
+                        .setPlaceholder('Digite os novos apelidos para seu personagem aqui.')
+                        .setValue(`${updatedQuery.info.nicknames}`)
+                        .setStyle(TextInputStyle.Paragraph);
+
+                    const firstActionRow = new ActionRowBuilder().addComponents(nameInput);
+                    const secondActionRow = new ActionRowBuilder().addComponents(nicknamesInput);
+
+                    modal.addComponents(firstActionRow, secondActionRow);
+
+                    await interaction.showModal(modal);
+
+                    interaction.awaitModalSubmit({
+                        filter: (i) => i.user.id === interaction.user.id && i.customId === "editCharModal",
+                        time: 5 * 60_000,
+                    }).then(async (modalInteraction) => {
+                        const newName = modalInteraction.fields.getTextInputValue('nameInput');
+                        const newNicknames = modalInteraction.fields.getTextInputValue('nicknamesInput');
+
+                        const newInfo = await characterProfile.findOneAndUpdate(
+                            {
+                                userID: user.id,
+                                "info.name": character
+                            },
+                            {
+                                "info.displayName": newName,
+                                "info.nicknames": newNicknames
+                            },
+                            {
+                                returnOriginal: false
+                            }
+                        )
+                        const resizedBuffer = await createBanner(newInfo, user);
+
+                        const attachment = new AttachmentBuilder(resizedBuffer, { name: "banner.png" });
+
+                        modalInteraction.reply({ content: 'Informações alteradas com sucesso!', ephemeral: true })
+                        interaction.message.edit({
+                            content: "",
+                            files: [attachment],
+                        });
+                    });
                 });
             });
         }
