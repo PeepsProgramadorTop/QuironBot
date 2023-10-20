@@ -21,6 +21,24 @@ Canvas.GlobalFonts.registerFromPath(
     "GG Sans Medium",
 );
 
+const adjustedText = (canvas, text) => {
+	const context = canvas.getContext('2d');
+    context.fillStyle = "#76787b";
+
+	let fontSize = 36;
+	let heightSize = 341;
+
+	do {
+		context.font = `${fontSize -= 1}px GG Sans Medium`;
+	} while (context.measureText(text).width > 950);
+	do {
+        heightSize = heightSize - 6;
+	} while (context.measureText(text).heightSize < 28);
+
+    context.font;
+    context.fillText(text, 296, heightSize);
+};
+
 const createBanner = async (query, user) => {
     const bannerURL = query.info.banner;
     const characterAvatarURL = query.info.avatar;
@@ -98,9 +116,7 @@ const createBanner = async (query, user) => {
         298,
     );
 
-    context.font = "35px GG Sans Medium";
-    context.fillStyle = "#76787b";
-    context.fillText(`${query.info.nicknames}`, 296, 335);
+	adjustedText(canvas, query.info.nicknames);
 
     context.font = "29px GG Sans Medium";
     context.fillStyle = "#828487";
