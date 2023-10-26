@@ -39,14 +39,26 @@ const adjustedText = (canvas, text) => {
     context.fillText(text, 296, heightSize);
 };
 
-const createBanner = async (query, user) => {
-    const bannerURL = query.info.banner;
-    const characterAvatarURL = query.info.avatar;
+const createBanner = async (characterInfo, user) => {
     const playerAvatarURL = user.avatarURL();
-    const response = await axios.get(bannerURL, {
-        responseType: "arraybuffer",
-    });
-    const bannerBuffer = Buffer.from(response.data);
+
+    //Avatar do Personagem
+    const characterAvatarURL = characterInfo.info.avatar;
+    const characterAvatarResponse = await axios.get(characterAvatarURL, { responseType: "arraybuffer" });
+    const characterAvatarBuffer = Buffer.from(characterAvatarResponse.data);
+    const resizedcharacterAvatar = await sharp(characterAvatarBuffer)
+        .resize({
+            width: 232,
+            height: 232,
+            fit: sharp.fit.cover,
+            position: sharp.strategy.attention,
+        })
+        .toBuffer();
+
+    //Banner do Personagem
+    const bannerURL = characterInfo.info.banner;
+    const bannerResponse = await axios.get(bannerURL, { responseType: "arraybuffer" });
+    const bannerBuffer = Buffer.from(bannerResponse.data);
     const resizedBanner = await sharp(bannerBuffer)
         .resize({
             width: 1306,
@@ -56,102 +68,106 @@ const createBanner = async (query, user) => {
         })
         .toBuffer();
 
+    //Criando o Canvas
     const canvas = Canvas.createCanvas(1306, 758);
     const context = canvas.getContext("2d");
 
-    const background = await Canvas.loadImage(resizedBanner);
-    const bannerLayer = await Canvas.loadImage("./src/images/status_layer.png");
-    const characterAvatar = await Canvas.loadImage(characterAvatarURL);
+    //Carregando Informações Básicas
+    const banner = await Canvas.loadImage(resizedBanner);
+    const statusLayer = await Canvas.loadImage("./src/images/status_layer.png");
+    const characterAvatar = await Canvas.loadImage(resizedcharacterAvatar);
     const playerAvatar = await Canvas.loadImage(playerAvatarURL);
 
+    //Carregando Ícones dos Chalés
     const zeusCabin = await Canvas.loadImage("./src/images/chalé_zeus.png");
-    const poseidonCabin = await Canvas.loadImage(
-        "./src/images/chalé_poseidon.png"
-    );
+    const poseidonCabin = await Canvas.loadImage("./src/images/chalé_poseidon.png");
     const demeterCabin = await Canvas.loadImage("./src/images/chalé_deméter.png");
     const aresCabin = await Canvas.loadImage("./src/images/chalé_ares.png");
     const athenaCabin = await Canvas.loadImage("./src/images/chalé_atena.png");
     const apolloCabin = await Canvas.loadImage("./src/images/chalé_apolo.png");
-    const arthemisCabin = await Canvas.loadImage(
-        "./src/images/chalé_ártemis.png"
-    );
-    const aphroditeCabin = await Canvas.loadImage(
-        "./src/images/chalé_afrodite.png"
-    );
+    const arthemisCabin = await Canvas.loadImage("./src/images/chalé_ártemis.png");
+    const aphroditeCabin = await Canvas.loadImage("./src/images/chalé_afrodite.png");
     const hadesCabin = await Canvas.loadImage("./src/images/chalé_hades.png");
 
-    context.save(); //Salva o estado anterior
+    //Desenhando o Banner
+    context.save(); //Salva
     context.beginPath();
     context.roundRect(0, 0, 1306, 270, 14);
     context.closePath();
     context.clip();
-    context.drawImage(background, 0, 0, 1306, 400);
-    context.restore(); //Restaura o estado anterior, para que possamos desenhar outras coisas depois disto.
+    context.drawImage(banner, 0, 0, 1306, 400);
+    context.restore(); //Restaura
 
-    context.drawImage(bannerLayer, 0, 0, canvas.width, canvas.height);
+    context.drawImage(statusLayer, 0, 0, canvas.width, canvas.height); //Desenhando a layer em cima do banner
 
-    context.save(); //Salva o estado anterior
+    //Desenhando o avatar do personagem
+    context.save(); //Salva
     context.beginPath();
     context.arc(163, 246, 116, 0, Math.PI * 2, true);
     context.closePath();
     context.clip();
     context.drawImage(characterAvatar, 47, 130, 232, 232);
-    context.restore(); //Restaura o estado anterior, para que possamos desenhar outras coisas depois disto.
+    context.restore(); //Restaura
 
-    context.save(); //Salva o estado anterior
+    //Desenhando o avatar do jogador
+    context.save(); //Salva
     context.beginPath();
     context.arc(311.5, 367.5, 17.5, 0, Math.PI * 2, true);
     context.closePath();
     context.clip();
     context.drawImage(playerAvatar, 294, 350, 35, 35);
-    context.restore(); //Restaura o estado anterior, para que possamos desenhar outras coisas depois disto.
+    context.restore(); //Restaura
 
+    //Nome do Personagem
     context.font = "40px GG Sans Medium";
     context.fillStyle = "#f7f7f7";
     context.fillText(
-        `${query.info.displayName
-            .replace(/[^a-zA-Z0-9\s\-—]+/g, "")
-            .replace(/^(?:\s|\p{Emoji})+/gu, "")}`,
+        `${characterInfo.info.displayName.replace(/[^a-zA-Z0-9\s\-—]+/g, "").replace(/^(?:\s|\p{Emoji})+/gu, "")}`,
         296,
         298
     );
 
-    adjustedText(canvas, query.info.nicknames);
+    //Apelidos do Personagem
+    adjustedText(canvas, characterInfo.info.nicknames);
 
+    //Nome de usuário do jogador
     context.font = "29px GG Sans Medium";
     context.fillStyle = "#828487";
     context.fillText(`@${user.username}`, 338, 377);
 
-    //ATRs & Stats
+    //Informações gerais do personagem (HP, dinheiro, nível, mana, etc...)
     context.font = "24px GG Sans Medium";
     context.fillStyle = "#f7f7f7";
     context.fillText(
-        `${query.info.hitPoints.current}/${query.info.hitPoints.base}HP`,
+        `${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP`,
         802,
         636
     );
     context.fillText(
-        `${query.info.money} dracma${query.info.money > 1 ? "s" : ""}`,
+        `${characterInfo.info.money} dracma${characterInfo.info.money > 1 ? "s" : ""}`,
         1065,
         636
     );
-    context.fillText(`Nível ${query.info.xp}`, 802, 695);
+    context.fillText(`Nível ${characterInfo.info.xp}`, 802, 695);
     context.fillText(
-        `${query.info.mana.current}/${query.info.mana.base} Mana`,
+        `${characterInfo.info.mana.current}/${characterInfo.info.mana.base} Mana`,
         1065,
         695
     );
+
+    //Atributos
     context.font = "24px GG Sans Medium";
     context.fillStyle = "#76787B";
-    context.fillText(`×${query.stats.atrPoints}`, 305, 531);
-    context.fillText(`×${query.stats.atrCON}`, 305, 604);
-    context.fillText(`×${query.stats.atrFOR}`, 228, 652);
-    context.fillText(`×${query.stats.atrAGI}`, 260, 700);
-    context.fillText(`×${query.stats.atrINT}`, 637, 604);
-    context.fillText(`×${query.stats.atrSAB}`, 631, 652);
-    context.fillText(`×${query.stats.atrCAR}`, 613, 700);
+    context.fillText(`×${characterInfo.stats.atrPoints}`, 305, 531);
+    context.fillText(`×${characterInfo.stats.atrCON}`, 305, 604);
+    context.fillText(`×${characterInfo.stats.atrFOR}`, 228, 652);
+    context.fillText(`×${characterInfo.stats.atrAGI}`, 260, 700);
+    context.fillText(`×${characterInfo.stats.atrINT}`, 637, 604);
+    context.fillText(`×${characterInfo.stats.atrSAB}`, 631, 652);
+    context.fillText(`×${characterInfo.stats.atrCAR}`, 613, 700);
 
-    switch (query.info.cabin) {
+    //Desenhando o ícone do chalé do personagem
+    switch (characterInfo.info.cabin) {
         case "Zeus":
             context.drawImage(zeusCabin, 308, 175, 336, 59);
             break;
@@ -182,13 +198,13 @@ module.exports = {
         }));
 
         if (names.length == 1) {
-            const query = await characterProfile.findOne({
+            const characterInfo = await characterProfile.findOne({
                 userID: user.id,
                 "info.name": names[0].name,
             });
-            const resizedBuffer = await createBanner(query, user);
 
-            const attachment = new AttachmentBuilder(resizedBuffer, {
+            const banner = await createBanner(characterInfo, user);
+            const attachment = new AttachmentBuilder(banner, {
                 name: `banner.png`,
             });
 
@@ -203,14 +219,13 @@ module.exports = {
                 .setPlaceholder("Selecione aqui.")
                 .setMinValues(0)
                 .setMaxValues(1)
-                .addOptions(
-                    names.map((characters) =>
-                        new StringSelectMenuOptionBuilder()
-                            .setLabel(characters.displayName)
-                            .setDescription(`Veja o status de ${characters.displayName}!`)
-                            .setValue(characters.name)
-                            .setEmoji("1158791462922748034")
-                    )
+                .addOptions(names.map((characters) =>
+                    new StringSelectMenuOptionBuilder()
+                        .setLabel(characters.displayName)
+                        .setDescription(`Veja o status de ${characters.displayName}!`)
+                        .setValue(characters.name)
+                        .setEmoji("1158791462922748034")
+                )
                 );
             const actionRow = new ActionRowBuilder().addComponents(charSelectMenu);
 
@@ -226,33 +241,32 @@ module.exports = {
                     i.customId === "selectCharacterMenu",
                 time: 60_000,
             });
-
             collector.on("collect", async (interaction) => {
                 const character = interaction.values[0];
-                const query = await characterProfile.findOne({
+                const characterInfo = await characterProfile.findOne({
                     userID: user.id,
                     "info.name": character,
                 });
-                const resizedBuffer = await createBanner(query, user);
 
-                const attachment = new AttachmentBuilder(resizedBuffer, {
+                const banner = await createBanner(characterInfo, user);
+                const attachment = new AttachmentBuilder(banner, {
                     name: "banner.png",
                 });
 
-                const editButton = new ButtonBuilder()
-                    .setCustomId("editButton")
-                    .setLabel("Editar Nome e Apelidos")
+                const editInfoButton = new ButtonBuilder()
+                    .setCustomId("editInfoButton")
+                    .setLabel("Alterar as Informações")
                     .setEmoji("📝")
-                    .setStyle("Primary");
-                const editAtrButton = new ButtonBuilder()
-                    .setCustomId("editAtrButton")
-                    .setLabel("Editar Atributos")
-                    .setEmoji("📊")
-                    .setStyle("Primary");
+                    .setStyle("Secondary");
+                const editImagesButton = new ButtonBuilder()
+                    .setCustomId("editImagesButton")
+                    .setLabel("Alterar Avatar e Banner")
+                    .setEmoji("🖼️")
+                    .setStyle("Secondary");
 
                 const newActionRow = new ActionRowBuilder().addComponents(
-                    editButton,
-                    editAtrButton
+                    editInfoButton,
+                    editImagesButton
                 );
 
                 await interaction.deferUpdate();
@@ -262,176 +276,85 @@ module.exports = {
                     components: [newActionRow],
                 });
 
-                const collector = reply.createMessageComponentCollector({
+                const collectorEditInfo = reply.createMessageComponentCollector({
                     componentType: ComponentType.Button,
                     filter: (i) =>
-                        i.user.id === interaction.user.id && i.customId === "editButton",
+                        i.user.id === interaction.user.id && i.customId === "editInfoButton",
                 });
-                collector.on("collect", async (interaction) => {
-                    const updatedQuery = await characterProfile.findOne({
+                collectorEditInfo.on("collect", async (interaction) => {
+                    //Informações do Personagem Atualizadas
+                    const updatedcharacterInfo = await characterProfile.findOne({
                         userID: user.id,
                         "info.name": character,
                     });
 
+                    //Construindo o Modal
                     const modal = new ModalBuilder()
                         .setCustomId("editCharModal")
                         .setTitle("Editar Personagem");
-
                     const nameInput = new TextInputBuilder()
                         .setCustomId("nameInput")
                         .setLabel("Nome:")
                         .setPlaceholder("Digite o novo nome para seu personagem aqui.")
-                        .setValue(`${updatedQuery.info.displayName}`)
+                        .setValue(`${updatedcharacterInfo.info.displayName}`)
                         .setStyle(TextInputStyle.Short);
-
                     const nicknamesInput = new TextInputBuilder()
                         .setCustomId("nicknamesInput")
                         .setLabel("Apelidos:")
                         .setPlaceholder(
                             "Digite os novos apelidos para seu personagem aqui."
                         )
-                        .setValue(`${updatedQuery.info.nicknames}`)
+                        .setValue(`${updatedcharacterInfo.info.nicknames}`)
                         .setStyle(TextInputStyle.Paragraph);
 
-                    const firstActionRow = new ActionRowBuilder().addComponents(
-                        nameInput
-                    );
-                    const secondActionRow = new ActionRowBuilder().addComponents(
-                        nicknamesInput
-                    );
+                    //ActionRows
+                    const firstActionRow = new ActionRowBuilder().addComponents(nameInput);
+                    const secondActionRow = new ActionRowBuilder().addComponents(nicknamesInput);
 
+                    //Adicionar componentes ao modal
                     modal.addComponents(firstActionRow, secondActionRow);
 
-                    await interaction.showModal(modal);
+                    await interaction.showModal(modal); //Mostrar modal para o usuário
 
-                    interaction
-                        .awaitModalSubmit({
-                            filter: (i) =>
-                                i.user.id === interaction.user.id &&
-                                i.customId === "editCharModal",
-                            time: 5 * 60_000,
-                        })
-                        .then(async (modalInteraction) => {
-                            const newName =
-                                modalInteraction.fields.getTextInputValue("nameInput");
-                            const newNicknames =
-                                modalInteraction.fields.getTextInputValue("nicknamesInput");
+                    interaction.awaitModalSubmit({
+                        filter: (i) =>
+                            i.user.id === interaction.user.id &&
+                            i.customId === "editCharModal",
+                        time: 5 * 60_000,
+                    }).then(async (modalInteraction) => {
+                        const newName = modalInteraction.fields.getTextInputValue("nameInput");
+                        const newNicknames = modalInteraction.fields.getTextInputValue("nicknamesInput");
 
-                            const newInfo = await characterProfile.findOneAndUpdate(
-                                {
-                                    userID: user.id,
-                                    "info.name": character,
-                                },
-                                {
-                                    "info.displayName": newName,
-                                    "info.nicknames": newNicknames,
-                                },
-                                {
-                                    returnOriginal: false,
-                                }
-                            );
-                            const resizedBuffer = await createBanner(newInfo, user);
+                        const newInfo = await characterProfile.findOneAndUpdate(
+                            {
+                                userID: user.id,
+                                "info.name": character,
+                            },
+                            {
+                                "info.displayName": newName,
+                                "info.nicknames": newNicknames,
+                            },
+                            {
+                                returnOriginal: false,
+                            }
+                        );
 
-                            const attachment = new AttachmentBuilder(resizedBuffer, {
-                                name: "banner.png",
-                            });
-
-                            modalInteraction.reply({
-                                content: "Informações alteradas com sucesso!",
-                                ephemeral: true,
-                            });
-                            interaction.message.edit({
-                                content: "",
-                                files: [attachment],
-                            });
+                        const banner = await createBanner(newInfo, user);
+                        const attachment = new AttachmentBuilder(banner, {
+                            name: "banner.png",
                         });
-                });
 
-                const collectorAtr = reply.createMessageComponentCollector({
-                    componentType: ComponentType.Button,
-                    filter: (i) =>
-                        i.user.id === interaction.user.id && i.customId === "editAtrButton",
-                });
-
-                collectorAtr.on("collect", async (interaction) => {
-                    const atrModal = new ModalBuilder()
-                        .setCustomId("editAtrModal")
-                        .setTitle("Edite seus status.");
-
-                    const forcaInput = new TextInputBuilder()
-                        .setCustomId("forcaInput")
-                        .setLabel("Força:")
-                        .setPlaceholder("Digite o valor de Força.")
-                        .setStyle(TextInputStyle.Short);
-
-                    const destrezaInput = new TextInputBuilder()
-                        .setCustomId("destrezaInput")
-                        .setLabel("Destreza:")
-                        .setPlaceholder("Digite o valor de Destreza.")
-                        .setStyle(TextInputStyle.Short);
-
-                    const constituicaoInput = new TextInputBuilder()
-                        .setCustomId("constituicaoInput")
-                        .setLabel("Constituição:")
-                        .setPlaceholder("Digite o valor de Constituição.")
-                        .setStyle(TextInputStyle.Short);
-
-                    const sabedoriaInput = new TextInputBuilder()
-                        .setCustomId("sabedoriaInput")
-                        .setLabel("Sabedoria:")
-                        .setPlaceholder("Digite o valor de Sabedoria.")
-                        .setStyle(TextInputStyle.Short);
-
-                    const inteligenciaInput = new TextInputBuilder()
-                        .setCustomId("inteligenciaInput")
-                        .setLabel("Inteligência:")
-                        .setPlaceholder("Digite o valor de Inteligência.")
-                        .setStyle(TextInputStyle.Short);
-
-                    const carismaInput = new TextInputBuilder()
-                        .setCustomId("carismaInput")
-                        .setLabel("Carisma:")
-                        .setPlaceholder("Digite o valor de Carisma.")
-                        .setStyle(TextInputStyle.Short);
-
-                    const firstAtrRow = new ActionRowBuilder().addComponents(
-                        forcaInput,
-                        destrezaInput,
-                        constituicaoInput
-                    );
-
-                    const secondAtrRow = new ActionRowBuilder().addComponents(
-                        sabedoriaInput,
-                        inteligenciaInput,
-                        carismaInput
-                    );
-
-                    atrModal.addComponents(firstAtrRow, secondAtrRow);
-
-                    await interaction.showModal(atrModal);
-
-                    interaction
-                        .awaitModalSubmit({
-                            filter: (i) =>
-                                i.user.id === interaction.user.id &&
-                                i.customId === "editAtrModal",
-                            time: 5 * 60_000,
-                        })
-                        .then(async (modalInteraction) => {
-                            var newAtr = [];
-                            newAtr.push([
-                                modalInteraction.fields.getTextInputValue("forcaInput"),
-                                modalInteraction.fields.getTextInputValue("destrezaInput"),
-                                modalInteraction.fields.getTextInputValue("constituicaoInput"),
-                                modalInteraction.fields.getTextInputValue("sabedoriaInput"),
-                                modalInteraction.fields.getTextInputValue("inteligenciaInput"),
-                                modalInteraction.fields.getTextInputValue("carismaInput"),
-                            ]);
-
-                            console.log(newAtr);
+                        modalInteraction.reply({
+                            content: "Informações alteradas com sucesso!",
+                            ephemeral: true,
                         });
-                });
-            });
+                        interaction.message.edit({
+                            content: "",
+                            files: [attachment],
+                        })
+                    })
+                })
+            })
         }
     },
 };
