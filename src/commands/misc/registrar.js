@@ -90,9 +90,9 @@ module.exports = {
                 ? "https://i.imgur.com/9WzYDnk.png"
                 : interaction.options.getAttachment("banner").url;
         const nicknames =
-            interaction.options.get("prefixo") == null
+            interaction.options.get("apelidos") == null
                 ? "Nenhum apelido."
-                : interaction.options.get("prefixo").value;
+                : interaction.options.get("apelidos").value;
 
         //Checa se você já tem um personagem com esse nome.
         const check = await characterProfile.findOne({

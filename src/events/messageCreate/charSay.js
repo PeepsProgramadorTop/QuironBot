@@ -60,20 +60,6 @@ module.exports = async (message, client) => {
                         });
                     }
 
-                    // Verifica se a mensagem está respondendo a outra
-                    if (message.reference) {
-                        try {
-                            const repliedMessage = await message.channel.messages.fetch(
-                                message.reference.messageID,
-                            );
-                            if (repliedMessage) {
-                                webhookMessage.content += `\n\nIn response to: [Original Message](${repliedMessage.url})`;
-                            }
-                        } catch (error) {
-                            console.error("Erro ao buscar mensagem original:", error);
-                        }
-                    }
-
                     webhook.send(webhookMessage).then((message) => {
                         client.messagesUserID.set(message.id, user.id);
                     });
@@ -105,20 +91,6 @@ module.exports = async (message, client) => {
                         name: attachment.name,
                     };
                 });
-            }
-
-            // Verifica se a mensagem está respondendo a outra
-            if (message.reference) {
-                try {
-                    const repliedMessage = await message.channel.messages.fetch(
-                        message?.reference?.messageId,
-                    );
-                    if (repliedMessage) {
-                        webhookMessage.content += `\n\nIn response to: ${client.messagesUserID.get(repliedMessage.id)}`;
-                    }
-                } catch (error) {
-                    console.error("Erro ao buscar mensagem original:", error);
-                }
             }
 
             webhookClient.send(webhookMessage).then((message) => {

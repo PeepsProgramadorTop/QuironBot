@@ -26,7 +26,7 @@ const adjustedText = (canvas, text) => {
     context.fillStyle = "#76787b";
 
     let fontSize = 36;
-    let heightSize = 341;
+    let heightSize = 398;
 
     do {
         context.font = `${fontSize -= 1}px GG Sans Medium`;
@@ -69,7 +69,7 @@ const createBanner = async (characterInfo, user) => {
         .toBuffer();
 
     //Criando o Canvas
-    const canvas = Canvas.createCanvas(1306, 758);
+    const canvas = Canvas.createCanvas(1306, 814);
     const context = canvas.getContext("2d");
 
     //Carregando Informações Básicas
@@ -87,12 +87,22 @@ const createBanner = async (characterInfo, user) => {
     const apolloCabin = await Canvas.loadImage("./src/images/chalé_apolo.png");
     const arthemisCabin = await Canvas.loadImage("./src/images/chalé_ártemis.png");
     const aphroditeCabin = await Canvas.loadImage("./src/images/chalé_afrodite.png");
+    const hephaestusCabin = await Canvas.loadImage("./src/images/chalé_hefesto.png");
+    const hermesCabin = await Canvas.loadImage("./src/images/chalé_hermes.png");
+    const dionysusCabin = await Canvas.loadImage("./src/images/chalé_dionísio.png");
     const hadesCabin = await Canvas.loadImage("./src/images/chalé_hades.png");
+    const irisCabin = await Canvas.loadImage("./src/images/chalé_íris.png");
+    const hypnosCabin = await Canvas.loadImage("./src/images/chalé_hipnos.png");
+    const nemesisCabin = await Canvas.loadImage("./src/images/chalé_nêmesis.png");
+    const nikeCabin = await Canvas.loadImage("./src/images/chalé_nike.png");
+    const hebeCabin = await Canvas.loadImage("./src/images/chalé_hebe.png");
+    const tycheCabin = await Canvas.loadImage("./src/images/chalé_tique.png");
+    const hekateCabin = await Canvas.loadImage("./src/images/chalé_hécate.png");
 
     //Desenhando o Banner
     context.save(); //Salva
     context.beginPath();
-    context.roundRect(0, 0, 1306, 270, 14);
+    context.roundRect(0, 0, 1306, 310, 12);
     context.closePath();
     context.clip();
     context.drawImage(banner, 0, 0, 1306, 400);
@@ -103,19 +113,19 @@ const createBanner = async (characterInfo, user) => {
     //Desenhando o avatar do personagem
     context.save(); //Salva
     context.beginPath();
-    context.arc(163, 246, 116, 0, Math.PI * 2, true);
+    context.arc(163, 302, 116, 0, Math.PI * 2, true);
     context.closePath();
     context.clip();
-    context.drawImage(characterAvatar, 47, 130, 232, 232);
+    context.drawImage(characterAvatar, 47, 186, 232, 232);
     context.restore(); //Restaura
 
     //Desenhando o avatar do jogador
     context.save(); //Salva
     context.beginPath();
-    context.arc(311.5, 367.5, 17.5, 0, Math.PI * 2, true);
+    context.arc(311.5, 423.5, 17.5, 0, Math.PI * 2, true);
     context.closePath();
     context.clip();
-    context.drawImage(playerAvatar, 294, 350, 35, 35);
+    context.drawImage(playerAvatar, 294, 406, 35, 35);
     context.restore(); //Restaura
 
     //Nome do Personagem
@@ -124,7 +134,7 @@ const createBanner = async (characterInfo, user) => {
     context.fillText(
         `${characterInfo.info.displayName.replace(/[^a-zA-Z0-9\s\-—]+/g, "").replace(/^(?:\s|\p{Emoji})+/gu, "")}`,
         296,
-        298
+        354
     );
 
     //Apelidos do Personagem
@@ -133,7 +143,7 @@ const createBanner = async (characterInfo, user) => {
     //Nome de usuário do jogador
     context.font = "29px GG Sans Medium";
     context.fillStyle = "#828487";
-    context.fillText(`@${user.username}`, 338, 377);
+    context.fillText(`@${user.username}`, 338, 433);
 
     //Informações gerais do personagem (HP, dinheiro, nível, mana, etc...)
     context.font = "24px GG Sans Medium";
@@ -141,44 +151,89 @@ const createBanner = async (characterInfo, user) => {
     context.fillText(
         `${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP`,
         802,
-        636
+        692
     );
     context.fillText(
         `${characterInfo.info.money} dracma${characterInfo.info.money > 1 ? "s" : ""}`,
         1065,
-        636
+        692
     );
-    context.fillText(`Nível ${characterInfo.info.xp}`, 802, 695);
+    context.fillText(`Nível ${characterInfo.info.xp}`, 802, 751);
     context.fillText(
         `${characterInfo.info.mana.current}/${characterInfo.info.mana.base} Mana`,
         1065,
-        695
+        751
     );
 
     //Atributos
     context.font = "24px GG Sans Medium";
     context.fillStyle = "#76787B";
-    context.fillText(`×${characterInfo.stats.atrPoints}`, 305, 531);
-    context.fillText(`×${characterInfo.stats.atrCON}`, 305, 604);
-    context.fillText(`×${characterInfo.stats.atrFOR}`, 228, 652);
-    context.fillText(`×${characterInfo.stats.atrAGI}`, 260, 700);
-    context.fillText(`×${characterInfo.stats.atrINT}`, 637, 604);
-    context.fillText(`×${characterInfo.stats.atrSAB}`, 631, 652);
-    context.fillText(`×${characterInfo.stats.atrCAR}`, 613, 700);
+    context.fillText(`×${characterInfo.stats.atrPoints}`, 305, 587);
+    context.fillText(`×${characterInfo.stats.atrCON}`, 305, 660);
+    context.fillText(`×${characterInfo.stats.atrFOR}`, 228, 708);
+    context.fillText(`×${characterInfo.stats.atrAGI}`, 260, 756);
+    context.fillText(`×${characterInfo.stats.atrINT}`, 637, 660);
+    context.fillText(`×${characterInfo.stats.atrSAB}`, 631, 708);
+    context.fillText(`×${characterInfo.stats.atrCAR}`, 613, 756);
 
     //Desenhando o ícone do chalé do personagem
     switch (characterInfo.info.cabin) {
         case "Zeus":
-            context.drawImage(zeusCabin, 308, 175, 336, 59);
+            context.drawImage(zeusCabin, 308, 231, 336, 59);
             break;
         case "Poseidon":
-            context.drawImage(poseidonCabin, 308, 175, 336, 59);
+            context.drawImage(poseidonCabin, 308, 231, 336, 59);
             break;
-        case "Hades":
-            context.drawImage(hadesCabin, 308, 175, 336, 59);
+        case "Demeter":
+            context.drawImage(demeterCabin, 308, 231, 336, 59);
+            break;
+        case "Ares":
+            context.drawImage(aresCabin, 308, 231, 336, 59);
             break;
         case "Atena":
-            context.drawImage(athenaCabin, 308, 175, 336, 59);
+            context.drawImage(athenaCabin, 308, 231, 336, 59);
+            break;
+        case "Apolo":
+            context.drawImage(apolloCabin, 308, 231, 336, 59);
+            break;
+        case "Ártemis":
+            context.drawImage(arthemisCabin, 308, 231, 336, 59);
+            break;
+        case "Hefesto":
+            context.drawImage(hephaestusCabin, 308, 231, 336, 59);
+            break;
+        case "Afrodite":
+            context.drawImage(aphroditeCabin, 308, 231, 336, 59);
+            break;
+        case "Hermes":
+            context.drawImage(hermesCabin, 308, 231, 336, 59);
+            break;
+        case "Dionísio":
+            context.drawImage(dionysusCabin, 308, 231, 336, 59);
+            break;
+        case "Hades":
+            context.drawImage(hadesCabin, 308, 231, 336, 59);
+            break;
+        case "Íris":
+            context.drawImage(irisCabin, 308, 231, 336, 59);
+            break;
+        case "Hipnos":
+            context.drawImage(hypnosCabin, 308, 231, 336, 59);
+            break;
+        case "Nêmesis":
+            context.drawImage(nemesisCabin, 308, 231, 336, 59);
+            break;
+        case "Nike":
+            context.drawImage(nikeCabin, 308, 231, 336, 59);
+            break;
+        case "Hebe":
+            context.drawImage(hebeCabin, 308, 231, 336, 59);
+            break;
+        case "Tique":
+            context.drawImage(tycheCabin, 308, 231, 336, 59);
+            break;
+        case "Hécate":
+            context.drawImage(hekateCabin, 308, 231, 336, 59);
             break;
     }
 
@@ -195,6 +250,7 @@ module.exports = {
         const names = characterGroup.map((data) => ({
             name: data.info.name,
             displayName: data.info.displayName,
+            cabin: data.info.cabin
         }));
 
         if (names.length == 1) {
@@ -214,19 +270,41 @@ module.exports = {
                 components: [],
             });
         } else if (names.length > 1) {
+            const emojiMap = {
+                Zeus: "⚡",
+                Poseidon: "🌊",
+                Demeter: "🌻",
+                Ares: "🪖",
+                Atena: "🦉",
+                Apolo: "☀️",
+                Ártemis: "🏹",
+                Hefesto: "🔨",
+                Afrodite: "💘",
+                Hermes: "<:hermes_symbol:1168239283958718476>",
+                Dionísio: "🍷",
+                Hades: "💀",
+                Íris: "🌈",
+                Hipnos: "💤",
+                Nêmesis: "⚖️",
+                Nike: "🏅",
+                Hebe: "🥂",
+                Tique: "🎲",
+                Hécate: "🌙",
+            };
             const charSelectMenu = new StringSelectMenuBuilder()
                 .setCustomId("selectCharacterMenu")
                 .setPlaceholder("Selecione aqui.")
                 .setMinValues(0)
                 .setMaxValues(1)
-                .addOptions(names.map((characters) =>
-                    new StringSelectMenuOptionBuilder()
+                .addOptions(names.map((characters) => {
+                    const cabin = characters.cabin;
+                    const emoji = emojiMap[cabin] || "❓"; // Default emoji if cabin not found
+                    return new StringSelectMenuOptionBuilder()
                         .setLabel(characters.displayName)
                         .setDescription(`Veja o status de ${characters.displayName}!`)
                         .setValue(characters.name)
-                        .setEmoji("1158791462922748034")
-                )
-                );
+                        .setEmoji(emoji);
+                }));
             const actionRow = new ActionRowBuilder().addComponents(charSelectMenu);
 
             const reply = await interaction.reply({
@@ -253,6 +331,43 @@ module.exports = {
                     name: "banner.png",
                 });
 
+                const atrSelectMenu = new StringSelectMenuBuilder()
+                    .setCustomId("atrSelectMenu")
+                    .setPlaceholder("Selecione aqui qual dos atributos você quer editar.")
+                    .setMinValues(0)
+                    .setMaxValues(1)
+                    .addOptions(
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel("Contituição (CON)")
+                            .setDescription(`Altere os valores da Constituição de seu personagem.`)
+                            .setValue("editAtrCON")
+                            .setEmoji("🫀"),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel("Força (FOR)")
+                            .setDescription(`Altere os valores da Força de seu personagem.`)
+                            .setValue("editAtrFOR")
+                            .setEmoji("🗡️"),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel("Agilidade (AGI)")
+                            .setDescription(`Altere os valores da Agilidade de seu personagem.`)
+                            .setValue("editAtrAGI")
+                            .setEmoji("🦿"),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel("Inteligência (INT)")
+                            .setDescription(`Altere os valores da Inteligência de seu personagem.`)
+                            .setValue("editAtrINT")
+                            .setEmoji("📜"),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel("Sabedoria (SAB)")
+                            .setDescription(`Altere os valores da Sabedoria de seu personagem.`)
+                            .setValue("editAtrSAB")
+                            .setEmoji("🦉"),
+                        new StringSelectMenuOptionBuilder()
+                            .setLabel("Carisma (CAR)")
+                            .setDescription(`Altere os valores da Carisma de seu personagem.`)
+                            .setValue("editAtrCAR")
+                            .setEmoji("✨"),
+                    );
                 const editInfoButton = new ButtonBuilder()
                     .setCustomId("editInfoButton")
                     .setLabel("Alterar as Informações")
@@ -264,16 +379,14 @@ module.exports = {
                     .setEmoji("🖼️")
                     .setStyle("Secondary");
 
-                const newActionRow = new ActionRowBuilder().addComponents(
-                    editInfoButton,
-                    editImagesButton
-                );
+                const firstActionRow = new ActionRowBuilder().addComponents(atrSelectMenu);
+                const secondActionRow = new ActionRowBuilder().addComponents(editInfoButton, editImagesButton);
 
                 await interaction.deferUpdate();
                 const reply = await interaction.message.edit({
                     content: "",
                     files: [attachment],
-                    components: [newActionRow],
+                    components: [firstActionRow, secondActionRow],
                 });
 
                 const collectorEditInfo = reply.createMessageComponentCollector({
@@ -301,9 +414,7 @@ module.exports = {
                     const nicknamesInput = new TextInputBuilder()
                         .setCustomId("nicknamesInput")
                         .setLabel("Apelidos:")
-                        .setPlaceholder(
-                            "Digite os novos apelidos para seu personagem aqui."
-                        )
+                        .setPlaceholder("Digite os novos apelidos para seu personagem aqui.")
                         .setValue(`${updatedcharacterInfo.info.nicknames}`)
                         .setStyle(TextInputStyle.Paragraph);
 
