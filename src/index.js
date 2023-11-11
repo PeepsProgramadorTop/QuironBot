@@ -19,7 +19,7 @@ const client = new Client({
 //Deletar um commando
 /* 
 client.on("ready", () => {
-    client.application.commands.fetch('').then((command) => {
+    client.application.commands.fetch('ID DO COMANDO').then((command) => {
         console.log(`Fetched command ${command.name}`)
         // further delete it like so:
         command.delete()

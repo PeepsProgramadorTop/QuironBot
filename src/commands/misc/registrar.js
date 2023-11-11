@@ -1,6 +1,7 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const playerProfile = require("../../models/playerProfile");
+const axios = require("axios");
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -81,18 +82,10 @@ module.exports = {
             .replaceAll(" ", ".");
         const displayName = interaction.options.get("nome").value;
         const cabin = interaction.options.get("chalé").value;
-        const avatar =
-            interaction.options.getAttachment("avatar") == null
-                ? "https://i.imgur.com/12wvWQo.png"
-                : interaction.options.getAttachment("avatar").url;
-        const banner =
-            interaction.options.getAttachment("banner") == null
-                ? "https://i.imgur.com/9WzYDnk.png"
-                : interaction.options.getAttachment("banner").url;
-        const nicknames =
-            interaction.options.get("apelidos") == null
-                ? "Nenhum apelido."
-                : interaction.options.get("apelidos").value;
+        const nicknames = interaction.options.get("apelidos") == null ? "Nenhum apelido." : interaction.options.get("apelidos").value;
+        
+        const avatarURL = interaction.options.getAttachment("avatar") == null ? "https://i.imgur.com/12wvWQo.png" : interaction.options.getAttachment("avatar").url;
+        const bannerURL = interaction.options.getAttachment("banner") == null ? "https://i.imgur.com/9WzYDnk.png" : interaction.options.getAttachment("banner").url;
 
         //Checa se você já tem um personagem com esse nome.
         const check = await characterProfile.findOne({
@@ -104,7 +97,39 @@ module.exports = {
             return;
         }
 
-        //Seta as coisas.
+        const avatarResponse = await axios.get(avatarURL, { responseType: "arraybuffer" });
+        const avatarBuffer = Buffer.from(avatarResponse.data);
+        const avatarAttachment = new AttachmentBuilder(avatarBuffer, { name: 'avatar.png' })
+
+        const bannerResponse = await axios.get(bannerURL, { responseType: "arraybuffer" });
+        const bannerBuffer = Buffer.from(bannerResponse.data);
+        const bannerAttachment = new AttachmentBuilder(bannerBuffer, { name: 'banner.png' });
+
+
+        const embed = {
+            color: 0x1BB76E,
+            author: {
+                name: 'Personagem criado com sucesso!',
+                icon_url: 'https://i.imgur.com/hss9I60.png'
+            },
+            title: `Olá, ${displayName}!`,
+            description: 'Pelo visto um(a) novo(a) campista chegou no acampamento! Seja bem-vindo(a) jovem meio-sangue, eu espero que sua aventura aqui seja épica.',
+            thumbnail: {
+                url: 'attachment://avatar.png',
+            },
+            image: {
+                url: 'attachment://banner.png',
+            },
+            footer: {
+                text: `Nome Registrado: ${name}`
+            }
+        };
+
+        const message = await interaction.reply({ embeds: [embed], files: [avatarAttachment, bannerAttachment], fetchReply: true });
+
+        const avatar = message.embeds[0].thumbnail.url;
+        const banner = message.embeds[0].image.url;
+
         await characterProfile.findOneAndUpdate(
             {
                 userID: user.id,
@@ -146,29 +171,5 @@ module.exports = {
                 },
             },
         );
-
-        //Pega a data após você setar tudo.
-        const data = await characterProfile.findOne({
-            userID: user.id,
-            "info.prefix": prefix,
-            "info.name": name,
-        });
-
-        const embed = new EmbedBuilder()
-            .setAuthor({
-                name: `Personagem criado com sucesso!`,
-                iconURL: "https://i.imgur.com/hss9I60.png",
-            })
-            .setTitle(`Olá, ${data.info.displayName}!`)
-            .setDescription(
-                `Pelo visto um(a) novo(a) campista chegou no acampamento! Seja bem-vindo(a) jovem meio-sangue, eu espero que sua aventura aqui seja épica.`,
-            )
-            .setThumbnail(data.info.avatar)
-            .setImage(data.info.banner)
-            .setFooter({ text: `Nome Registrado: ${data.info.name}` })
-            .setColor("#1BB76E");
-
-        //Responde com as infos
-        interaction.reply({ embeds: [embed] });
     },
 };
