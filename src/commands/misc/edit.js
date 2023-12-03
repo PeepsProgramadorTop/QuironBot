@@ -64,7 +64,6 @@ module.exports = {
                 characterGroup.forEach((data) => {
                     names.push({
                         name: `${data.info.name}`,
-                        displayName: `${data.info.displayName}`,
                     });
                 });
 
@@ -76,14 +75,14 @@ module.exports = {
                                 "info.name": names[0].name,
                             },
                             {
-                                "info.displayName": newName,
+                                "info.name": newName,
                             },
                             {
                                 returnOriginal: false,
                             },
                         )
                         .collation({ strenght: 2 });
-                    interaction.reply(`Nome novo: ${query.info.displayName}`);
+                    interaction.reply(`Nome novo: ${query.info.name}`);
                 } else if (names.length > 1) {
                     const charSelectMenu = new StringSelectMenuBuilder()
                         .setCustomId(interaction.id)
@@ -93,9 +92,9 @@ module.exports = {
                         .addOptions(
                             names.map((characters) =>
                                 new StringSelectMenuOptionBuilder()
-                                    .setLabel(characters.displayName)
+                                    .setLabel(characters.name)
                                     .setDescription(
-                                        `Mude o nome de ${characters.displayName} para ${newName}!`,
+                                        `Mude o nome de ${characters.name} para ${newName}!`,
                                     )
                                     .setValue(characters.name)
                                     .setEmoji("📝"),
@@ -128,7 +127,7 @@ module.exports = {
                                 "info.name": character,
                             },
                             {
-                                "info.displayName": newName,
+                                "info.name": newName,
                             },
                             {
                                 returnOriginal: false,
@@ -136,7 +135,7 @@ module.exports = {
                         );
 
                         reply.edit({
-                            content: `Nome novo: ${query.info.displayName}`,
+                            content: `Nome novo: ${query.info.name}`,
                             components: [],
                         });
                     });

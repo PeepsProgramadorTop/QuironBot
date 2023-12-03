@@ -28,7 +28,6 @@ module.exports = {
         const characterGroup = await characterProfile.find({ userID: user.id });
         const names = characterGroup.map((data) => ({
             name: data.info.name,
-            displayName: data.info.displayName,
             cabin: data.info.cabin
         }));
 
@@ -79,8 +78,8 @@ module.exports = {
                     const cabin = characters.cabin;
                     const emoji = emojiMap[cabin] || "❓"; // Default emoji if cabin not found
                     return new StringSelectMenuOptionBuilder()
-                        .setLabel(characters.displayName)
-                        .setDescription(`Veja o status de ${characters.displayName}!`)
+                        .setLabel(characters.name)
+                        .setDescription(`Veja o status de ${characters.name}!`)
                         .setValue(characters.name)
                         .setEmoji(emoji);
                 }));
@@ -188,7 +187,7 @@ module.exports = {
                         .setCustomId("nameInput")
                         .setLabel("Nome:")
                         .setPlaceholder("Digite o novo nome para seu personagem aqui.")
-                        .setValue(`${updatedcharacterInfo.info.displayName}`)
+                        .setValue(`${updatedcharacterInfo.info.name}`)
                         .setStyle(TextInputStyle.Short);
                     const nicknamesInput = new TextInputBuilder()
                         .setCustomId("nicknamesInput")
@@ -221,7 +220,7 @@ module.exports = {
                                 "info.name": character,
                             },
                             {
-                                "info.displayName": newName,
+                                "info.name": newName,
                                 "info.nicknames": newNicknames,
                             },
                             {

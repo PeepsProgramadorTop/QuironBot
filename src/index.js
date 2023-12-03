@@ -15,6 +15,13 @@ const client = new Client({
         IntentsBitField.Flags.MessageContent,
     ],
 });
+client.constants = new Map();
+
+const process = require('node:process');
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
 //Deletar um commando
 /* 

@@ -43,7 +43,7 @@ module.exports = {
             const embedMessage = [
                 {
                     color: 0x5865F2,
-                    title: `Você está visualizando ${characterData.info.displayName}... (${pageNum + 1}/${totalPageNum})`,
+                    title: `Você está visualizando ${characterData.info.name}... (${pageNum + 1}/${totalPageNum})`,
                     author: {
                         name: `Personagens de: ${user.username}`,
                         icon_url: user.displayAvatarURL()
@@ -54,7 +54,7 @@ module.exports = {
                 },
                 {
                     color: 0x5865F2,
-                    title: characterData.info.displayName,
+                    title: characterData.info.name,
                     description: `**${characterData.info.nicknames}**\n\n**Chalé:** \`${characterData.info.cabin}\`\n**Prefixo:** \`${characterData.info.prefix}\``,
                     image: {
                         url: characterData.info.banner

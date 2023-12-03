@@ -112,7 +112,7 @@ async function createBanner(characterInfo, user) {
     context.font = "40px GG Sans Medium";
     context.fillStyle = "#f7f7f7";
     context.fillText(
-        `${characterInfo.info.displayName.replace(/[^a-zA-Z0-9\s\-—]+/g, "").replace(/^(?:\s|\p{Emoji})+/gu, "")}`,
+        `${characterInfo.info.name.replace(/[^a-zA-Z0-9\s\-—]+/g, "").replace(/^(?:\s|\p{Emoji})+/gu, "")}`,
         296,
         354
     );

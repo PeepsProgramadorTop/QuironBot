@@ -4,8 +4,7 @@ const characterProfile = mongoose.Schema({
   userID: { type: "String" }, //ID do Usuário - Utilizado para identificar a quem este personagem pertence.
   info: {
     prefix: { type: "String", required: true }, //Prefixo - Utilizado para enviar mensagens com o personagem.
-    name: { type: "String", required: true }, //Nome - Utilizado para identificar o personagem, uma vez setado não pode ser alterado.
-    displayName: { type: "String", required: true }, //Nome de Exibição - Nome exibido em qualquer coisa sobre o personagem, pode ser alterado.
+    name: { type: "String", required: true }, //Nome - Utilizado para identificar o personagem.
     cabin: { type: "String", required: true }, //Chalé - O chalé do personagem
     nicknames: { type: "String", default: "Nenhum apelido." }, //Apelidos - Nomes exibidos debaixo do nome de exibição no banner.
     necklace_beads: { type: "String", default: "Nenhuma." }, //Colar de Contas do Personagem.

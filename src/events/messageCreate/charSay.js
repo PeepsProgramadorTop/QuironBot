@@ -26,7 +26,7 @@ module.exports = async (message, client) => {
         });
 
         if (!data) {
-            // Se nenhum webhook existir na base de dados, crie um novo
+            //Se nenhum webhook existir na base de dados, crie um novo
             channel
                 .createWebhook({
                     name: "QuíronHook",
@@ -41,7 +41,7 @@ module.exports = async (message, client) => {
 
                     const webhookMessage = {
                         username:
-                            character.info.displayName +
+                            character.info.name +
                             ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
                         avatarURL: character.info.avatar,
                     };
@@ -60,13 +60,24 @@ module.exports = async (message, client) => {
                         });
                     }
 
-                    webhook.send(webhookMessage).then((message) => {
-                        client.messagesUserID.set(message.id, user.id);
-                    });
+                    // Verifica se a mensagem está respondendo a outra
+                    if (message.reference) {
+                        try {
+                            const repliedMessage = await message.channel.messages.fetch(message?.reference?.messageId);
+                            const userID = await characterProfile.findOne({ "info.name": repliedMessage.author.username.replace(/\s*\[\s*\d+\/\d+HP\s*\]\s*$/, '') });
+                            if (repliedMessage) {
+                                webhookMessage.content = `In response to: <@${userID.userID}> [Original Message](${repliedMessage.url})\n\n${webhookMessage.content}`;
+                            }
+                        } catch (error) {
+                            console.error("Erro ao buscar mensagem original:", error);
+                        }
+                    }
+
+                    webhook.send(webhookMessage)
                     message.delete();
                 });
         } else {
-            // Se um webhook já existe, atualize suas informações e use-o
+            //Se um webhook já existe, atualize suas informações e use-o
             const webhookClient = new WebhookClient({
                 id: data.webhookID,
                 token: data.webhookToken,
@@ -74,7 +85,7 @@ module.exports = async (message, client) => {
 
             const webhookMessage = {
                 username:
-                    character.info.displayName +
+                    character.info.name +
                     ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
                 avatarURL: character.info.avatar,
             };
@@ -83,7 +94,7 @@ module.exports = async (message, client) => {
                 webhookMessage.content = contentWithoutPrefix;
             }
 
-            // Verifica se há anexos e adiciona-os à mensagem
+            //Verifica se há anexos e adiciona-os à mensagem
             if (message.attachments.size > 0) {
                 webhookMessage.files = message.attachments.map((attachment) => {
                     return {
@@ -93,9 +104,20 @@ module.exports = async (message, client) => {
                 });
             }
 
-            webhookClient.send(webhookMessage).then((message) => {
-                client.messagesUserID.set(message.id, user.id);
-            });
+            //Verifica se a mensagem está respondendo a outra
+            if (message.reference) {
+                try {
+                    const repliedMessage = await message.channel.messages.fetch(message?.reference?.messageId);
+                    const repliedMessageAuthor = await characterProfile.findOne({ "info.name": repliedMessage.author.username.replace(/\s*\[\s*\d+\/\d+HP\s*\]\s*$/, '') });
+                    if (repliedMessage) {
+                        webhookMessage.content = `> <:deco_chat:1180719307399905280>  Respondendo **@${repliedMessage.author.username}** (<@${repliedMessageAuthor.userID}>) - [Mensagem](${repliedMessage.url})\n\n${webhookMessage.content}`;
+                    }
+                } catch (error) {
+                    console.error("Erro ao buscar mensagem original:", error);
+                }
+            }
+
+            webhookClient.send(webhookMessage)
             message.delete();
         }
     }
