@@ -1,0 +1,137 @@
+[
+  {
+    "name": "Zeus",
+    "value": "Zeus",
+    "skills": ["Atletismo", "Intimidação", "Persuasão"],
+    "Atributos": {
+      "Destreza": "+3",
+      "Força": "+2"
+    }
+  },
+  {
+    "name": "Poseidon",
+    "value": "Poseidon",
+    "skills": ["Adestrar Animais", "Atletismo", "Sobrevivência"],
+    "Atributos": {
+      "Destreza": "+3",
+      "Sabedoria": "+2"
+    }
+  },
+  {
+    "name": "Demeter",
+    "value": "Demeter",
+    "skills": ["Natureza", "Sobrevivência"],
+    "Atributos": {
+      "Inteligência": "+2",
+      "Sabedoria": "+3"
+    }
+  },
+  {
+    "name": "Ares",
+    "value": "Ares",
+    "skills": ["Atletismo", "Intimidação"],
+    "Atributos": {
+      "Constituição": "+2",
+      "Força": "+2"
+    }
+  },
+  {
+    "name": "Atena",
+    "value": "Atena",
+    "skills": ["História", "Sobrevivência"],
+    "Atributos": {
+      "Inteligência": "+3",
+      "Sabedoria": "+1"
+    }
+  },
+  {
+    "name": "Apolo",
+    "value": "Apolo",
+    "skills": ["Atletismo", "Medicina", "Atuação"],
+    "Atributos": {
+      "Sabedoria": "+3",
+      "Carisma": "+1"
+    }
+  },
+  {
+    "name": "Hefesto",
+    "value": "Hefesto",
+    "skills": ["Metalurgia", "Hardware"],
+    "Atributos": {
+      "Força": "+2",
+      "Inteligência": "+2"
+    }
+  },
+  {
+    "name": "Afrodite",
+    "value": "Afrodite",
+    "skills": ["Persuasão", "Intuição"],
+    "Atributos": {
+      "Carisma": "+3",
+      "Inteligência": "+1"
+    }
+  },
+  {
+    "name": "Hermes",
+    "value": "Hermes",
+    "skills": ["Enganação", "Furtividade"],
+    "Atributos": {
+      "Destreza": "+2",
+      "Carisma": "+2"
+    }
+  },
+  {
+    "name": "Dionisio",
+    "value": "Dionisio",
+    "skills": ["Atuação", "Persuasão", "Ofício(Vinho)"],
+    "Atributos": {
+      "Carisma": "+2",
+      "Inteligência": "+2"
+    }
+  },
+  {
+    "name": "Hades",
+    "value": "Hades",
+    "skills": ["Intimidação", "Enganação"],
+    "Atributos": {
+      "Destreza": "+3",
+      "Carisma": "+2"
+    }
+  },
+  {
+    "name": "Íris",
+    "value": "Íris",
+    "skills": ["Atletismo", "Percepção"],
+    "Atributos": {
+      "Carisma": "+2",
+      "Destreza": "+1"
+    }
+  },
+  {
+    "name": "Hipnos",
+    "value": "Hipnos",
+    "skills": ["Enganação", "Persuasão"],
+    "Atributos": {
+      "Constituição": "+1",
+      "Inteligência": "+2"
+    }
+  },
+  {
+    "name": "Nêmesis",
+    "value": "Nêmesis",
+    "skills": ["Persuasão", "Investigação"],
+    "Atributos": {
+      "Inteligência": "+2",
+      "Carisma": "+1"
+    }
+  },
+  {
+    "name": "Nike",
+    "value": "Nike",
+    "skills": ["Acrobacia", "Atletismo"],
+    "Atributos": {
+      "Destreza": "+2",
+      "Inteligência": "+1"
+    }
+  }
+]
