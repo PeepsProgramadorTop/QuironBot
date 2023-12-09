@@ -4,7 +4,6 @@ const { CommandHandler } = require("djs-commander");
 const { readdirSync } = require('fs');
 const mongoose = require("mongoose");
 const path = require("path");
-const utils = require('./majestia.js');
 
 //Definindo o Client
 const client = new Client({

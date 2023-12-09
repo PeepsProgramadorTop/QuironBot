@@ -84,11 +84,11 @@ module.exports = {
         //Checa se já tem um personagem com esse nome.
         const check = await characterProfile.findOne({
             "info.name": name
-        });
+        }) ?? { info: {} };
         if (check.info.name == name) {
             await interaction.editReply("Já existe um personagem com este nome, por favor tente outro.");
             return;
-        }
+        };
 
         //Avatar
         const avatarResponse = await axios.get(avatarURL, { responseType: "arraybuffer" });
