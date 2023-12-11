@@ -1,14 +1,7 @@
 const {
     SlashCommandBuilder,
     AttachmentBuilder,
-    ActionRowBuilder,
-    StringSelectMenuBuilder,
-    StringSelectMenuOptionBuilder,
     ComponentType,
-    ButtonBuilder,
-    ModalBuilder,
-    TextInputBuilder,
-    TextInputStyle,
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const { createBanner } = require("../../utils/createBanner");
@@ -24,6 +17,8 @@ module.exports = {
         .setName("status")
         .setDescription("Retorna o perfil do personagem escolhido."),
     run: async ({ interaction }) => {
+        await interaction.deferReply();
+
         const { user } = interaction;
 
         const characterGroup = await characterProfile.find({ userID: user.id });
@@ -34,7 +29,7 @@ module.exports = {
 
         switch (names.length) {
             case 0:
-                interaction.reply("Você não tem um personagem.")
+                interaction.editReply("Você não tem um personagem.")
                 break;
             case 1:
                 const characterInfo = await characterProfile.findOne({
@@ -118,12 +113,13 @@ module.exports = {
                     ],
                 };
 
-                const oneCharReply = await interaction.reply({
+                const oneCharReply = await interaction.editReply({
                     content: "",
                     files: [attachment],
                     components: [firstActionRow, secondActionRow],
                 });
 
+                //Collector dos botões
                 const collectorEditInfo = oneCharReply.createMessageComponentCollector({
                     componentType: ComponentType.Button,
                     filter: (i) =>
@@ -235,6 +231,129 @@ module.exports = {
                     })
                 })
 
+                //Criando Modals de forma eficiente
+                const attributeModals = {
+                    CON: {
+                        title: "Editar Atributo - Constituição (CON)",
+                        custom_id: "editCONModal",
+                        atrField: "atrCON",
+                    },
+                    FOR: {
+                        title: "Editar Atributo - Força (FOR)",
+                        custom_id: "editFORModal",
+                        atrField: "atrFOR",
+                    },
+                    AGI: {
+                        title: "Editar Atributo - Agilidade (AGI)",
+                        custom_id: "editAGIModal",
+                        atrField: "atrAGI",
+                    },
+                    INT: {
+                        title: "Editar Atributo - Inteligência (INT)",
+                        custom_id: "editINTModal",
+                        atrField: "atrINT",
+                    },
+                    SAB: {
+                        title: "Editar Atributo - Sabedoria (SAB)",
+                        custom_id: "editSABModal",
+                        atrField: "atrSAB",
+                    },
+                    CAR: {
+                        title: "Editar Atributo - Carisma (CAR)",
+                        custom_id: "editCARModal",
+                        atrField: "atrCAR",
+                    },
+                };
+                const createAttributeModal = (attribute) => ({
+                    type: 1,
+                    components: [
+                        {
+                            type: 4,
+                            custom_id: `quantity${attribute}`,
+                            label: "Quantidade:",
+                            placeholder: `Digite aqui a quantidade de pontos que você quer adicionar a este atributo.`,
+                            min_length: 1,
+                            max_length: 3,
+                            style: 1,
+                            required: true,
+                        },
+                    ],
+                });
+                const handleAttributeEdit = async (interaction, user, character, attribute) => {
+                    const updatedcharacterInfo = await characterProfile.findOne({
+                        userID: user.id,
+                        "info.name": character,
+                    });
+
+                    const attributeModal = createAttributeModal(attribute);
+                    const attributeInfo = attributeModals[attribute];
+
+                    await interaction.showModal({
+                        title: attributeInfo.title,
+                        custom_id: attributeInfo.custom_id,
+                        components: [attributeModal],
+                    });
+
+                    interaction.awaitModalSubmit({
+                        filter: (i) =>
+                            i.user.id === interaction.user.id &&
+                            i.customId === attributeInfo.custom_id,
+                        time: 5 * 60_000,
+                    }).then(async (modalInteraction) => {
+                        const quantityToAdd = Number(modalInteraction.fields.getTextInputValue(`quantity${attribute}`));
+                        const currentQuantity = updatedcharacterInfo.stats[attributeInfo.atrField];
+                        const quantity = quantityToAdd + currentQuantity;
+
+                        const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
+
+                        if (isNaN(quantityToAdd) || quantityToAdd < 1) {
+                            modalInteraction.reply({
+                                content: "Você tem que colocar um número positivo válido.",
+                                ephemeral: true,
+                            });
+                            return;
+                        }
+                        if (atrPoints < 0) {
+                            modalInteraction.reply({
+                                content: "Você não tem pontos suficientes para esta ação.",
+                                ephemeral: true,
+                            });
+                            return;
+                        }
+
+                        const updateFields = {
+                            "stats.atrPoints": atrPoints,
+                            [`stats.${attributeInfo.atrField}`]: quantity,
+                        };
+
+                        const newInfo = await characterProfile.findOneAndUpdate(
+                            {
+                                userID: user.id,
+                                "info.name": character,
+                            },
+                            updateFields,
+                            {
+                                returnOriginal: false,
+                            }
+                        );
+
+                        const banner = await createBanner(newInfo, user);
+                        const attachment = new AttachmentBuilder(banner, {
+                            name: "banner.png",
+                        });
+
+                        modalInteraction.reply({
+                            content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo ${attribute}! Agora você possui ${newInfo.stats[attributeInfo.atrField]} pontos neste atributo!`,
+                            ephemeral: true,
+                        });
+                        interaction.message.edit({
+                            content: "",
+                            files: [attachment],
+                        });
+                    });
+                };
+
+                //Collector dos atributos
                 const collectorAtr = oneCharReply.createMessageComponentCollector({
                     componentType: ComponentType.StringSelect,
                     filter: (i) =>
@@ -243,503 +362,9 @@ module.exports = {
                     time: 60_000,
                 });
                 collectorAtr.on("collect", async (interaction) => {
-                    //Informações do Personagem Atualizadas
-                    const updatedcharacterInfo = await characterProfile.findOne({
-                        userID: user.id,
-                        "info.name": character,
-                    });
-
-                    switch (interaction.values[0]) {
-                        case "editAtrCON":
-                            const CONModal = {
-                                title: "Editar Atributo - Constituição (CON)",
-                                custom_id: "editCONModal",
-                                components: [
-                                    {
-                                        type: 1,
-                                        components: [
-                                            {
-                                                type: 4,
-                                                custom_id: "quantityCON",
-                                                label: "Quantidade:",
-                                                placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a estre atributo.",
-                                                min_length: 1,
-                                                max_length: 3,
-                                                style: 1,
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            };
-
-                            await interaction.showModal(CONModal); //Mostrar modal para o usuário
-
-                            interaction.awaitModalSubmit({
-                                filter: (i) =>
-                                    i.user.id === interaction.user.id &&
-                                    i.customId === "editCONModal",
-                                time: 5 * 60_000,
-                            }).then(async (modalInteraction) => {
-                                const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityCON"));
-                                const currentQuantity = updatedcharacterInfo.stats.atrCON;
-                                const quantity = quantityToAdd + currentQuantity;
-
-                                const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                    modalInteraction.reply({
-                                        content: "Você tem que colocar um número positivo válido.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-                                if (atrPoints < 0) {
-                                    modalInteraction.reply({
-                                        content: "Você não tem pontos suficientes para esta ação.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-
-                                const newInfo = await characterProfile.findOneAndUpdate(
-                                    {
-                                        userID: user.id,
-                                        "info.name": character,
-                                    },
-                                    {
-                                        "stats.atrPoints": atrPoints,
-                                        "stats.atrCON": quantity
-                                    },
-                                    {
-                                        returnOriginal: false,
-                                    }
-                                );
-
-                                const banner = await createBanner(newInfo, user);
-                                const attachment = new AttachmentBuilder(banner, {
-                                    name: "banner.png",
-                                });
-
-                                modalInteraction.reply({
-                                    content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Constituição (CON)! Agora você possui ${newInfo.stats.atrCON} pontos neste atributo!`,
-                                    ephemeral: true,
-                                });
-                                interaction.message.edit({
-                                    content: "",
-                                    files: [attachment],
-                                })
-                            })
-                            break;
-
-                        case "editAtrFOR":
-                            const FORModal = {
-                                title: "Editar Atributo - Força (FOR)",
-                                custom_id: "editFORModal",
-                                components: [
-                                    {
-                                        type: 1,
-                                        components: [
-                                            {
-                                                type: 4,
-                                                custom_id: "quantityFOR",
-                                                label: "Quantidade:",
-                                                placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                min_length: 1,
-                                                max_length: 3,
-                                                style: 1,
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            };
-
-                            await interaction.showModal(FORModal);
-
-                            interaction.awaitModalSubmit({
-                                filter: (i) =>
-                                    i.user.id === interaction.user.id &&
-                                    i.customId === "editFORModal",
-                                time: 5 * 60_000,
-                            }).then(async (modalInteraction) => {
-                                const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityFOR"));
-                                const currentQuantity = updatedcharacterInfo.stats.atrFOR;
-                                const quantity = quantityToAdd + currentQuantity;
-
-                                const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                    modalInteraction.reply({
-                                        content: "Você tem que colocar um número positivo válido.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-                                if (atrPoints < 0) {
-                                    modalInteraction.reply({
-                                        content: "Você não tem pontos suficientes para esta ação.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-
-                                const newInfo = await characterProfile.findOneAndUpdate(
-                                    {
-                                        userID: user.id,
-                                        "info.name": character,
-                                    },
-                                    {
-                                        "stats.atrPoints": atrPoints,
-                                        "stats.atrFOR": quantity
-                                    },
-                                    {
-                                        returnOriginal: false,
-                                    }
-                                );
-
-                                const banner = await createBanner(newInfo, user);
-                                const attachment = new AttachmentBuilder(banner, {
-                                    name: "banner.png",
-                                });
-
-                                modalInteraction.reply({
-                                    content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Força (FOR)! Agora você possui ${newInfo.stats.atrFOR} pontos neste atributo!`,
-                                    ephemeral: true,
-                                });
-                                interaction.message.edit({
-                                    content: "",
-                                    files: [attachment],
-                                });
-                            });
-                            break;
-
-                        case "editAtrAGI":
-                            const AGIModal = {
-                                title: "Editar Atributo - Agilidade (AGI)",
-                                custom_id: "editAGIModal",
-                                components: [
-                                    {
-                                        type: 1,
-                                        components: [
-                                            {
-                                                type: 4,
-                                                custom_id: "quantityAGI",
-                                                label: "Quantidade:",
-                                                placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                min_length: 1,
-                                                max_length: 3,
-                                                style: 1,
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            };
-
-                            await interaction.showModal(AGIModal);
-
-                            interaction.awaitModalSubmit({
-                                filter: (i) =>
-                                    i.user.id === interaction.user.id &&
-                                    i.customId === "editAGIModal",
-                                time: 5 * 60_000,
-                            }).then(async (modalInteraction) => {
-                                const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityAGI"));
-                                const currentQuantity = updatedcharacterInfo.stats.atrAGI;
-                                const quantity = quantityToAdd + currentQuantity;
-
-                                const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                    modalInteraction.reply({
-                                        content: "Você tem que colocar um número positivo válido.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-                                if (atrPoints < 0) {
-                                    modalInteraction.reply({
-                                        content: "Você não tem pontos suficientes para esta ação.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-
-                                const newInfo = await characterProfile.findOneAndUpdate(
-                                    {
-                                        userID: user.id,
-                                        "info.name": character,
-                                    },
-                                    {
-                                        "stats.atrPoints": atrPoints,
-                                        "stats.atrAGI": quantity
-                                    },
-                                    {
-                                        returnOriginal: false,
-                                    }
-                                );
-
-                                const banner = await createBanner(newInfo, user);
-                                const attachment = new AttachmentBuilder(banner, {
-                                    name: "banner.png",
-                                });
-
-                                modalInteraction.reply({
-                                    content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Agilidade (AGI)! Agora você possui ${newInfo.stats.atrAGI} pontos neste atributo!`,
-                                    ephemeral: true,
-                                });
-                                interaction.message.edit({
-                                    content: "",
-                                    files: [attachment],
-                                });
-                            });
-                            break;
-                        case "editAtrINT":
-                            const INTModal = {
-                                title: "Editar Atributo - Inteligência (INT)",
-                                custom_id: "editINTModal",
-                                components: [
-                                    {
-                                        type: 1,
-                                        components: [
-                                            {
-                                                type: 4,
-                                                custom_id: "quantityINT",
-                                                label: "Quantidade:",
-                                                placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                min_length: 1,
-                                                max_length: 3,
-                                                style: 1,
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            };
-
-                            await interaction.showModal(INTModal);
-
-                            interaction.awaitModalSubmit({
-                                filter: (i) =>
-                                    i.user.id === interaction.user.id &&
-                                    i.customId === "editINTModal",
-                                time: 5 * 60_000,
-                            }).then(async (modalInteraction) => {
-                                const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityINT"));
-                                const currentQuantity = updatedcharacterInfo.stats.atrINT;
-                                const quantity = quantityToAdd + currentQuantity;
-
-                                const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                    modalInteraction.reply({
-                                        content: "Você tem que colocar um número positivo válido.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-                                if (atrPoints < 0) {
-                                    modalInteraction.reply({
-                                        content: "Você não tem pontos suficientes para esta ação.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-
-                                const newInfo = await characterProfile.findOneAndUpdate(
-                                    {
-                                        userID: user.id,
-                                        "info.name": character,
-                                    },
-                                    {
-                                        "stats.atrPoints": atrPoints,
-                                        "stats.atrINT": quantity
-                                    },
-                                    {
-                                        returnOriginal: false,
-                                    }
-                                );
-
-                                const banner = await createBanner(newInfo, user);
-                                const attachment = new AttachmentBuilder(banner, {
-                                    name: "banner.png",
-                                });
-
-                                modalInteraction.reply({
-                                    content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Inteligência (INT)! Agora você possui ${newInfo.stats.atrINT} pontos neste atributo!`,
-                                    ephemeral: true,
-                                });
-                                interaction.message.edit({
-                                    content: "",
-                                    files: [attachment],
-                                });
-                            });
-                            break;
-                        case "editAtrSAB":
-                            const SABModal = {
-                                title: "Editar Atributo - Sabedoria (SAB)",
-                                custom_id: "editSABModal",
-                                components: [
-                                    {
-                                        type: 1,
-                                        components: [
-                                            {
-                                                type: 4,
-                                                custom_id: "quantitySAB",
-                                                label: "Quantidade:",
-                                                placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                min_length: 1,
-                                                max_length: 3,
-                                                style: 1,
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            };
-
-                            await interaction.showModal(SABModal);
-
-                            interaction.awaitModalSubmit({
-                                filter: (i) =>
-                                    i.user.id === interaction.user.id &&
-                                    i.customId === "editSABModal",
-                                time: 5 * 60_000,
-                            }).then(async (modalInteraction) => {
-                                const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantitySAB"));
-                                const currentQuantity = updatedcharacterInfo.stats.atrSAB;
-                                const quantity = quantityToAdd + currentQuantity;
-
-                                const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                    modalInteraction.reply({
-                                        content: "Você tem que colocar um número positivo válido.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-                                if (atrPoints < 0) {
-                                    modalInteraction.reply({
-                                        content: "Você não tem pontos suficientes para esta ação.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-
-                                const newInfo = await characterProfile.findOneAndUpdate(
-                                    {
-                                        userID: user.id,
-                                        "info.name": character,
-                                    },
-                                    {
-                                        "stats.atrPoints": atrPoints,
-                                        "stats.atrSAB": quantity
-                                    },
-                                    {
-                                        returnOriginal: false,
-                                    }
-                                );
-
-                                const banner = await createBanner(newInfo, user);
-                                const attachment = new AttachmentBuilder(banner, {
-                                    name: "banner.png",
-                                });
-
-                                modalInteraction.reply({
-                                    content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Sabedoria (SAB)! Agora você possui ${newInfo.stats.atrSAB} pontos neste atributo!`,
-                                    ephemeral: true,
-                                });
-                                interaction.message.edit({
-                                    content: "",
-                                    files: [attachment],
-                                });
-                            });
-                            break;
-                        case "editAtrCAR":
-                            const CARModal = {
-                                title: "Editar Atributo - Carisma (CAR)",
-                                custom_id: "editCARModal",
-                                components: [
-                                    {
-                                        type: 1,
-                                        components: [
-                                            {
-                                                type: 4,
-                                                custom_id: "quantityCAR",
-                                                label: "Quantidade:",
-                                                placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                min_length: 1,
-                                                max_length: 3,
-                                                style: 1,
-                                                required: true
-                                            }
-                                        ]
-                                    }
-                                ]
-                            };
-
-                            await interaction.showModal(CARModal);
-
-                            interaction.awaitModalSubmit({
-                                filter: (i) =>
-                                    i.user.id === interaction.user.id &&
-                                    i.customId === "editCARModal",
-                                time: 5 * 60_000,
-                            }).then(async (modalInteraction) => {
-                                const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityCAR"));
-                                const currentQuantity = updatedcharacterInfo.stats.atrCAR;
-                                const quantity = quantityToAdd + currentQuantity;
-
-                                const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                    modalInteraction.reply({
-                                        content: "Você tem que colocar um número positivo válido.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-                                if (atrPoints < 0) {
-                                    modalInteraction.reply({
-                                        content: "Você não tem pontos suficientes para esta ação.",
-                                        ephemeral: true,
-                                    });
-                                    return;
-                                };
-
-                                const newInfo = await characterProfile.findOneAndUpdate(
-                                    {
-                                        userID: user.id,
-                                        "info.name": character,
-                                    },
-                                    {
-                                        "stats.atrPoints": atrPoints,
-                                        "stats.atrCAR": quantity
-                                    },
-                                    {
-                                        returnOriginal: false,
-                                    }
-                                );
-
-                                const banner = await createBanner(newInfo, user);
-                                const attachment = new AttachmentBuilder(banner, {
-                                    name: "banner.png",
-                                });
-
-                                modalInteraction.reply({
-                                    content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Carisma (CAR)! Agora você possui ${newInfo.stats.atrCAR} pontos neste atributo!`,
-                                    ephemeral: true,
-                                });
-                                interaction.message.edit({
-                                    content: "",
-                                    files: [attachment],
-                                });
-                            });
-                            break;
-                    }
-                })
+                    const selectedAttribute = interaction.values[0].substring(7); // Remove "editAtr" prefix
+                    await handleAttributeEdit(interaction, user, character, selectedAttribute);
+                });
                 break;
             default:
                 const emojiMap = {
@@ -786,7 +411,7 @@ module.exports = {
                     ],
                 };
 
-                const reply = await interaction.reply({
+                const reply = await interaction.editReply({
                     content: "Selecione abaixo um de seus personagens para ver seu status.",
                     components: [actionRow],
                 });
@@ -999,6 +624,129 @@ module.exports = {
                         })
                     })
 
+                    //Criando Modals de forma eficiente
+                    const attributeModals = {
+                        CON: {
+                            title: "Editar Atributo - Constituição (CON)",
+                            custom_id: "editCONModal",
+                            atrField: "atrCON",
+                        },
+                        FOR: {
+                            title: "Editar Atributo - Força (FOR)",
+                            custom_id: "editFORModal",
+                            atrField: "atrFOR",
+                        },
+                        AGI: {
+                            title: "Editar Atributo - Agilidade (AGI)",
+                            custom_id: "editAGIModal",
+                            atrField: "atrAGI",
+                        },
+                        INT: {
+                            title: "Editar Atributo - Inteligência (INT)",
+                            custom_id: "editINTModal",
+                            atrField: "atrINT",
+                        },
+                        SAB: {
+                            title: "Editar Atributo - Sabedoria (SAB)",
+                            custom_id: "editSABModal",
+                            atrField: "atrSAB",
+                        },
+                        CAR: {
+                            title: "Editar Atributo - Carisma (CAR)",
+                            custom_id: "editCARModal",
+                            atrField: "atrCAR",
+                        },
+                    };
+                    const createAttributeModal = (attribute) => ({
+                        type: 1,
+                        components: [
+                            {
+                                type: 4,
+                                custom_id: `quantity${attribute}`,
+                                label: "Quantidade:",
+                                placeholder: `Digite aqui a quantidade de pontos que você quer adicionar a este atributo.`,
+                                min_length: 1,
+                                max_length: 3,
+                                style: 1,
+                                required: true,
+                            },
+                        ],
+                    });
+                    const handleAttributeEdit = async (interaction, user, character, attribute) => {
+                        const updatedcharacterInfo = await characterProfile.findOne({
+                            userID: user.id,
+                            "info.name": character,
+                        });
+
+                        const attributeModal = createAttributeModal(attribute);
+                        const attributeInfo = attributeModals[attribute];
+
+                        await interaction.showModal({
+                            title: attributeInfo.title,
+                            custom_id: attributeInfo.custom_id,
+                            components: [attributeModal],
+                        });
+
+                        interaction.awaitModalSubmit({
+                            filter: (i) =>
+                                i.user.id === interaction.user.id &&
+                                i.customId === attributeInfo.custom_id,
+                            time: 5 * 60_000,
+                        }).then(async (modalInteraction) => {
+                            const quantityToAdd = Number(modalInteraction.fields.getTextInputValue(`quantity${attribute}`));
+                            const currentQuantity = updatedcharacterInfo.stats[attributeInfo.atrField];
+                            const quantity = quantityToAdd + currentQuantity;
+
+                            const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
+
+                            if (isNaN(quantityToAdd) || quantityToAdd < 1) {
+                                modalInteraction.reply({
+                                    content: "Você tem que colocar um número positivo válido.",
+                                    ephemeral: true,
+                                });
+                                return;
+                            }
+                            if (atrPoints < 0) {
+                                modalInteraction.reply({
+                                    content: "Você não tem pontos suficientes para esta ação.",
+                                    ephemeral: true,
+                                });
+                                return;
+                            }
+
+                            const updateFields = {
+                                "stats.atrPoints": atrPoints,
+                                [`stats.${attributeInfo.atrField}`]: quantity,
+                            };
+
+                            const newInfo = await characterProfile.findOneAndUpdate(
+                                {
+                                    userID: user.id,
+                                    "info.name": character,
+                                },
+                                updateFields,
+                                {
+                                    returnOriginal: false,
+                                }
+                            );
+
+                            const banner = await createBanner(newInfo, user);
+                            const attachment = new AttachmentBuilder(banner, {
+                                name: "banner.png",
+                            });
+
+                            modalInteraction.reply({
+                                content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo ${attribute}! Agora você possui ${newInfo.stats[attributeInfo.atrField]} pontos neste atributo!`,
+                                ephemeral: true,
+                            });
+                            interaction.message.edit({
+                                content: "",
+                                files: [attachment],
+                            });
+                        });
+                    };
+
+                    //Collector dos atributos
                     const collectorAtr = reply.createMessageComponentCollector({
                         componentType: ComponentType.StringSelect,
                         filter: (i) =>
@@ -1007,503 +755,9 @@ module.exports = {
                         time: 60_000,
                     });
                     collectorAtr.on("collect", async (interaction) => {
-                        //Informações do Personagem Atualizadas
-                        const updatedcharacterInfo = await characterProfile.findOne({
-                            userID: user.id,
-                            "info.name": character,
-                        });
-
-                        switch (interaction.values[0]) {
-                            case "editAtrCON":
-                                const CONModal = {
-                                    title: "Editar Atributo - Constituição (CON)",
-                                    custom_id: "editCONModal",
-                                    components: [
-                                        {
-                                            type: 1,
-                                            components: [
-                                                {
-                                                    type: 4,
-                                                    custom_id: "quantityCON",
-                                                    label: "Quantidade:",
-                                                    placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a estre atributo.",
-                                                    min_length: 1,
-                                                    max_length: 3,
-                                                    style: 1,
-                                                    required: true
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                };
-
-                                await interaction.showModal(CONModal); //Mostrar modal para o usuário
-
-                                interaction.awaitModalSubmit({
-                                    filter: (i) =>
-                                        i.user.id === interaction.user.id &&
-                                        i.customId === "editCONModal",
-                                    time: 5 * 60_000,
-                                }).then(async (modalInteraction) => {
-                                    const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityCON"));
-                                    const currentQuantity = updatedcharacterInfo.stats.atrCON;
-                                    const quantity = quantityToAdd + currentQuantity;
-
-                                    const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                    if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                        modalInteraction.reply({
-                                            content: "Você tem que colocar um número positivo válido.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-                                    if (atrPoints < 0) {
-                                        modalInteraction.reply({
-                                            content: "Você não tem pontos suficientes para esta ação.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-
-                                    const newInfo = await characterProfile.findOneAndUpdate(
-                                        {
-                                            userID: user.id,
-                                            "info.name": character,
-                                        },
-                                        {
-                                            "stats.atrPoints": atrPoints,
-                                            "stats.atrCON": quantity
-                                        },
-                                        {
-                                            returnOriginal: false,
-                                        }
-                                    );
-
-                                    const banner = await createBanner(newInfo, user);
-                                    const attachment = new AttachmentBuilder(banner, {
-                                        name: "banner.png",
-                                    });
-
-                                    modalInteraction.reply({
-                                        content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Constituição (CON)! Agora você possui ${newInfo.stats.atrCON} pontos neste atributo!`,
-                                        ephemeral: true,
-                                    });
-                                    interaction.message.edit({
-                                        content: "",
-                                        files: [attachment],
-                                    })
-                                })
-                                break;
-
-                            case "editAtrFOR":
-                                const FORModal = {
-                                    title: "Editar Atributo - Força (FOR)",
-                                    custom_id: "editFORModal",
-                                    components: [
-                                        {
-                                            type: 1,
-                                            components: [
-                                                {
-                                                    type: 4,
-                                                    custom_id: "quantityFOR",
-                                                    label: "Quantidade:",
-                                                    placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                    min_length: 1,
-                                                    max_length: 3,
-                                                    style: 1,
-                                                    required: true
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                };
-
-                                await interaction.showModal(FORModal);
-
-                                interaction.awaitModalSubmit({
-                                    filter: (i) =>
-                                        i.user.id === interaction.user.id &&
-                                        i.customId === "editFORModal",
-                                    time: 5 * 60_000,
-                                }).then(async (modalInteraction) => {
-                                    const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityFOR"));
-                                    const currentQuantity = updatedcharacterInfo.stats.atrFOR;
-                                    const quantity = quantityToAdd + currentQuantity;
-
-                                    const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                    if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                        modalInteraction.reply({
-                                            content: "Você tem que colocar um número positivo válido.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-                                    if (atrPoints < 0) {
-                                        modalInteraction.reply({
-                                            content: "Você não tem pontos suficientes para esta ação.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-
-                                    const newInfo = await characterProfile.findOneAndUpdate(
-                                        {
-                                            userID: user.id,
-                                            "info.name": character,
-                                        },
-                                        {
-                                            "stats.atrPoints": atrPoints,
-                                            "stats.atrFOR": quantity
-                                        },
-                                        {
-                                            returnOriginal: false,
-                                        }
-                                    );
-
-                                    const banner = await createBanner(newInfo, user);
-                                    const attachment = new AttachmentBuilder(banner, {
-                                        name: "banner.png",
-                                    });
-
-                                    modalInteraction.reply({
-                                        content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Força (FOR)! Agora você possui ${newInfo.stats.atrFOR} pontos neste atributo!`,
-                                        ephemeral: true,
-                                    });
-                                    interaction.message.edit({
-                                        content: "",
-                                        files: [attachment],
-                                    });
-                                });
-                                break;
-
-                            case "editAtrAGI":
-                                const AGIModal = {
-                                    title: "Editar Atributo - Agilidade (AGI)",
-                                    custom_id: "editAGIModal",
-                                    components: [
-                                        {
-                                            type: 1,
-                                            components: [
-                                                {
-                                                    type: 4,
-                                                    custom_id: "quantityAGI",
-                                                    label: "Quantidade:",
-                                                    placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                    min_length: 1,
-                                                    max_length: 3,
-                                                    style: 1,
-                                                    required: true
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                };
-
-                                await interaction.showModal(AGIModal);
-
-                                interaction.awaitModalSubmit({
-                                    filter: (i) =>
-                                        i.user.id === interaction.user.id &&
-                                        i.customId === "editAGIModal",
-                                    time: 5 * 60_000,
-                                }).then(async (modalInteraction) => {
-                                    const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityAGI"));
-                                    const currentQuantity = updatedcharacterInfo.stats.atrAGI;
-                                    const quantity = quantityToAdd + currentQuantity;
-
-                                    const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                    if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                        modalInteraction.reply({
-                                            content: "Você tem que colocar um número positivo válido.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-                                    if (atrPoints < 0) {
-                                        modalInteraction.reply({
-                                            content: "Você não tem pontos suficientes para esta ação.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-
-                                    const newInfo = await characterProfile.findOneAndUpdate(
-                                        {
-                                            userID: user.id,
-                                            "info.name": character,
-                                        },
-                                        {
-                                            "stats.atrPoints": atrPoints,
-                                            "stats.atrAGI": quantity
-                                        },
-                                        {
-                                            returnOriginal: false,
-                                        }
-                                    );
-
-                                    const banner = await createBanner(newInfo, user);
-                                    const attachment = new AttachmentBuilder(banner, {
-                                        name: "banner.png",
-                                    });
-
-                                    modalInteraction.reply({
-                                        content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Agilidade (AGI)! Agora você possui ${newInfo.stats.atrAGI} pontos neste atributo!`,
-                                        ephemeral: true,
-                                    });
-                                    interaction.message.edit({
-                                        content: "",
-                                        files: [attachment],
-                                    });
-                                });
-                                break;
-                            case "editAtrINT":
-                                const INTModal = {
-                                    title: "Editar Atributo - Inteligência (INT)",
-                                    custom_id: "editINTModal",
-                                    components: [
-                                        {
-                                            type: 1,
-                                            components: [
-                                                {
-                                                    type: 4,
-                                                    custom_id: "quantityINT",
-                                                    label: "Quantidade:",
-                                                    placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                    min_length: 1,
-                                                    max_length: 3,
-                                                    style: 1,
-                                                    required: true
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                };
-
-                                await interaction.showModal(INTModal);
-
-                                interaction.awaitModalSubmit({
-                                    filter: (i) =>
-                                        i.user.id === interaction.user.id &&
-                                        i.customId === "editINTModal",
-                                    time: 5 * 60_000,
-                                }).then(async (modalInteraction) => {
-                                    const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityINT"));
-                                    const currentQuantity = updatedcharacterInfo.stats.atrINT;
-                                    const quantity = quantityToAdd + currentQuantity;
-
-                                    const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                    if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                        modalInteraction.reply({
-                                            content: "Você tem que colocar um número positivo válido.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-                                    if (atrPoints < 0) {
-                                        modalInteraction.reply({
-                                            content: "Você não tem pontos suficientes para esta ação.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-
-                                    const newInfo = await characterProfile.findOneAndUpdate(
-                                        {
-                                            userID: user.id,
-                                            "info.name": character,
-                                        },
-                                        {
-                                            "stats.atrPoints": atrPoints,
-                                            "stats.atrINT": quantity
-                                        },
-                                        {
-                                            returnOriginal: false,
-                                        }
-                                    );
-
-                                    const banner = await createBanner(newInfo, user);
-                                    const attachment = new AttachmentBuilder(banner, {
-                                        name: "banner.png",
-                                    });
-
-                                    modalInteraction.reply({
-                                        content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Inteligência (INT)! Agora você possui ${newInfo.stats.atrINT} pontos neste atributo!`,
-                                        ephemeral: true,
-                                    });
-                                    interaction.message.edit({
-                                        content: "",
-                                        files: [attachment],
-                                    });
-                                });
-                                break;
-                            case "editAtrSAB":
-                                const SABModal = {
-                                    title: "Editar Atributo - Sabedoria (SAB)",
-                                    custom_id: "editSABModal",
-                                    components: [
-                                        {
-                                            type: 1,
-                                            components: [
-                                                {
-                                                    type: 4,
-                                                    custom_id: "quantitySAB",
-                                                    label: "Quantidade:",
-                                                    placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                    min_length: 1,
-                                                    max_length: 3,
-                                                    style: 1,
-                                                    required: true
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                };
-
-                                await interaction.showModal(SABModal);
-
-                                interaction.awaitModalSubmit({
-                                    filter: (i) =>
-                                        i.user.id === interaction.user.id &&
-                                        i.customId === "editSABModal",
-                                    time: 5 * 60_000,
-                                }).then(async (modalInteraction) => {
-                                    const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantitySAB"));
-                                    const currentQuantity = updatedcharacterInfo.stats.atrSAB;
-                                    const quantity = quantityToAdd + currentQuantity;
-
-                                    const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                    if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                        modalInteraction.reply({
-                                            content: "Você tem que colocar um número positivo válido.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-                                    if (atrPoints < 0) {
-                                        modalInteraction.reply({
-                                            content: "Você não tem pontos suficientes para esta ação.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-
-                                    const newInfo = await characterProfile.findOneAndUpdate(
-                                        {
-                                            userID: user.id,
-                                            "info.name": character,
-                                        },
-                                        {
-                                            "stats.atrPoints": atrPoints,
-                                            "stats.atrSAB": quantity
-                                        },
-                                        {
-                                            returnOriginal: false,
-                                        }
-                                    );
-
-                                    const banner = await createBanner(newInfo, user);
-                                    const attachment = new AttachmentBuilder(banner, {
-                                        name: "banner.png",
-                                    });
-
-                                    modalInteraction.reply({
-                                        content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Sabedoria (SAB)! Agora você possui ${newInfo.stats.atrSAB} pontos neste atributo!`,
-                                        ephemeral: true,
-                                    });
-                                    interaction.message.edit({
-                                        content: "",
-                                        files: [attachment],
-                                    });
-                                });
-                                break;
-                            case "editAtrCAR":
-                                const CARModal = {
-                                    title: "Editar Atributo - Carisma (CAR)",
-                                    custom_id: "editCARModal",
-                                    components: [
-                                        {
-                                            type: 1,
-                                            components: [
-                                                {
-                                                    type: 4,
-                                                    custom_id: "quantityCAR",
-                                                    label: "Quantidade:",
-                                                    placeholder: "Digite aqui a quantidade de pontos que você quer adicionar a este atributo.",
-                                                    min_length: 1,
-                                                    max_length: 3,
-                                                    style: 1,
-                                                    required: true
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                };
-
-                                await interaction.showModal(CARModal);
-
-                                interaction.awaitModalSubmit({
-                                    filter: (i) =>
-                                        i.user.id === interaction.user.id &&
-                                        i.customId === "editCARModal",
-                                    time: 5 * 60_000,
-                                }).then(async (modalInteraction) => {
-                                    const quantityToAdd = Number(modalInteraction.fields.getTextInputValue("quantityCAR"));
-                                    const currentQuantity = updatedcharacterInfo.stats.atrCAR;
-                                    const quantity = quantityToAdd + currentQuantity;
-
-                                    const atrPoints = updatedcharacterInfo.stats.atrPoints - quantityToAdd;
-
-                                    if (isNaN(quantityToAdd) || quantityToAdd < 1) {
-                                        modalInteraction.reply({
-                                            content: "Você tem que colocar um número positivo válido.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-                                    if (atrPoints < 0) {
-                                        modalInteraction.reply({
-                                            content: "Você não tem pontos suficientes para esta ação.",
-                                            ephemeral: true,
-                                        });
-                                        return;
-                                    };
-
-                                    const newInfo = await characterProfile.findOneAndUpdate(
-                                        {
-                                            userID: user.id,
-                                            "info.name": character,
-                                        },
-                                        {
-                                            "stats.atrPoints": atrPoints,
-                                            "stats.atrCAR": quantity
-                                        },
-                                        {
-                                            returnOriginal: false,
-                                        }
-                                    );
-
-                                    const banner = await createBanner(newInfo, user);
-                                    const attachment = new AttachmentBuilder(banner, {
-                                        name: "banner.png",
-                                    });
-
-                                    modalInteraction.reply({
-                                        content: `Você adicionou ${quantityToAdd} ponto(s) ao atributo Carisma (CAR)! Agora você possui ${newInfo.stats.atrCAR} pontos neste atributo!`,
-                                        ephemeral: true,
-                                    });
-                                    interaction.message.edit({
-                                        content: "",
-                                        files: [attachment],
-                                    });
-                                });
-                                break;
-                        }
-                    })
+                        const selectedAttribute = interaction.values[0].substring(7); // Remove "editAtr" prefix
+                        await handleAttributeEdit(interaction, user, character, selectedAttribute);
+                    });
                 })
                 break;
         };

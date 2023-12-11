@@ -13,7 +13,7 @@ const characterProfile = mongoose.Schema({
     }, //Colar de Contas do Personagem.
     avatar: { type: "String" }, //Avatar - Imagem de perfil do personagem, pode ser alterada. (Não é obrigatório.)
     banner: { type: "String" }, //Banner - imagem que normalmente representa o personagem, utilizada no status, pode ser alterada. (Não é obrigatório.)
-    money: { type: Number, default: 1 }, //Dracmas - Moeda utilizada na economia do servidor.
+    money: { type: Number, default: 50 }, //Dracmas - Moeda utilizada na economia do servidor.
     xp: { type: Number, default: 0 },
     mana: {
       base: { type: Number, default: 100 }, //Mana Base
@@ -25,7 +25,7 @@ const characterProfile = mongoose.Schema({
     }, //HP
   },
   stats: {
-    atrPoints: { type: Number, default: 36 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
+    atrPoints: { type: Number, default: 0 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
     atrCON: { type: Number, default: 0 }, //Atributo - Constituição
     atrFOR: { type: Number, default: 0 }, //Atributo - Força
     atrAGI: { type: Number, default: 0 }, //Atributo - Agilidade

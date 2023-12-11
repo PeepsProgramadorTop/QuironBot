@@ -25,7 +25,8 @@ module.exports = {
         }));
 
         switch (names.lenght) {
-            case 1:
+            case 0:
+                interaction.editReply("Este usuário não tem personagens.");
                 break;
             default:
                 const actionRowAvatar = {
