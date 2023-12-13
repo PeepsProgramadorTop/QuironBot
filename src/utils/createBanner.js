@@ -145,7 +145,13 @@ async function createBanner(characterInfo, user) {
   context.font = "24px GG Sans Medium";
   context.fillStyle = "#f7f7f7";
   context.fillText(
-    `${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP`,
+    `${
+      characterInfo.info.hitPoints.current +
+      Math.floor((characterInfo.stats.atrCON - 10) / 2)
+    }/${
+      characterInfo.info.hitPoints.base +
+      Math.floor((characterInfo.stats.atrCON - 10) / 2)
+    }HP`,
     802,
     692
   );
@@ -168,32 +174,44 @@ async function createBanner(characterInfo, user) {
   context.fillStyle = "#76787B";
   context.fillText(`×${characterInfo.stats.atrPoints}`, 305, 587);
   context.fillText(
-    `×${characterInfo.stats.atrCON}(${Math.floor((atrCON - 10) / 2)})`,
+    `×${characterInfo.stats.atrCON}(${Math.floor(
+      (characterInfo.stats.atrCON - 10) / 2
+    )})`,
     305,
     660
   );
   context.fillText(
-    `×${characterInfo.stats.atrFOR}(${Math.floor((atrFOR - 10) / 2)})`,
+    `×${characterInfo.stats.atrFOR}(${Math.floor(
+      (characterInfo.stats.atrFOR - 10) / 2
+    )})`,
     228,
     708
   );
   context.fillText(
-    `×${characterInfo.stats.atrAGI}(${Math.floor((atrAGI - 10) / 2)})`,
+    `×${characterInfo.stats.atrAGI}(${Math.floor(
+      (characterInfo.stats.atrAGI - 10) / 2
+    )})`,
     260,
     756
   );
   context.fillText(
-    `×${characterInfo.stats.atrINT}(${Math.floor((atrINT - 10) / 2)})`,
+    `×${characterInfo.stats.atrINT}(${Math.floor(
+      (characterInfo.stats.atrINT - 10) / 2
+    )})`,
     637,
     660
   );
   context.fillText(
-    `×${characterInfo.stats.atrSAB}(${Math.floor((atrSAB - 10) / 2)})`,
+    `×${characterInfo.stats.atrSAB}(${Math.floor(
+      (characterInfo.stats.atrSAB - 10) / 2
+    )})`,
     631,
     708
   );
   context.fillText(
-    `×${characterInfo.stats.atrCAR}(${Math.floor((atrCAR - 10) / 2)})`,
+    `×${characterInfo.stats.atrCAR}(${Math.floor(
+      (characterInfo.stats.atrCAR - 10) / 2
+    )})`,
     613,
     756
   );

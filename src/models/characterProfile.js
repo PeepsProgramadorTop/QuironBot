@@ -14,7 +14,7 @@ const characterProfile = mongoose.Schema({
     avatar: { type: "String" }, //Avatar - Imagem de perfil do personagem, pode ser alterada. (Não é obrigatório.)
     banner: { type: "String" }, //Banner - imagem que normalmente representa o personagem, utilizada no status, pode ser alterada. (Não é obrigatório.)
     money: { type: Number, default: 50 }, //Dracmas - Moeda utilizada na economia do servidor.
-    xp: { type: Number, default: 0 },
+    xp: { type: Number, default: 1 },
     mana: {
       base: { type: Number, default: 100 }, //Mana Base
       current: { type: Number, default: 0 }, //Mana Atual

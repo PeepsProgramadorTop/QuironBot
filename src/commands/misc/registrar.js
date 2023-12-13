@@ -177,8 +177,8 @@ module.exports = {
             avatar: avatar, //Avatar do Personagem
             nicknames: nicknames, //Apelidos do Personagem
             hitPoints: {
-              base: valores.vida_base + Math.floor((atrCON - 10) / 2), //HP Base
-              current: valores.vida_base + Math.floor((atrCON - 10) / 2), //HP Atual
+              base: valores.vida_base, //HP Base
+              current: valores.vida_base, //HP Atual
             }, //HP
           },
         },
