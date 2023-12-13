@@ -7,7 +7,7 @@ const characterProfile = mongoose.Schema({
     name: { type: "String", required: true }, //Nome - Utilizado para identificar o personagem.
     cabin: { type: "String", required: true }, //Chalé - O chalé do personagem
     nicknames: { type: "String", default: "Nenhum apelido." }, //Apelidos - Nomes exibidos debaixo do nome de exibição no banner.
-    necklace_beads: { 
+    necklace_beads: {
       amount: { type: Number, default: 0 }, //Quantidade de contas
       beads: [{ body: String }], //As contas
     }, //Colar de Contas do Personagem.

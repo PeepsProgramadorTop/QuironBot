@@ -2,136 +2,151 @@
   {
     "name": "Zeus",
     "value": "Zeus",
+    "vida_base": 12,
+    "vida_up": 7,
     "skills": ["Atletismo", "Intimidação", "Persuasão"],
     "Atributos": {
-      "Destreza": "+3",
-      "Força": "+2"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Poseidon",
     "value": "Poseidon",
+    "vida_base": 12,
+    "vida_up": 7,
     "skills": ["Adestrar Animais", "Atletismo", "Sobrevivência"],
     "Atributos": {
-      "Destreza": "+3",
-      "Sabedoria": "+2"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Demeter",
     "value": "Demeter",
+    "vida_base": 12,
+    "vida_up": 7,
     "skills": ["Natureza", "Sobrevivência"],
     "Atributos": {
-      "Inteligência": "+2",
-      "Sabedoria": "+3"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Ares",
     "value": "Ares",
+    "vida_base": 12,
+    "vida_up": 7,
     "skills": ["Atletismo", "Intimidação"],
     "Atributos": {
-      "Constituição": "+2",
-      "Força": "+2"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Atena",
     "value": "Atena",
+    "vida_base": 8,
+    "vida_up": 5,
     "skills": ["História", "Sobrevivência"],
     "Atributos": {
-      "Inteligência": "+3",
-      "Sabedoria": "+1"
+      "Constituição": "+1"
     }
   },
   {
     "name": "Apolo",
     "value": "Apolo",
+    "vida_base": 10,
+    "vida_up": 5,
     "skills": ["Atletismo", "Medicina", "Atuação"],
     "Atributos": {
-      "Sabedoria": "+3",
-      "Carisma": "+1"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Hefesto",
     "value": "Hefesto",
+    "vida_base": 12,
+    "vida_up": 7,
     "skills": ["Metalurgia", "Hardware"],
     "Atributos": {
-      "Força": "+2",
-      "Inteligência": "+2"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Afrodite",
     "value": "Afrodite",
+    "vida_base": 8,
+    "vida_up": 5,
     "skills": ["Persuasão", "Intuição"],
     "Atributos": {
-      "Carisma": "+3",
-      "Inteligência": "+1"
+      "Constituição": "+1"
     }
   },
   {
     "name": "Hermes",
     "value": "Hermes",
+    "vida_base": 10,
+    "vida_up": 6,
     "skills": ["Enganação", "Furtividade"],
     "Atributos": {
-      "Destreza": "+2",
-      "Carisma": "+2"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Dionisio",
     "value": "Dionisio",
+    "vida_base": 8,
+    "vida_up": 5,
     "skills": ["Atuação", "Persuasão", "Ofício(Vinho)"],
     "Atributos": {
-      "Carisma": "+2",
-      "Inteligência": "+2"
+      "Constituição": "+1"
     }
   },
   {
     "name": "Hades",
     "value": "Hades",
+    "vida_base": 12,
+    "vida_up": 7,
     "skills": ["Intimidação", "Enganação"],
     "Atributos": {
-      "Destreza": "+3",
-      "Carisma": "+2"
+      "Constituição": "+2"
     }
   },
   {
     "name": "Íris",
     "value": "Íris",
+    "vida_base": 8,
+    "vida_up": 5,
     "skills": ["Atletismo", "Percepção"],
     "Atributos": {
-      "Carisma": "+2",
-      "Destreza": "+1"
+      "Constituição": "+1"
     }
   },
   {
     "name": "Hipnos",
     "value": "Hipnos",
+    "vida_base": 8,
+    "vida_up": 5,
     "skills": ["Enganação", "Persuasão"],
     "Atributos": {
-      "Constituição": "+1",
-      "Inteligência": "+2"
+      "Constituição": "+1"
     }
   },
   {
     "name": "Nêmesis",
     "value": "Nêmesis",
+    "vida_base": 8,
+    "vida_up": 5,
     "skills": ["Persuasão", "Investigação"],
     "Atributos": {
-      "Inteligência": "+2",
-      "Carisma": "+1"
+      "Constituição": "+1"
     }
   },
   {
     "name": "Nike",
     "value": "Nike",
+    "vida_base": 10,
+    "vida_up": 6,
     "skills": ["Acrobacia", "Atletismo"],
     "Atributos": {
-      "Destreza": "+2",
-      "Inteligência": "+1"
+      "Constituição": "+2"
     }
   }
 ]
