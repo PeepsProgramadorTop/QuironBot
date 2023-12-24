@@ -6,7 +6,12 @@
     "vida_up": 7,
     "skills": ["Atletismo", "Intimidação", "Persuasão"],
     "Atributos": {
-      "Constituição": "+2"
+      "DES": 3,
+      "FOR": 2,
+      "CON": 0,
+      "CAR": 0,
+      "INT": 0,
+      "SAB": 0
     }
   },
   {
@@ -16,17 +21,27 @@
     "vida_up": 7,
     "skills": ["Adestrar Animais", "Atletismo", "Sobrevivência"],
     "Atributos": {
-      "Constituição": "+2"
+      "SAB": 2,
+      "DES": 3,
+      "FOR": 0,
+      "CON": 0,
+      "CAR": 0,
+      "INT": 0
     }
   },
   {
-    "name": "Demeter",
-    "value": "Demeter",
+    "name": "Deméter",
+    "value": "Deméter",
     "vida_base": 12,
     "vida_up": 7,
     "skills": ["Natureza", "Sobrevivência"],
     "Atributos": {
-      "Constituição": "+2"
+      "INT": 2,
+      "SAB": 3,
+      "DES": 0,
+      "FOR": 0,
+      "CON": 0,
+      "CAR": 0
     }
   },
   {
@@ -36,7 +51,12 @@
     "vida_up": 7,
     "skills": ["Atletismo", "Intimidação"],
     "Atributos": {
-      "Constituição": "+2"
+      "CON": 2,
+      "FOR": 2,
+      "DES": 0,
+      "CAR": 0,
+      "INT": 0,
+      "SAB": 0
     }
   },
   {
@@ -46,7 +66,12 @@
     "vida_up": 5,
     "skills": ["História", "Sobrevivência"],
     "Atributos": {
-      "Constituição": "+1"
+      "INT": 3,
+      "SAB": 1,
+      "DES": 0,
+      "FOR": 0,
+      "CON": 0,
+      "CAR": 0
     }
   },
   {
@@ -56,7 +81,12 @@
     "vida_up": 5,
     "skills": ["Atletismo", "Medicina", "Atuação"],
     "Atributos": {
-      "Constituição": "+2"
+      "SAB": 3,
+      "CAR": 1,
+      "DES": 0,
+      "FOR": 0,
+      "CON": 0,
+      "INT": 0
     }
   },
   {
@@ -66,7 +96,12 @@
     "vida_up": 7,
     "skills": ["Metalurgia", "Hardware"],
     "Atributos": {
-      "Constituição": "+2"
+      "FOR": 2,
+      "INT": 2,
+      "DES": 0,
+      "CON": 0,
+      "CAR": 0,
+      "SAB": 0
     }
   },
   {
@@ -76,7 +111,12 @@
     "vida_up": 5,
     "skills": ["Persuasão", "Intuição"],
     "Atributos": {
-      "Constituição": "+1"
+      "CAR": 3,
+      "INT": 1,
+      "DES": 0,
+      "FOR": 0,
+      "CON": 0,
+      "SAB": 0
     }
   },
   {
@@ -86,17 +126,27 @@
     "vida_up": 6,
     "skills": ["Enganação", "Furtividade"],
     "Atributos": {
-      "Constituição": "+2"
+      "DES": 2,
+      "CAR": 2,
+      "INT": 0,
+      "FOR": 0,
+      "CON": 0,
+      "SAB": 0
     }
   },
   {
-    "name": "Dionisio",
-    "value": "Dionisio",
+    "name": "Dionísio",
+    "value": "Dionísio",
     "vida_base": 8,
     "vida_up": 5,
     "skills": ["Atuação", "Persuasão", "Ofício(Vinho)"],
     "Atributos": {
-      "Constituição": "+1"
+      "CAR": 2,
+      "INT": 2,
+      "DES": 0,
+      "FOR": 0,
+      "CON": 0,
+      "SAB": 0
     }
   },
   {
@@ -106,7 +156,12 @@
     "vida_up": 7,
     "skills": ["Intimidação", "Enganação"],
     "Atributos": {
-      "Constituição": "+2"
+      "DES": 3,
+      "CAR": 2,
+      "INT": 0,
+      "FOR": 0,
+      "CON": 0,
+      "SAB": 0
     }
   },
   {
@@ -116,7 +171,12 @@
     "vida_up": 5,
     "skills": ["Atletismo", "Percepção"],
     "Atributos": {
-      "Constituição": "+1"
+      "CAR": 2,
+      "DES": 1,
+      "INT": 0,
+      "FOR": 0,
+      "CON": 0,
+      "SAB": 0
     }
   },
   {
@@ -126,7 +186,12 @@
     "vida_up": 5,
     "skills": ["Enganação", "Persuasão"],
     "Atributos": {
-      "Constituição": "+1"
+      "CON": 1,
+      "INT": 2,
+      "DES": 0,
+      "FOR": 0,
+      "CAR": 0,
+      "SAB": 0
     }
   },
   {
@@ -136,17 +201,27 @@
     "vida_up": 5,
     "skills": ["Persuasão", "Investigação"],
     "Atributos": {
-      "Constituição": "+1"
+      "INT": 2,
+      "CAR": 1,
+      "DES": 0,
+      "FOR": 0,
+      "CON": 0,
+      "SAB": 0
     }
   },
   {
-    "name": "Nike",
-    "value": "Nike",
+    "name": "Hecate",
+    "value": "Hecate",
     "vida_base": 10,
     "vida_up": 6,
-    "skills": ["Acrobacia", "Atletismo"],
+    "skills": ["Persuasão", "Investigação"],
     "Atributos": {
-      "Constituição": "+2"
+      "INT": 2,
+      "CAR": 0,
+      "DES": 0,
+      "FOR": 0,
+      "CON": 0,
+      "SAB": 3
     }
   }
 ]

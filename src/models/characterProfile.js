@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const globalVariables = require("../globalVariables.json");
 
 const characterProfile = mongoose.Schema({
   userID: { type: "String" }, //ID do Usuário - Utilizado para identificar a quem este personagem pertence.
@@ -26,13 +27,52 @@ const characterProfile = mongoose.Schema({
   },
   stats: {
     atrPoints: { type: Number, default: 0 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
-    atrCON: { type: Number, default: 0 }, //Atributo - Constituição
-    atrFOR: { type: Number, default: 0 }, //Atributo - Força
-    atrAGI: { type: Number, default: 0 }, //Atributo - Agilidade
-    atrINT: { type: Number, default: 0 }, //Atributo - Inteligência
-    atrSAB: { type: Number, default: 0 }, //Atributo - Sabedoria
-    atrCAR: { type: Number, default: 0 }, //Atributo - Carisma
+    atrCON: {
+      base: { type: Number, default: 8 },
+      mod: { type: Number, default: 0 },
+    }, //Atributo - Constituição
+    atrFOR: {
+      base: { type: Number, default: 8 },
+      mod: { type: Number, default: 0 },
+    }, //Atributo - Força
+    atrAGI: {
+      base: { type: Number, default: 8 },
+      mod: { type: Number, default: 0 },
+    }, //Atributo - Agilidade
+    atrINT: {
+      base: { type: Number, default: 8 },
+      mod: { type: Number, default: 0 },
+    }, //Atributo - Inteligência
+    atrSAB: {
+      base: { type: Number, default: 8 },
+      mod: { type: Number, default: 0 },
+    }, //Atributo - Sabedoria
+    atrCAR: {
+      base: { type: Number, default: 8 },
+      mod: { type: Number, default: 0 },
+    }, //Atributo - Carisma
   }, //Atributos do Personagem
+  skills: {
+    Atletismo: { type: Number, default: 0 },
+    Acrobacia: { type: Number, default: 0 },
+    Furtividade: { type: Number, default: 0 },
+    Prestidigitação: { type: Number, default: 0 },
+    Arcanismo: { type: Number, default: 0 },
+    História: { type: Number, default: 0 },
+    Investigação: { type: Number, default: 0 },
+    Natureza: { type: Number, default: 0 },
+    Intuição: { type: Number, default: 0 },
+    Adestrar: { type: Number, default: 0 },
+    Medicina: { type: Number, default: 0 },
+    Percepção: { type: Number, default: 0 },
+    Sobrevivência: { type: Number, default: 0 },
+    Atuação: { type: Number, default: 0 },
+    Enganação: { type: Number, default: 0 },
+    Intimidação: { type: Number, default: 0 },
+    Persuasão: { type: Number, default: 0 },
+    Metalurgia: { type: Number, default: 0 },
+    Hardware: { type: Number, default: 0 },
+  },
 });
 
 module.exports = mongoose.model("characterProfile", characterProfile);

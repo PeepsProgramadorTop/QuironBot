@@ -145,13 +145,7 @@ async function createBanner(characterInfo, user) {
   context.font = "24px GG Sans Medium";
   context.fillStyle = "#f7f7f7";
   context.fillText(
-    `${
-      characterInfo.info.hitPoints.current +
-      Math.floor((characterInfo.stats.atrCON - 10) / 2)
-    }/${
-      characterInfo.info.hitPoints.base +
-      Math.floor((characterInfo.stats.atrCON - 10) / 2)
-    }HP`,
+    `${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP`,
     802,
     692
   );
@@ -174,44 +168,32 @@ async function createBanner(characterInfo, user) {
   context.fillStyle = "#76787B";
   context.fillText(`×${characterInfo.stats.atrPoints}`, 305, 587);
   context.fillText(
-    `×${characterInfo.stats.atrCON}(${Math.floor(
-      (characterInfo.stats.atrCON - 10) / 2
-    )})`,
+    `×${characterInfo.stats.atrCON.base}(${characterInfo.stats.atrCON.mod})`,
     305,
     660
   );
   context.fillText(
-    `×${characterInfo.stats.atrFOR}(${Math.floor(
-      (characterInfo.stats.atrFOR - 10) / 2
-    )})`,
+    `×${characterInfo.stats.atrFOR.base}(${characterInfo.stats.atrFOR.mod})`,
     228,
     708
   );
   context.fillText(
-    `×${characterInfo.stats.atrAGI}(${Math.floor(
-      (characterInfo.stats.atrAGI - 10) / 2
-    )})`,
+    `×${characterInfo.stats.atrAGI.base}(${characterInfo.stats.atrAGI.mod})`,
     260,
     756
   );
   context.fillText(
-    `×${characterInfo.stats.atrINT}(${Math.floor(
-      (characterInfo.stats.atrINT - 10) / 2
-    )})`,
+    `×${characterInfo.stats.atrINT.base}(${characterInfo.stats.atrINT.mod})`,
     637,
     660
   );
   context.fillText(
-    `×${characterInfo.stats.atrSAB}(${Math.floor(
-      (characterInfo.stats.atrSAB - 10) / 2
-    )})`,
+    `×${characterInfo.stats.atrSAB.base}(${characterInfo.stats.atrSAB.mod})`,
     631,
     708
   );
   context.fillText(
-    `×${characterInfo.stats.atrCAR}(${Math.floor(
-      (characterInfo.stats.atrCAR - 10) / 2
-    )})`,
+    `×${characterInfo.stats.atrCAR.base}(${characterInfo.stats.atrCAR.mod})`,
     613,
     756
   );
