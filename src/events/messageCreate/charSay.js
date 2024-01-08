@@ -1,10 +1,10 @@
-const { WebhookClient } = require("discord.js");
+const { WebhookClient, ChannelType } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const webhookSchema = require("../../models/webhookSchema");
 
 module.exports = async (message, client) => {
     const user = message.author;
-    const channel = message.channel;
+    const channel = message.channel.type === ChannelType.PublicThread ? message.channel.parent : message.channel;
 
     const characterGroup = await characterProfile.find({ userID: user.id });
     const prefixes = characterGroup.map((data) => data.info.prefix);
@@ -44,6 +44,7 @@ module.exports = async (message, client) => {
                             character.info.name +
                             ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
                         avatarURL: character.info.avatar,
+                        threadId: message.channel.type === ChannelType.PublicThread ? message.channel.id : null
                     };
 
                     if (contentWithoutPrefix !== "") {
@@ -64,9 +65,9 @@ module.exports = async (message, client) => {
                     if (message.reference) {
                         try {
                             const repliedMessage = await message.channel.messages.fetch(message?.reference?.messageId);
-                            const userID = await characterProfile.findOne({ "info.name": repliedMessage.author.username.replace(/\s*\[\s*\d+\/\d+HP\s*\]\s*$/, '') });
+                            const repliedMessageAuthor = await characterProfile.findOne({ "info.name": repliedMessage.author.username.replace(/\s*\[\s*\d+\/\d+HP\s*\]\s*$/, '') });
                             if (repliedMessage) {
-                                webhookMessage.content = `In response to: <@${userID.userID}> [Original Message](${repliedMessage.url})\n\n${webhookMessage.content}`;
+                                webhookMessage.content = `> <:deco_chat:1180719307399905280>  Respondendo **@${repliedMessage.author.username}** (<@${repliedMessageAuthor.userID}>) - [Mensagem](${repliedMessage.url})\n\n${webhookMessage.content}`;
                             }
                         } catch (error) {
                             console.error("Erro ao buscar mensagem original:", error);
@@ -88,6 +89,7 @@ module.exports = async (message, client) => {
                     character.info.name +
                     ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
                 avatarURL: character.info.avatar,
+                threadId: message.channel.type === ChannelType.PublicThread ? message.channel.id : null
             };
 
             if (contentWithoutPrefix !== "") {

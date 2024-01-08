@@ -5,6 +5,7 @@ const {
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const { createBanner } = require("../../utils/createBanner");
+const { getLifeInfo } = require("../../utils/rpInfo");
 const Canvas = require("@napi-rs/canvas");
 const { join } = require("path");
 Canvas.GlobalFonts.registerFromPath(
@@ -32,10 +33,31 @@ module.exports = {
                 interaction.editReply("Você não tem um personagem.")
                 break;
             case 1:
-                const characterInfo = await characterProfile.findOne({
+                const oldData = await characterProfile.findOne({
                     userID: user.id,
                     "info.name": names[0].name,
                 });
+
+                const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
+                const xpPoints = oldData.info.level.xpPoints;
+                const level = (Math.floor(xpPoints / 1000) - 1);
+                const CON = Math.floor((oldData.stats.atrCON / 2) - 5);
+
+                const characterInfo = await characterProfile.findOneAndUpdate(
+                    {
+                        userID: user.id,
+                        "info.name": oldData.info.name,
+                    },
+                    {
+                        $set: {
+                            "info.hitPoints.base": (base + CON) + ((level * (bonusPerLvl + CON))),
+                            "info.hitPoints.current": oldData.info.hitPoints.current > ((base + CON) + ((level * (bonusPerLvl + CON)))) || oldData.info.hitPoints.current == oldData.info.hitPoints.base ? (base + CON) + ((level * (bonusPerLvl + CON))) : oldData.info.hitPoints.current,
+                        },
+                    },
+                    {
+                        returnOriginal: false,
+                    },
+                );
 
                 const character = characterInfo.info.name;
 
@@ -425,10 +447,31 @@ module.exports = {
                 });
                 collector.on("collect", async (interaction) => {
                     const character = interaction.values[0];
-                    const characterInfo = await characterProfile.findOne({
+                    const oldData = await characterProfile.findOne({
                         userID: user.id,
                         "info.name": character,
                     });
+
+                    const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
+                    const xpPoints = oldData.info.level.xpPoints;
+                    const level = (Math.floor(xpPoints / 1000) - 1);
+                    const CON = Math.floor((oldData.stats.atrCON / 2) - 5);
+
+                    const characterInfo = await characterProfile.findOneAndUpdate(
+                        {
+                            userID: user.id,
+                            "info.name": character,
+                        },
+                        {
+                            $set: {
+                                "info.hitPoints.base": (base + CON) + ((level * (bonusPerLvl + CON))),
+                                "info.hitPoints.current": oldData.info.hitPoints.current > ((base + CON) + ((level * (bonusPerLvl + CON)))) || oldData.info.hitPoints.current == oldData.info.hitPoints.base ? (base + CON) + ((level * (bonusPerLvl + CON))) : oldData.info.hitPoints.current,
+                            },
+                        },
+                        {
+                            returnOriginal: false,
+                        },
+                    );
 
                     const banner = await createBanner(characterInfo, user);
                     const attachment = new AttachmentBuilder(banner, {

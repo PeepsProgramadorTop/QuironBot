@@ -120,7 +120,7 @@ module.exports = {
         const description = interaction.options.get("desc").value;
         const image = interaction.options.getAttachment("imagem");
         const bead = interaction.options.getAttachment("conta");
-        const channel = client.channels.cache.get("1156525267934781470");
+        const channel = client.channels.cache.get("1183159793662308412");
         const missionID = uuidv4();
 
         const check = await missionSchema.findOne({
