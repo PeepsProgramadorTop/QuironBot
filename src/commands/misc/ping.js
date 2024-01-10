@@ -9,12 +9,12 @@ module.exports = {
       option
         .setName("avatar")
         .setDescription("Avatar/imagem do personagem que você quer criar.")
-        .setRequired(false)
+        .setRequired(false),
     ),
   run: async ({ client, interaction }) => {
     const teste = await axios.get(
       interaction.options.getAttachment("avatar").url,
-      { responseType: "arraybuffer" }
+      { responseType: "arraybuffer" },
     );
     const buffer = Buffer.from(teste.data);
     const attachment = new AttachmentBuilder(buffer, { name: "teste.png" });

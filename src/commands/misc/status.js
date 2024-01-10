@@ -10,7 +10,7 @@ const Canvas = require("@napi-rs/canvas");
 const { join } = require("path");
 Canvas.GlobalFonts.registerFromPath(
   join(__dirname, "../..", "fonts", "gg_sans_medium.ttf"),
-  "GG Sans Medium"
+  "GG Sans Medium",
 );
 
 module.exports = {
@@ -61,7 +61,7 @@ module.exports = {
           },
           {
             returnOriginal: false,
-          }
+          },
         );
 
         const character = characterInfo.info.name;
@@ -255,7 +255,7 @@ module.exports = {
                 },
                 {
                   returnOriginal: false,
-                }
+                },
               );
 
               const banner = await createBanner(newInfo, user);
@@ -326,7 +326,7 @@ module.exports = {
           interaction,
           user,
           character,
-          attribute
+          attribute,
         ) => {
           const updatedcharacterInfo = await characterProfile.findOne({
             userID: user.id,
@@ -352,8 +352,8 @@ module.exports = {
             .then(async (modalInteraction) => {
               const quantityToAdd = Number(
                 modalInteraction.fields.getTextInputValue(
-                  `quantity${attribute}`
-                )
+                  `quantity${attribute}`,
+                ),
               );
               const currentQuantity =
                 updatedcharacterInfo.stats[attributeInfo.atrField];
@@ -390,7 +390,7 @@ module.exports = {
                 updateFields,
                 {
                   returnOriginal: false,
-                }
+                },
               );
 
               const banner = await createBanner(newInfo, user);
@@ -424,7 +424,7 @@ module.exports = {
             interaction,
             user,
             character,
-            selectedAttribute
+            selectedAttribute,
           );
         });
         break;
@@ -516,7 +516,7 @@ module.exports = {
             },
             {
               returnOriginal: false,
-            }
+            },
           );
 
           const banner = await createBanner(characterInfo, user);
@@ -710,7 +710,7 @@ module.exports = {
                   },
                   {
                     returnOriginal: false,
-                  }
+                  },
                 );
 
                 const banner = await createBanner(newInfo, user);
@@ -781,7 +781,7 @@ module.exports = {
             interaction,
             user,
             character,
-            attribute
+            attribute,
           ) => {
             const updatedcharacterInfo = await characterProfile.findOne({
               userID: user.id,
@@ -807,8 +807,8 @@ module.exports = {
               .then(async (modalInteraction) => {
                 const quantityToAdd = Number(
                   modalInteraction.fields.getTextInputValue(
-                    `quantity${attribute}`
-                  )
+                    `quantity${attribute}`,
+                  ),
                 );
                 const currentQuantity =
                   updatedcharacterInfo.stats[attributeInfo.atrField];
@@ -845,7 +845,7 @@ module.exports = {
                   updateFields,
                   {
                     returnOriginal: false,
-                  }
+                  },
                 );
 
                 const banner = await createBanner(newInfo, user);
@@ -880,7 +880,7 @@ module.exports = {
               interaction,
               user,
               character,
-              selectedAttribute
+              selectedAttribute,
             );
           });
         });

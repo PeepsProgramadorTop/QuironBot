@@ -10,7 +10,7 @@ module.exports = {
       option
         .setName("usuario")
         .setDescription("Usuário que você quer editar o personagem.")
-        .setRequired(true)
+        .setRequired(true),
     )
     .setDefaultMemberPermissions(IntentsBitField.Flags.GuildModeration),
   run: async ({ interaction }) => {
@@ -309,7 +309,7 @@ module.exports = {
                   },
                   {
                     returnOriginal: false,
-                  }
+                  },
                 );
 
                 const xpPoints = newInfo.info.level.xpPoints;
@@ -493,7 +493,7 @@ module.exports = {
                   },
                   {
                     returnOriginal: false,
-                  }
+                  },
                 );
 
                 const xpPoints = newInfo.info.level.xpPoints;
@@ -578,8 +578,8 @@ module.exports = {
                 .then(async (modalInteraction) => {
                   const quantity = Number(
                     modalInteraction.fields.getTextInputValue(
-                      `quantity${sigla}`
-                    )
+                      `quantity${sigla}`,
+                    ),
                   );
 
                   const newInfo = await characterProfile.findOneAndUpdate(
@@ -592,7 +592,7 @@ module.exports = {
                     },
                     {
                       returnOriginal: false,
-                    }
+                    },
                   );
 
                   const xpPoints = newInfo.info.level.xpPoints;
@@ -670,8 +670,8 @@ module.exports = {
                   .then(async (modalInteraction) => {
                     const quantity = Number(
                       modalInteraction.fields.getTextInputValue(
-                        "quantityAtrPoints"
-                      )
+                        "quantityAtrPoints",
+                      ),
                     );
 
                     const newInfo = await characterProfile.findOneAndUpdate(
@@ -684,7 +684,7 @@ module.exports = {
                       },
                       {
                         returnOriginal: false,
-                      }
+                      },
                     );
 
                     const xpPoints = newInfo.info.level.xpPoints;

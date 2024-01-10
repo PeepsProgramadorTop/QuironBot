@@ -12,16 +12,16 @@ module.exports = {
       option
         .setName("prefixo")
         .setDescription(
-          "Prefixo utilizado para enviar mensagens com o personagem."
+          "Prefixo utilizado para enviar mensagens com o personagem.",
         )
-        .setRequired(true)
+        .setRequired(true),
     )
     //Opção - Nome
     .addStringOption((option) =>
       option
         .setName("nome")
         .setDescription("Nome do personagem que você quer criar.")
-        .setRequired(true)
+        .setRequired(true),
     )
     //Opção - Chalé
     .addStringOption((option) =>
@@ -47,32 +47,32 @@ module.exports = {
           { name: "Nike", value: "Nike" },
           { name: "Hebe", value: "Hebe" },
           { name: "Tique", value: "Tique" },
-          { name: "Hécate", value: "Hécate" }
+          { name: "Hécate", value: "Hécate" },
         )
-        .setRequired(true)
+        .setRequired(true),
     )
     //Opção - Apelidos
     .addStringOption((option) =>
       option
         .setName("apelidos")
         .setDescription("Apelidos para o personagem que você quer criar.")
-        .setRequired(false)
+        .setRequired(false),
     )
     //Opção - Avatar
     .addAttachmentOption((option) =>
       option
         .setName("avatar")
         .setDescription("Avatar/imagem do personagem que você quer criar.")
-        .setRequired(false)
+        .setRequired(false),
     )
     //Opção - Banner
     .addAttachmentOption((option) =>
       option
         .setName("banner")
         .setDescription(
-          "Imagem decorativa localizada no perfil do personagem, retangular, 958x400px recomendados."
+          "Imagem decorativa localizada no perfil do personagem, retangular, 958x400px recomendados.",
         )
-        .setRequired(false)
+        .setRequired(false),
     ),
   run: async ({ interaction }) => {
     await interaction.deferReply();
@@ -102,7 +102,7 @@ module.exports = {
     })) ?? { info: {} };
     if (check.info.name == name) {
       await interaction.editReply(
-        "Já existe um personagem com este nome, por favor tente outro."
+        "Já existe um personagem com este nome, por favor tente outro.",
       );
       return;
     }
@@ -182,7 +182,7 @@ module.exports = {
       },
       {
         upsert: true,
-      }
+      },
     );
 
     //Seta o playerProfile
@@ -196,7 +196,7 @@ module.exports = {
           name: user.username,
           guildID: guild.id,
         },
-      }
+      },
     );
   },
 };

@@ -17,7 +17,7 @@ module.exports = async (message, client) => {
     message.attachments.size > 0
   ) {
     const prefixUsed = prefixes.find((prefix) =>
-      message.content.startsWith(prefix)
+      message.content.startsWith(prefix),
     );
     if (!prefixUsed) return;
     const contentWithoutPrefix = message.content
@@ -74,12 +74,12 @@ module.exports = async (message, client) => {
           if (message.reference) {
             try {
               const repliedMessage = await message.channel.messages.fetch(
-                message?.reference?.messageId
+                message?.reference?.messageId,
               );
               const repliedMessageAuthor = await characterProfile.findOne({
                 "info.name": repliedMessage.author.username.replace(
                   /\s*\[\s*\d+\/\d+HP\s*\]\s*$/,
-                  ""
+                  "",
                 ),
               });
               if (repliedMessage) {
@@ -129,12 +129,12 @@ module.exports = async (message, client) => {
       if (message.reference) {
         try {
           const repliedMessage = await message.channel.messages.fetch(
-            message?.reference?.messageId
+            message?.reference?.messageId,
           );
           const repliedMessageAuthor = await characterProfile.findOne({
             "info.name": repliedMessage.author.username.replace(
               /\s*\[\s*\d+\/\d+HP\s*\]\s*$/,
-              ""
+              "",
             ),
           });
           if (repliedMessage) {
