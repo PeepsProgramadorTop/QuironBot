@@ -13,13 +13,13 @@ const { createCard } = require("../../utils/createBanner");
 const { getLifeInfo } = require("../../utils/rpInfo");
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("status")
-        .setDescription("Retorna o perfil do personagem escolhido."),
-    run: async ({ interaction }) => {
-        await interaction.deferReply();
+  data: new SlashCommandBuilder()
+    .setName("status")
+    .setDescription("Retorna o perfil do personagem escolhido."),
+  run: async ({ interaction }) => {
+    await interaction.deferReply();
 
-        const { user } = interaction;
+    const { user } = interaction;
 
         const charactersFromUser = await characterDB.find({ userID: user.id });
         const userCharactersList = charactersFromUser.map((data) => ({
