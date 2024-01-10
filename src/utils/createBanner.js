@@ -20,7 +20,7 @@ const adjustedText = (canvas, text) => {
     context.fillText(text, 360, heightSize);
 };
 
-async function createBanner(characterInfo, user) {
+async function createCard(characterInfo, user) {
     //------------------------------------------
     //Pegando e ajustando o avatar do Personagem
     //------------------------------------------
@@ -74,6 +74,18 @@ async function createBanner(characterInfo, user) {
     const aresCabin = await Canvas.loadImage("./src/images/secondLayer/ares.png");
     const athenaCabin = await Canvas.loadImage("./src/images/secondLayer/atena.png");
     const apolloCabin = await Canvas.loadImage("./src/images/secondLayer/apolo.png");
+    const arthemisCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const hephaestusCabin = await Canvas.loadImage("./src/images/secondLayer/hefesto.png");
+    const aphroditeCabin = await Canvas.loadImage("./src/images/secondLayer/afrodite.png");
+    const hermesCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const dionysusCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const irisCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const hypnosCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const nemesisCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const nikeCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const hebeCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const tycheCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
+    const hekateCabin = await Canvas.loadImage("./src/images/secondLayer/empty.png");
 
     //-------------------
     //Desenhando o banner
@@ -314,4 +326,4 @@ async function createBanner(characterInfo, user) {
     return canvas.encode("png");
 };
 
-module.exports = { createBanner }
+module.exports = { createCard }

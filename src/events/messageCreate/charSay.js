@@ -1,6 +1,7 @@
 const { WebhookClient, ChannelType } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const webhookSchema = require("../../models/webhookSchema");
+const { getLifeInfo } = require("../../utils/rpInfo");
 
 module.exports = async (message, client) => {
     const user = message.author;
@@ -39,11 +40,37 @@ module.exports = async (message, client) => {
                         channel: channel.id,
                     });
 
+                    const oldData = await characterProfile.findOne({
+                        userID: user.id,
+                        "info.name": character.info.name,
+                    });
+        
+                    const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
+                    const xpPoints = oldData.info.level.xpPoints;
+                    const level = (Math.floor(xpPoints / 1000) - 1);
+                    const CON = Math.floor((oldData.stats.atrCON / 2) - 5);
+        
+                    const characterInfo = await characterProfile.findOneAndUpdate(
+                        {
+                            userID: user.id,
+                            "info.name": oldData.info.name,
+                        },
+                        {
+                            $set: {
+                                "info.hitPoints.base": (base + CON) + ((level * (bonusPerLvl + CON))),
+                                "info.hitPoints.current": oldData.info.hitPoints.current > ((base + CON) + ((level * (bonusPerLvl + CON)))) || oldData.info.hitPoints.current == oldData.info.hitPoints.base ? (base + CON) + ((level * (bonusPerLvl + CON))) : oldData.info.hitPoints.current,
+                            },
+                        },
+                        {
+                            returnOriginal: false,
+                        },
+                    );
+        
                     const webhookMessage = {
                         username:
-                            character.info.name +
-                            ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
-                        avatarURL: character.info.avatar,
+                        characterInfo.info.name +
+                            ` [ ${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP ]`,
+                        avatarURL: characterInfo.info.avatar,
                         threadId: message.channel.type === ChannelType.PublicThread ? message.channel.id : null
                     };
 
@@ -83,12 +110,38 @@ module.exports = async (message, client) => {
                 id: data.webhookID,
                 token: data.webhookToken,
             });
+            
+            const oldData = await characterProfile.findOne({
+                userID: user.id,
+                "info.name": character.info.name,
+            });
+
+            const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
+            const xpPoints = oldData.info.level.xpPoints;
+            const level = (Math.floor(xpPoints / 1000) - 1);
+            const CON = Math.floor((oldData.stats.atrCON / 2) - 5);
+
+            const characterInfo = await characterProfile.findOneAndUpdate(
+                {
+                    userID: user.id,
+                    "info.name": oldData.info.name,
+                },
+                {
+                    $set: {
+                        "info.hitPoints.base": (base + CON) + ((level * (bonusPerLvl + CON))),
+                        "info.hitPoints.current": oldData.info.hitPoints.current > ((base + CON) + ((level * (bonusPerLvl + CON)))) || oldData.info.hitPoints.current == oldData.info.hitPoints.base ? (base + CON) + ((level * (bonusPerLvl + CON))) : oldData.info.hitPoints.current,
+                    },
+                },
+                {
+                    returnOriginal: false,
+                },
+            );
 
             const webhookMessage = {
                 username:
-                    character.info.name +
-                    ` [ ${character.info.hitPoints.current}/${character.info.hitPoints.base}HP ]`,
-                avatarURL: character.info.avatar,
+                characterInfo.info.name +
+                    ` [ ${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP ]`,
+                avatarURL: characterInfo.info.avatar,
                 threadId: message.channel.type === ChannelType.PublicThread ? message.channel.id : null
             };
 
