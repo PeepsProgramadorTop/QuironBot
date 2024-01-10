@@ -18,7 +18,7 @@ module.exports = async (message, client) => {
     message.attachments.size > 0
   ) {
     const prefixUsed = prefixes.find((prefix) =>
-      message.content.startsWith(prefix)
+      message.content.startsWith(prefix),
     );
     if (!prefixUsed) return;
     const contentWithoutPrefix = message.content
@@ -32,53 +32,61 @@ module.exports = async (message, client) => {
       "info.prefix": prefixUsed,
     });
 
-        if (!data) {
-            //Se nenhum webhook existir na base de dados, crie um novo
-            channel
-                .createWebhook({
-                    name: "QuíronHook",
-                    avatar: "https://i.imgur.com/3LUWvgi.png",
-                })
-                .then(async (webhook) => {
-                    await webhookSchema.create({
-                        webhookID: webhook.id,
-                        webhookToken: webhook.token,
-                        channel: channel.id,
-                    });
+    if (!data) {
+      //Se nenhum webhook existir na base de dados, crie um novo
+      channel
+        .createWebhook({
+          name: "QuíronHook",
+          avatar: "https://i.imgur.com/3LUWvgi.png",
+        })
+        .then(async (webhook) => {
+          await webhookSchema.create({
+            webhookID: webhook.id,
+            webhookToken: webhook.token,
+            channel: channel.id,
+          });
 
-                    const oldData = await characterProfile.findOne({
-                        userID: user.id,
-                        "info.name": character.info.name,
-                    });
-        
-                    const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
-                    const xpPoints = oldData.info.level.xpPoints;
-                    const level = (Math.floor(xpPoints / 1000) - 1);
-                    const CON = Math.floor((oldData.stats.atrCON / 2) - 5);
-        
-                    const characterInfo = await characterProfile.findOneAndUpdate(
-                        {
-                            userID: user.id,
-                            "info.name": oldData.info.name,
-                        },
-                        {
-                            $set: {
-                                "info.hitPoints.base": (base + CON) + ((level * (bonusPerLvl + CON))),
-                                "info.hitPoints.current": oldData.info.hitPoints.current > ((base + CON) + ((level * (bonusPerLvl + CON)))) || oldData.info.hitPoints.current == oldData.info.hitPoints.base ? (base + CON) + ((level * (bonusPerLvl + CON))) : oldData.info.hitPoints.current,
-                            },
-                        },
-                        {
-                            returnOriginal: false,
-                        },
-                    );
-        
-                    const webhookMessage = {
-                        username:
-                        characterInfo.info.name +
-                            ` [ ${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP ]`,
-                        avatarURL: characterInfo.info.avatar,
-                        threadId: message.channel.type === ChannelType.PublicThread ? message.channel.id : null
-                    };
+          const oldData = await characterProfile.findOne({
+            userID: user.id,
+            "info.name": character.info.name,
+          });
+
+          const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
+          const xpPoints = oldData.info.level.xpPoints;
+          const level = Math.floor(xpPoints / 1000) - 1;
+          const CON = Math.floor(oldData.stats.atrCON / 2 - 5);
+
+          const characterInfo = await characterProfile.findOneAndUpdate(
+            {
+              userID: user.id,
+              "info.name": oldData.info.name,
+            },
+            {
+              $set: {
+                "info.hitPoints.base": base + CON + level * (bonusPerLvl + CON),
+                "info.hitPoints.current":
+                  oldData.info.hitPoints.current >
+                    base + CON + level * (bonusPerLvl + CON) ||
+                  oldData.info.hitPoints.current == oldData.info.hitPoints.base
+                    ? base + CON + level * (bonusPerLvl + CON)
+                    : oldData.info.hitPoints.current,
+              },
+            },
+            {
+              returnOriginal: false,
+            },
+          );
+
+          const webhookMessage = {
+            username:
+              characterInfo.info.name +
+              ` [ ${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP ]`,
+            avatarURL: characterInfo.info.avatar,
+            threadId:
+              message.channel.type === ChannelType.PublicThread
+                ? message.channel.id
+                : null,
+          };
 
           if (contentWithoutPrefix !== "") {
             webhookMessage.content = contentWithoutPrefix;
@@ -98,12 +106,12 @@ module.exports = async (message, client) => {
           if (message.reference) {
             try {
               const repliedMessage = await message.channel.messages.fetch(
-                message?.reference?.messageId
+                message?.reference?.messageId,
               );
               const repliedMessageAuthor = await characterProfile.findOne({
                 "info.name": repliedMessage.author.username.replace(
                   /\s*\[\s*\d+\/\d+HP\s*\]\s*$/,
-                  ""
+                  "",
                 ),
               });
               if (repliedMessage) {
@@ -114,49 +122,57 @@ module.exports = async (message, client) => {
             }
           }
 
-                    webhook.send(webhookMessage)
-                    message.delete();
-                });
-        } else {
-            //Se um webhook já existe, atualize suas informações e use-o
-            const webhookClient = new WebhookClient({
-                id: data.webhookID,
-                token: data.webhookToken,
-            });
-            
-            const oldData = await characterProfile.findOne({
-                userID: user.id,
-                "info.name": character.info.name,
-            });
+          webhook.send(webhookMessage);
+          message.delete();
+        });
+    } else {
+      //Se um webhook já existe, atualize suas informações e use-o
+      const webhookClient = new WebhookClient({
+        id: data.webhookID,
+        token: data.webhookToken,
+      });
 
-            const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
-            const xpPoints = oldData.info.level.xpPoints;
-            const level = (Math.floor(xpPoints / 1000) - 1);
-            const CON = Math.floor((oldData.stats.atrCON / 2) - 5);
+      const oldData = await characterProfile.findOne({
+        userID: user.id,
+        "info.name": character.info.name,
+      });
 
-            const characterInfo = await characterProfile.findOneAndUpdate(
-                {
-                    userID: user.id,
-                    "info.name": oldData.info.name,
-                },
-                {
-                    $set: {
-                        "info.hitPoints.base": (base + CON) + ((level * (bonusPerLvl + CON))),
-                        "info.hitPoints.current": oldData.info.hitPoints.current > ((base + CON) + ((level * (bonusPerLvl + CON)))) || oldData.info.hitPoints.current == oldData.info.hitPoints.base ? (base + CON) + ((level * (bonusPerLvl + CON))) : oldData.info.hitPoints.current,
-                    },
-                },
-                {
-                    returnOriginal: false,
-                },
-            );
+      const { base, bonusPerLvl } = getLifeInfo(oldData.info.cabin);
+      const xpPoints = oldData.info.level.xpPoints;
+      const level = Math.floor(xpPoints / 1000) - 1;
+      const CON = Math.floor(oldData.stats.atrCON / 2 - 5);
 
-            const webhookMessage = {
-                username:
-                characterInfo.info.name +
-                    ` [ ${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP ]`,
-                avatarURL: characterInfo.info.avatar,
-                threadId: message.channel.type === ChannelType.PublicThread ? message.channel.id : null
-            };
+      const characterInfo = await characterProfile.findOneAndUpdate(
+        {
+          userID: user.id,
+          "info.name": oldData.info.name,
+        },
+        {
+          $set: {
+            "info.hitPoints.base": base + CON + level * (bonusPerLvl + CON),
+            "info.hitPoints.current":
+              oldData.info.hitPoints.current >
+                base + CON + level * (bonusPerLvl + CON) ||
+              oldData.info.hitPoints.current == oldData.info.hitPoints.base
+                ? base + CON + level * (bonusPerLvl + CON)
+                : oldData.info.hitPoints.current,
+          },
+        },
+        {
+          returnOriginal: false,
+        },
+      );
+
+      const webhookMessage = {
+        username:
+          characterInfo.info.name +
+          ` [ ${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP ]`,
+        avatarURL: characterInfo.info.avatar,
+        threadId:
+          message.channel.type === ChannelType.PublicThread
+            ? message.channel.id
+            : null,
+      };
 
       if (contentWithoutPrefix !== "") {
         webhookMessage.content = contentWithoutPrefix;
@@ -176,12 +192,12 @@ module.exports = async (message, client) => {
       if (message.reference) {
         try {
           const repliedMessage = await message.channel.messages.fetch(
-            message?.reference?.messageId
+            message?.reference?.messageId,
           );
           const repliedMessageAuthor = await characterProfile.findOne({
             "info.name": repliedMessage.author.username.replace(
               /\s*\[\s*\d+\/\d+HP\s*\]\s*$/,
-              ""
+              "",
             ),
           });
           if (repliedMessage) {

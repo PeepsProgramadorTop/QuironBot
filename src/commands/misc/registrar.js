@@ -2,6 +2,7 @@ const { SlashCommandBuilder, AttachmentBuilder } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 const playerProfile = require("../../models/playerProfile");
 const axios = require("axios");
+const { getATRInfo } = require("../../utils/rpInfo");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -185,16 +186,33 @@ module.exports = {
       }
     );
 
-    //Seta o playerProfile
-    await playerProfile.findOneAndUpdate(
+    const registro = await characterProfile.findOne({
+      userID: user.id,
+      "info.name": name,
+    });
+
+    const {
+      CON: deusCON,
+      FOR: deusFOR,
+      AGI: deusAGI,
+      INT: deusINT,
+      SAB: deusSAB,
+      CAR: deusCAR,
+    } = getATRInfo(registro.info.cabin);
+
+    await characterProfile.findOneAndUpdate(
       {
         userID: user.id,
+        "info.name": name,
       },
       {
-        $set: {
-          userID: user.id,
-          name: user.username,
-          guildID: guild.id,
+        $inc: {
+          "stats.atrCON": deusCON,
+          "stats.atrFOR": deusFOR,
+          "stats.atrAGI": deusAGI,
+          "stats.atrINT": deusINT,
+          "stats.atrSAB": deusSAB,
+          "stats.atrCAR": deusCAR,
         },
       }
     );

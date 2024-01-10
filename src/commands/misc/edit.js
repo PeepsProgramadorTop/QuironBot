@@ -18,8 +18,8 @@ module.exports = {
           option
             .setName("nome")
             .setDescription("O novo nome de exibição do seu personagem.")
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -29,8 +29,8 @@ module.exports = {
           option
             .setName("apelidos")
             .setDescription("Os novos apelidos do seu personagem.")
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -40,8 +40,8 @@ module.exports = {
           option
             .setName("avatar")
             .setDescription("Anexo da imagem do seu novo avatar.")
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -51,8 +51,8 @@ module.exports = {
           option
             .setName("banner")
             .setDescription("Anexo da imagem do seu novo banner.")
-            .setRequired(true)
-        )
+            .setRequired(true),
+        ),
     ),
   run: async ({ interaction }) => {
     const { user } = interaction;
@@ -78,7 +78,7 @@ module.exports = {
               },
               {
                 returnOriginal: false,
-              }
+              },
             );
 
             const embed = [
@@ -146,7 +146,7 @@ module.exports = {
                 },
                 {
                   returnOriginal: false,
-                }
+                },
               );
 
               const embed = [
@@ -187,7 +187,7 @@ module.exports = {
               },
               {
                 returnOriginal: false,
-              }
+              },
             );
 
             const embed = [
@@ -255,7 +255,7 @@ module.exports = {
                 },
                 {
                   returnOriginal: false,
-                }
+                },
               );
 
               const embed = [
@@ -336,7 +336,7 @@ module.exports = {
               },
               {
                 returnOriginal: false,
-              }
+              },
             );
             break;
           default:
@@ -410,7 +410,7 @@ module.exports = {
                 },
                 {
                   returnOriginal: false,
-                }
+                },
               );
             });
             break;
@@ -471,7 +471,7 @@ module.exports = {
               },
               {
                 returnOriginal: false,
-              }
+              },
             );
             break;
           default:
@@ -545,7 +545,7 @@ module.exports = {
                 },
                 {
                   returnOriginal: false,
-                }
+                },
               );
             });
             break;

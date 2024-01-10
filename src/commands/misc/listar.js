@@ -5,7 +5,7 @@ const Canvas = require("@napi-rs/canvas");
 const { join } = require("path");
 Canvas.GlobalFonts.registerFromPath(
   join(__dirname, "../..", "fonts", "gg_sans_medium.ttf"),
-  "GG Sans Medium"
+  "GG Sans Medium",
 );
 
 module.exports = {
@@ -78,7 +78,7 @@ module.exports = {
     const initialEmbed = createCharacterListEmbed(
       characterGroup[currentPage],
       currentPage,
-      totalPages
+      totalPages,
     );
 
     const actionRow = {
@@ -159,7 +159,7 @@ module.exports = {
       const newEmbed = createCharacterListEmbed(
         characterGroup[currentPage],
         currentPage,
-        totalPages
+        totalPages,
       );
 
       interaction.update({ embeds: newEmbed, components: [actionRow] });
