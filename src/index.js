@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Client, Collection, IntentsBitField } = require("discord.js");
+const { Client, Partials, IntentsBitField } = require("discord.js");
 const { CommandHandler } = require("djs-commander");
 const { readdirSync } = require('fs');
 const mongoose = require("mongoose");
@@ -12,7 +12,10 @@ const client = new Client({
         IntentsBitField.Flags.GuildMembers,
         IntentsBitField.Flags.GuildMessages,
         IntentsBitField.Flags.MessageContent,
+        IntentsBitField.Flags.GuildMessageReactions,
+        IntentsBitField.Flags.DirectMessages,
     ],
+	partials: [Partials.Message, Partials.Channel, Partials.Reaction],
 });
 client.constants = new Map();
 

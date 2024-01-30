@@ -68,6 +68,10 @@ module.exports = {
                         "info.name": character,
                     });
 
+                    const xpPoints = characterInfo.info.level.xpPoints;
+                    const level = Math.floor(xpPoints / 1000);
+                    const xpCurrent = xpPoints - (level * 1000);
+
                     const embed = [
                         {
                             color: 0x575A63,
@@ -83,7 +87,7 @@ module.exports = {
                         {
                             color: 0x575A63,
                             title: characterInfo.info.name,
-                            description: `**${characterInfo.info.nicknames}**\n\n**Chalé:** \`${characterInfo.info.cabin}\`\n**Prefixo:** \`${characterInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP\`\n> **🪙・Dinheiro:** \`${characterInfo.info.money}\`\n> **📊・Nível:** \`${characterInfo.info.xp}\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${characterInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${characterInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${characterInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${characterInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${characterInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${characterInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${characterInfo.stats.atrCAR}\``,
+                            description: `**${characterInfo.info.nicknames}**\n\n**Chalé:** \`${characterInfo.info.cabin}\`\n**Prefixo:** \`${characterInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${characterInfo.info.hitPoints.current}/${characterInfo.info.hitPoints.base}HP\`\n> **💵・Dólares:** \`${characterInfo.info.money}\`\n> **🪙・Dracmas:** \`${characterInfo.info.dracmas}\`\n> **📊・Nível:** \`${level} (${xpCurrent}/1000)\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${characterInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${characterInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${characterInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${characterInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${characterInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${characterInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${characterInfo.stats.atrCAR}\``,
                             image: {
                                 url: characterInfo.info.banner
                             },
@@ -176,6 +180,13 @@ module.exports = {
                                 type: 2, //Botão - Alterar as Informações
                                 custom_id: "editStatusButton",
                                 label: "Alterar Status",
+                                emoji: "📊",
+                                style: 2 // Secondary
+                            },
+                            {
+                                type: 2, //Botão - Alterar as Informações
+                                custom_id: "editLevelsButton",
+                                label: "Alterar Níveis",
                                 emoji: "📊",
                                 style: 2 // Secondary
                             },
@@ -290,6 +301,10 @@ module.exports = {
                                 }
                             );
 
+                            const xpPoints = newInfo.info.level.xpPoints;
+                            const level = Math.floor(xpPoints / 1000);
+                            const xpCurrent = xpPoints - (level * 1000);
+
                             const embed = [
                                 {
                                     color: 0x575A63,
@@ -305,7 +320,7 @@ module.exports = {
                                 {
                                     color: 0x575A63,
                                     title: newInfo.info.name,
-                                    description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **🪙・Dinheiro:** \`${newInfo.info.money}\`\n> **📊・Nível:** \`${newInfo.info.xp}\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
+                                    description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **💵・Dólares:** \`${newInfo.info.money}\`\n> **🪙・Dracmas:** \`${newInfo.info.dracmas}\`\n> **📊・Nível:** \`${level} (${xpCurrent}/1000)\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
                                     image: {
                                         url: newInfo.info.banner
                                     },
@@ -327,6 +342,122 @@ module.exports = {
                     });
 
 
+                    const collectorLevelsInfo = reply.createMessageComponentCollector({
+                        componentType: ComponentType.Button,
+                        filter: (i) =>
+                            i.user.id === interaction.user.id && i.customId === "editLevelsButton",
+                    });
+                    collectorLevelsInfo.on("collect", async (interaction) => {
+                        //Informações do Personagem Atualizadas
+                        const updatedcharacterInfo = await characterProfile.findOne({
+                            userID: userMentioned.id,
+                            "info.name": character,
+                        });
+
+                        //Construindo o Modal
+                        const modal = {
+                            title: "Editar Níveis do Personagem",
+                            custom_id: "editCharLevelsModal",
+                            components: [
+                                {
+                                    type: 1,
+                                    components: [
+                                        {
+                                            type: 4,
+                                            custom_id: "xpInput",
+                                            label: "Pontos de XP:",
+                                            placeholder: "Digite os pontos de XP novos que este personagem terá (+1 nível a cada 1000).",
+                                            value: updatedcharacterInfo.info.level.xpPoints,
+                                            min_length: 1,
+                                            max_length: 4000,
+                                            style: 2,
+                                            required: true
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: 1,
+                                    components: [
+                                        {
+                                            type: 4,
+                                            custom_id: "magicXpInput",
+                                            label: "Pontos de XP Mágicos:",
+                                            placeholder: "Digite os pontos de XP mágicos novos que este personagem terá (+1 nível a cada 1000).",
+                                            value: updatedcharacterInfo.info.magicLevel.xpPoints,
+                                            min_length: 1,
+                                            max_length: 4000,
+                                            style: 2,
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            ]
+                        };
+
+                        await interaction.showModal(modal); //Mostrar modal para o usuário
+
+                        interaction.awaitModalSubmit({
+                            filter: (i) =>
+                                i.user.id === interaction.user.id &&
+                                i.customId === "editCharLevelsModal",
+                            time: 5 * 60_000,
+                        }).then(async (modalInteraction) => {
+                            const newXPValue = modalInteraction.fields.getTextInputValue("xpInput");
+                            const newMagicXPValue = modalInteraction.fields.getTextInputValue("magicXpInput");
+
+                            const newInfo = await characterProfile.findOneAndUpdate(
+                                {
+                                    userID: userMentioned.id,
+                                    "info.name": character,
+                                },
+                                {
+                                    "info.level.xpPoints": newXPValue,
+                                    "info.magicLevel.xpPoints": newMagicXPValue,
+                                },
+                                {
+                                    returnOriginal: false,
+                                }
+                            );
+
+                            const xpPoints = newInfo.info.level.xpPoints;
+                            const level = Math.floor(xpPoints / 1000);
+                            const xpCurrent = xpPoints - (level * 1000);
+
+                            const embed = [
+                                {
+                                    color: 0x575A63,
+                                    author: {
+                                        name: `Personagem de: ${userMentioned.username}`,
+                                        icon_url: userMentioned.displayAvatarURL()
+                                    },
+                                    title: `Você está editando: ${newInfo.info.name}`,
+                                    image: {
+                                        url: "https://i.imgur.com/rg4KxSi.png"
+                                    }
+                                },
+                                {
+                                    color: 0x575A63,
+                                    title: newInfo.info.name,
+                                    description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **💵・Dólares:** \`${newInfo.info.money}\`\n> **🪙・Dracmas:** \`${newInfo.info.dracmas}\`\n> **📊・Nível:** \`${level} (${xpCurrent}/1000)\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
+                                    image: {
+                                        url: newInfo.info.banner
+                                    },
+                                    thumbnail: {
+                                        url: newInfo.info.avatar
+                                    }
+                                }
+                            ];
+
+                            modalInteraction.reply({
+                                content: "Informações alteradas com sucesso!",
+                                ephemeral: true,
+                            });
+
+                            interaction.message.edit({
+                                embeds: embed
+                            })
+                        })
+                    })
                     const collectorStatusInfo = reply.createMessageComponentCollector({
                         componentType: ComponentType.Button,
                         filter: (i) =>
@@ -383,7 +514,7 @@ module.exports = {
                                             type: 4,
                                             custom_id: "moneyInput",
                                             label: "Dinheiro:",
-                                            placeholder: "Digite o novo valor monetário que este personagem terá.",
+                                            placeholder: "Digite o novo valor em dólares que este personagem terá.",
                                             value: updatedcharacterInfo.info.money,
                                             min_length: 1,
                                             max_length: 4000,
@@ -397,10 +528,10 @@ module.exports = {
                                     components: [
                                         {
                                             type: 4,
-                                            custom_id: "xpInput",
-                                            label: "Nível:",
-                                            placeholder: "Digite o novo nível para este personagem.",
-                                            value: updatedcharacterInfo.info.xp,
+                                            custom_id: "dracmasInput",
+                                            label: "Dracmas:",
+                                            placeholder: "Digite o novo valor em dracmas que este personagem terá.",
+                                            value: updatedcharacterInfo.info.dracmas,
                                             min_length: 1,
                                             max_length: 4000,
                                             style: 2,
@@ -422,7 +553,7 @@ module.exports = {
                             const newMaxHP = modalInteraction.fields.getTextInputValue("maxHPInput");
                             const newCurrentHP = modalInteraction.fields.getTextInputValue("currentHPInput");
                             const newMoneyValue = modalInteraction.fields.getTextInputValue("moneyInput");
-                            const newXPValue = modalInteraction.fields.getTextInputValue("xpInput");
+                            const newDracmasValue = modalInteraction.fields.getTextInputValue("dracmasInput");
 
                             const newInfo = await characterProfile.findOneAndUpdate(
                                 {
@@ -433,12 +564,16 @@ module.exports = {
                                     "info.hitPoints.base": newMaxHP,
                                     "info.hitPoints.current": newCurrentHP,
                                     "info.money": newMoneyValue,
-                                    "info.xp": newXPValue,
+                                    "info.dracmas": newDracmasValue,
                                 },
                                 {
                                     returnOriginal: false,
                                 }
                             );
+
+                            const xpPoints = newInfo.info.level.xpPoints;
+                            const level = Math.floor(xpPoints / 1000);
+                            const xpCurrent = xpPoints - (level * 1000);
 
                             const embed = [
                                 {
@@ -455,7 +590,7 @@ module.exports = {
                                 {
                                     color: 0x575A63,
                                     title: newInfo.info.name,
-                                    description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **🪙・Dinheiro:** \`${newInfo.info.money}\`\n> **📊・Nível:** \`${newInfo.info.xp}\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
+                                    description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **💵・Dólares:** \`${newInfo.info.money}\`\n> **🪙・Dracmas:** \`${newInfo.info.dracmas}\`\n> **📊・Nível:** \`${level} (${xpCurrent}/1000)\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
                                     image: {
                                         url: newInfo.info.banner
                                     },
@@ -529,6 +664,10 @@ module.exports = {
                                     }
                                 );
 
+                                const xpPoints = newInfo.info.level.xpPoints;
+                                const level = Math.floor(xpPoints / 1000);
+                                const xpCurrent = xpPoints - (level * 1000);
+
                                 const embed = [
                                     {
                                         color: 0x575A63,
@@ -544,7 +683,7 @@ module.exports = {
                                     {
                                         color: 0x575A63,
                                         title: newInfo.info.name,
-                                        description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **🪙・Dinheiro:** \`${newInfo.info.money}\`\n> **📊・Nível:** \`${newInfo.info.xp}\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
+                                        description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **💵・Dólares:** \`${newInfo.info.money}\`\n> **🪙・Dracmas:** \`${newInfo.info.dracmas}\`\n> **📊・Nível:** \`${level} (${xpCurrent}/1000)\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
                                         image: {
                                             url: newInfo.info.banner
                                         },
@@ -611,6 +750,10 @@ module.exports = {
                                             returnOriginal: false,
                                         }
                                     );
+                                    
+                                    const xpPoints = newInfo.info.level.xpPoints;
+                                    const level = Math.floor(xpPoints / 1000);
+                                    const xpCurrent = xpPoints - (level * 1000);
 
                                     const embed = [
                                         {
@@ -627,7 +770,7 @@ module.exports = {
                                         {
                                             color: 0x575A63,
                                             title: newInfo.info.name,
-                                            description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **🪙・Dinheiro:** \`${newInfo.info.money}\`\n> **📊・Nível:** \`${newInfo.info.xp}\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
+                                            description: `**${newInfo.info.nicknames}**\n\n**Chalé:** \`${newInfo.info.cabin}\`\n**Prefixo:** \`${newInfo.info.prefix}\`\n\n> **❤️・Vida:** \`${newInfo.info.hitPoints.current}/${newInfo.info.hitPoints.base}HP\`\n> **💵・Dólares:** \`${newInfo.info.money}\`\n> **🪙・Dracmas:** \`${newInfo.info.dracmas}\`\n> **📊・Nível:** \`${level} (${xpCurrent}/1000)\`\n\n>>> **🌟・Ponto(s) Restante(s):** \`${newInfo.stats.atrPoints}\`\n\n**🫀・Constituição (CON):** \`${newInfo.stats.atrCON}\`\n**🗡️・Força (FOR):** \`${newInfo.stats.atrFOR}\`\n**🦿・Agilidade (AGI):** \`${newInfo.stats.atrAGI}\`\n**📜・Inteligência (INT):** \`${newInfo.stats.atrINT}\`\n**🦉・Sabedoria (SAB):** \`${newInfo.stats.atrSAB}\`\n**✨・Carisma (CAR):** \`${newInfo.stats.atrCAR}\``,
                                             image: {
                                                 url: newInfo.info.banner
                                             },

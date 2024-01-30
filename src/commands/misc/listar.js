@@ -2,13 +2,7 @@ const {
     ComponentType, AttachmentBuilder
 } = require("discord.js");
 const characterProfile = require("../../models/characterProfile.js");
-const { createBanner } = require("../../utils/createBanner");
-const Canvas = require("@napi-rs/canvas");
-const { join } = require("path");
-Canvas.GlobalFonts.registerFromPath(
-    join(__dirname, "../..", "fonts", "gg_sans_medium.ttf"),
-    "GG Sans Medium"
-);
+const { createCard } = require("../../utils/createCard");
 
 module.exports = {
     data: {
@@ -151,7 +145,7 @@ module.exports = {
 
             interaction.update({ embeds: newEmbed, components: [actionRow] });
             if (interaction.customId == "check_status") {
-                const banner = await createBanner(characterGroup[currentPage], user);
+                const banner = await createCard(characterGroup[currentPage], user);
                 const attachment = new AttachmentBuilder(banner, {
                     name: `banner.png`,
                 });

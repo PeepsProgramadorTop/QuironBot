@@ -8,12 +8,12 @@ const characterProfile = mongoose.Schema({
     cabin: { type: "String", required: true }, //Chalé - O chalé do personagem
     nicknames: { type: "String", default: "Nenhum apelido." }, //Apelidos - Nomes exibidos debaixo do nome de exibição no banner.
     necklace_beads: { 
-      amount: { type: Number, default: 0 }, //Quantidade de contas
       beads: [{ body: String }], //As contas
     }, //Colar de Contas do Personagem.
     avatar: { type: "String" }, //Avatar - Imagem de perfil do personagem, pode ser alterada. (Não é obrigatório.)
     banner: { type: "String" }, //Banner - imagem que normalmente representa o personagem, utilizada no status, pode ser alterada. (Não é obrigatório.)
-    money: { type: Number, default: 50 }, //Dracmas - Moeda utilizada na economia do servidor.
+    money: { type: Number, default: 200 }, //Dólares - Moeda utilizada na economia do servidor.
+    dracmas: { type: Number, default: 50 }, //Dracmas - Moeda utilizada na economia do servidor.
     xp: { type: Number, default: 0 },
     mana: {
       base: { type: Number, default: 100 }, //Mana Base
@@ -23,6 +23,12 @@ const characterProfile = mongoose.Schema({
       base: { type: Number, default: 0 }, //HP Base
       current: { type: Number, default: 0 }, //HP Atual
     }, //HP
+    level: {
+      xpPoints: { type: Number, default: 1000 }, //Pontos de XP
+    }, //Level
+    magicLevel: {
+      xpPoints: { type: Number, default: 0 }, //Pontos de XP - Magia
+    }, //Level - Magia
   },
   stats: {
     atrPoints: { type: Number, default: 0 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
