@@ -1,7 +1,0 @@
-#PROD
-#TOKEN = MTE1NjAxNjU5MzkyNzY4ODI0Mg.GRNFLI.FAq9uNvYX8HgNtbasLsULXvSkK_M5DIrMd-qSM
-#MONGODB_URI = mongodb+srv://victoordvicr:rhQtGJZyVHJS6mFr@clusterquiron.bnpwywb.mongodb.net/?retryWrites=true&w=majority
-
-#DEV
-TOKEN=MTE4Mzg2NjE0MjQ2NTQ2MjI5Mg.Gc9I6r.j6ed9HPCZsLNu2w0XtOfZE1PMGCUe_Jm8sQEaM
-MONGODB_URI=mongodb+srv://victoordvicr:138Bkl4omUvUilcL@cluster0.kpedojt.mongodb.net/?retryWrites=true&w=majority
