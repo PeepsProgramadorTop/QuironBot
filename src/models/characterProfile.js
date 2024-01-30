@@ -31,13 +31,13 @@ const characterProfile = mongoose.Schema({
     }, //Level - Magia
   },
   stats: {
-    atrPoints: { type: Number, default: 24 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
-    atrCON: { type: Number, default: 8 }, //Atributo - Constituição
-    atrFOR: { type: Number, default: 8 }, //Atributo - Força
-    atrAGI: { type: Number, default: 8 }, //Atributo - Agilidade
-    atrINT: { type: Number, default: 8 }, //Atributo - Inteligência
-    atrSAB: { type: Number, default: 8 }, //Atributo - Sabedoria
-    atrCAR: { type: Number, default: 8 }, //Atributo - Carisma
+    atrPoints: { type: Number, default: 0 }, //Pontos de Atributos, utilizados para melhorar os atributos. Podem ser ganhados em missões, eventos, treinamento, etc.
+    atrCON: { type: Number, default: 0 }, //Atributo - Constituição
+    atrFOR: { type: Number, default: 0 }, //Atributo - Força
+    atrAGI: { type: Number, default: 0 }, //Atributo - Agilidade
+    atrINT: { type: Number, default: 0 }, //Atributo - Inteligência
+    atrSAB: { type: Number, default: 0 }, //Atributo - Sabedoria
+    atrCAR: { type: Number, default: 0 }, //Atributo - Carisma
   }, //Atributos do Personagem
 });
 

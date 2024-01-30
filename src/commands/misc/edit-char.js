@@ -3,66 +3,65 @@ const { SlashCommandBuilder, ComponentType } = require("discord.js");
 const characterProfile = require("../../models/characterProfile");
 
 module.exports = {
-  data: new SlashCommandBuilder()
-    .setName("editar-personagem")
-    .setDescription("Edita o personagem do usuário marcado.")
-    .addUserOption((option) =>
-      option
-        .setName("usuario")
-        .setDescription("Usuário que você quer editar o personagem.")
-        .setRequired(true),
-    )
-    .setDefaultMemberPermissions(IntentsBitField.Flags.GuildModeration),
-  run: async ({ interaction }) => {
-    await interaction.deferReply();
+    data: new SlashCommandBuilder()
+        .setName("editar-personagem")
+        .setDescription("Edita o personagem do usuário marcado.")
+        .addUserOption((option) =>
+            option
+                .setName("usuario")
+                .setDescription("Usuário que você quer editar o personagem.")
+                .setRequired(true),
+        )
+        .setDefaultMemberPermissions(IntentsBitField.Flags.GuildModeration),
+    run: async ({ interaction }) => {
+        await interaction.deferReply();
 
-    const { user } = interaction;
-    const userMentioned = interaction.options.getUser("usuario");
+        const { user } = interaction;
+        const userMentioned = interaction.options.getUser('usuario');
 
-    const characterGroup = await characterProfile.find({
-      userID: userMentioned.id,
-    });
-    const names = characterGroup.map((data) => ({
-      name: data.info.name,
-    }));
+        const characterGroup = await characterProfile.find({ userID: userMentioned.id });
+        const names = characterGroup.map((data) => ({
+            name: data.info.name
+        }));
 
-    switch (names.lenght) {
-      case 0:
-        interaction.editReply("Este usuário não tem personagens.");
-        break;
-      default:
-        const actionRowAvatar = {
-          type: 1, // Action Row
-          components: [
-            {
-              type: 3, // String Select Menu
-              custom_id: interaction.id,
-              placeholder: "Selecione aqui.",
-              min_values: 0,
-              max_values: 1,
-              options: names.map((characters) => ({
-                label: characters.name,
-                description: `Edite o personagem ${characters.name}!`,
-                value: characters.name,
-                emoji: "📝",
-              })),
-            },
-          ],
-        };
+        switch (names.lenght) {
+            case 0:
+                interaction.editReply("Este usuário não tem personagens.");
+                break;
+            default:
+                const actionRowAvatar = {
+                    type: 1, // Action Row
+                    components: [
+                        {
+                            type: 3, // String Select Menu
+                            custom_id: interaction.id,
+                            placeholder: "Selecione aqui.",
+                            min_values: 0,
+                            max_values: 1,
+                            options: names.map((characters) => ({
+                                label: characters.name,
+                                description: `Edite o personagem ${characters.name}!`,
+                                value: characters.name,
+                                emoji: "📝",
+                            })),
+                        },
+                    ],
+                };
 
-        const reply = await interaction.editReply({
-          content: `Selecione abaixo qual dos personagens do usuário escolhido você quer editar.`,
-          components: [actionRowAvatar],
-        });
+                const reply = await interaction.editReply({
+                    content: `Selecione abaixo qual dos personagens do usuário escolhido você quer editar.`,
+                    components: [actionRowAvatar],
+                });
 
-        const collector = reply.createMessageComponentCollector({
-          componentType: ComponentType.StringSelect,
-          filter: (i) =>
-            i.user.id === interaction.user.id && i.customId === interaction.id,
-          time: 15 * 60_000,
-        });
-        collector.on("collect", async (interaction) => {
-          const character = interaction.values[0];
+                const collector = reply.createMessageComponentCollector({
+                    componentType: ComponentType.StringSelect,
+                    filter: (i) =>
+                        i.user.id === interaction.user.id &&
+                        i.customId === interaction.id,
+                    time: 15 * 60_000,
+                });
+                collector.on("collect", async (interaction) => {
+                    const character = interaction.values[0];
 
                     const characterInfo = await characterProfile.findOne({
                         userID: userMentioned.id,
@@ -200,101 +199,92 @@ module.exports = {
                         ],
                     };
 
-          await interaction.deferUpdate();
-          const reply = await interaction.message.edit({
-            content: "",
-            components: [firstActionRow, secondActionRow, thirdActionRow],
-            embeds: embed,
-          });
+                    await interaction.deferUpdate();
+                    const reply = await interaction.message.edit({
+                        content: '',
+                        components: [firstActionRow, secondActionRow, thirdActionRow],
+                        embeds: embed
+                    });
 
-          const collectorEditInfo = reply.createMessageComponentCollector({
-            componentType: ComponentType.Button,
-            filter: (i) =>
-              i.user.id === interaction.user.id &&
-              i.customId === "editInfoButton",
-          });
-          collectorEditInfo.on("collect", async (interaction) => {
-            //Informações do Personagem Atualizadas
-            const updatedcharacterInfo = await characterProfile.findOne({
-              userID: userMentioned.id,
-              "info.name": character,
-            });
+                    const collectorEditInfo = reply.createMessageComponentCollector({
+                        componentType: ComponentType.Button,
+                        filter: (i) =>
+                            i.user.id === interaction.user.id && i.customId === "editInfoButton",
+                    });
+                    collectorEditInfo.on("collect", async (interaction) => {
+                        //Informações do Personagem Atualizadas
+                        const updatedcharacterInfo = await characterProfile.findOne({
+                            userID: userMentioned.id,
+                            "info.name": character,
+                        });
 
-            //Construindo o Modal
-            const modal = {
-              title: "Editar Personagem",
-              custom_id: "editCharModal",
-              components: [
-                {
-                  type: 1,
-                  components: [
-                    {
-                      type: 4,
-                      custom_id: "prefixInput",
-                      label: "Prefixo:",
-                      placeholder:
-                        "Digite o novo prefixo para este personagem aqui.",
-                      value: updatedcharacterInfo.info.prefix,
-                      min_length: 1,
-                      max_length: 4000,
-                      style: 1,
-                      required: true,
-                    },
-                  ],
-                },
-                {
-                  type: 1,
-                  components: [
-                    {
-                      type: 4,
-                      custom_id: "nameInput",
-                      label: "Nome:",
-                      placeholder:
-                        "Digite o novo nome para este personagem aqui.",
-                      value: updatedcharacterInfo.info.name,
-                      min_length: 1,
-                      max_length: 4000,
-                      style: 1,
-                      required: true,
-                    },
-                  ],
-                },
-                {
-                  type: 1,
-                  components: [
-                    {
-                      type: 4,
-                      custom_id: "nicknamesInput",
-                      label: "Apelidos:",
-                      placeholder:
-                        "Digite os novos apelidos para este personagem aqui.",
-                      value: updatedcharacterInfo.info.nicknames,
-                      min_length: 1,
-                      max_length: 4000,
-                      style: 2,
-                      required: true,
-                    },
-                  ],
-                },
-              ],
-            };
+                        //Construindo o Modal
+                        const modal = {
+                            title: "Editar Personagem",
+                            custom_id: "editCharModal",
+                            components: [
+                                {
+                                    type: 1,
+                                    components: [
+                                        {
+                                            type: 4,
+                                            custom_id: "prefixInput",
+                                            label: "Prefixo:",
+                                            placeholder: "Digite o novo prefixo para este personagem aqui.",
+                                            value: updatedcharacterInfo.info.prefix,
+                                            min_length: 1,
+                                            max_length: 4000,
+                                            style: 1,
+                                            required: true
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: 1,
+                                    components: [
+                                        {
+                                            type: 4,
+                                            custom_id: "nameInput",
+                                            label: "Nome:",
+                                            placeholder: "Digite o novo nome para este personagem aqui.",
+                                            value: updatedcharacterInfo.info.name,
+                                            min_length: 1,
+                                            max_length: 4000,
+                                            style: 1,
+                                            required: true
+                                        }
+                                    ]
+                                },
+                                {
+                                    type: 1,
+                                    components: [
+                                        {
+                                            type: 4,
+                                            custom_id: "nicknamesInput",
+                                            label: "Apelidos:",
+                                            placeholder: "Digite os novos apelidos para este personagem aqui.",
+                                            value: updatedcharacterInfo.info.nicknames,
+                                            min_length: 1,
+                                            max_length: 4000,
+                                            style: 2,
+                                            required: true
+                                        }
+                                    ]
+                                }
+                            ]
+                        };
 
-            await interaction.showModal(modal); //Mostrar modal para o usuário
+                        await interaction.showModal(modal); //Mostrar modal para o usuário
 
-            interaction
-              .awaitModalSubmit({
-                filter: (i) =>
-                  i.user.id === interaction.user.id &&
-                  i.customId === "editCharModal",
-                time: 5 * 60_000,
-              })
-              .then(async (modalInteraction) => {
-                const newPrefix =
-                  modalInteraction.fields.getTextInputValue("prefixInput");
-                const newName =
-                  modalInteraction.fields.getTextInputValue("nameInput");
-                const newNicknames =
-                  modalInteraction.fields.getTextInputValue("nicknamesInput");
+                        interaction.awaitModalSubmit({
+                            filter: (i) =>
+                                i.user.id === interaction.user.id &&
+                                i.customId === "editCharModal",
+                            time: 5 * 60_000,
+                        }).then(async (modalInteraction) => {
+                            const newPrefix = modalInteraction.fields.getTextInputValue("prefixInput");
+                            const newName = modalInteraction.fields.getTextInputValue("nameInput");
+                            const newNicknames = modalInteraction.fields.getTextInputValue("nicknamesInput");
 
                             const newInfo = await characterProfile.findOneAndUpdate(
                                 {
@@ -340,16 +330,17 @@ module.exports = {
                                 }
                             ];
 
-                modalInteraction.reply({
-                  content: "Informações alteradas com sucesso!",
-                  ephemeral: true,
-                });
+                            modalInteraction.reply({
+                                content: "Informações alteradas com sucesso!",
+                                ephemeral: true,
+                            });
 
-                interaction.message.edit({
-                  embeds: embed,
-                });
-              });
-          });
+                            interaction.message.edit({
+                                embeds: embed
+                            })
+                        })
+                    });
+
 
                     const collectorLevelsInfo = reply.createMessageComponentCollector({
                         componentType: ComponentType.Button,
@@ -551,7 +542,7 @@ module.exports = {
                             ]
                         };
 
-            await interaction.showModal(modal); //Mostrar modal para o usuário
+                        await interaction.showModal(modal); //Mostrar modal para o usuário
 
                         interaction.awaitModalSubmit({
                             filter: (i) =>
@@ -609,62 +600,56 @@ module.exports = {
                                 }
                             ];
 
-                modalInteraction.reply({
-                  content: "Informações alteradas com sucesso!",
-                  ephemeral: true,
-                });
+                            modalInteraction.reply({
+                                content: "Informações alteradas com sucesso!",
+                                ephemeral: true,
+                            });
 
-                interaction.message.edit({
-                  embeds: embed,
-                });
-              });
-          });
-          const collectorAtr = reply.createMessageComponentCollector({
-            componentType: ComponentType.StringSelect,
-            filter: (i) =>
-              i.user.id === interaction.user.id &&
-              i.customId === "atrSelectMenu",
-            time: 15 * 60_000,
-          });
-          collectorAtr.on("collect", async (interaction) => {
-            async function handleEditAtributo(atributo, sigla, propriedade) {
-              const modalData = {
-                title: `Editar Atributo - ${atributo} (${sigla})`,
-                custom_id: `edit${sigla}Modal`,
-                components: [
-                  {
-                    type: 1,
-                    components: [
-                      {
-                        type: 4,
-                        custom_id: `quantity${sigla}`,
-                        label: "Quantidade:",
-                        placeholder: `Digite aqui a quantidade de pontos que você quer setar neste atributo.`,
-                        min_length: 1,
-                        max_length: 3,
-                        style: 1,
-                        required: true,
-                      },
-                    ],
-                  },
-                ],
-              };
+                            interaction.message.edit({
+                                embeds: embed
+                            })
+                        })
+                    })
+                    const collectorAtr = reply.createMessageComponentCollector({
+                        componentType: ComponentType.StringSelect,
+                        filter: (i) =>
+                            i.user.id === interaction.user.id &&
+                            i.customId === "atrSelectMenu",
+                        time: 15 * 60_000,
+                    });
+                    collectorAtr.on("collect", async (interaction) => {
+                        async function handleEditAtributo(atributo, sigla, propriedade) {
+                            const modalData = {
+                                title: `Editar Atributo - ${atributo} (${sigla})`,
+                                custom_id: `edit${sigla}Modal`,
+                                components: [
+                                    {
+                                        type: 1,
+                                        components: [
+                                            {
+                                                type: 4,
+                                                custom_id: `quantity${sigla}`,
+                                                label: "Quantidade:",
+                                                placeholder: `Digite aqui a quantidade de pontos que você quer setar neste atributo.`,
+                                                min_length: 1,
+                                                max_length: 3,
+                                                style: 1,
+                                                required: true
+                                            }
+                                        ]
+                                    }
+                                ]
+                            };
 
-              await interaction.showModal(modalData);
+                            await interaction.showModal(modalData);
 
-              interaction
-                .awaitModalSubmit({
-                  filter: (i) =>
-                    i.user.id === interaction.user.id &&
-                    i.customId === `edit${sigla}Modal`,
-                  time: 5 * 60_000,
-                })
-                .then(async (modalInteraction) => {
-                  const quantity = Number(
-                    modalInteraction.fields.getTextInputValue(
-                      `quantity${sigla}`,
-                    ),
-                  );
+                            interaction.awaitModalSubmit({
+                                filter: (i) =>
+                                    i.user.id === interaction.user.id &&
+                                    i.customId === `edit${sigla}Modal`,
+                                time: 5 * 60_000,
+                            }).then(async (modalInteraction) => {
+                                const quantity = Number(modalInteraction.fields.getTextInputValue(`quantity${sigla}`));
 
                                 const newInfo = await characterProfile.findOneAndUpdate(
                                     {
@@ -708,55 +693,50 @@ module.exports = {
                                     }
                                 ];
 
-                  modalInteraction.reply({
-                    content: "Informações alteradas com sucesso!",
-                    ephemeral: true,
-                  });
-                  interaction.message.edit({
-                    embeds: embed,
-                  });
-                });
-            }
+                                modalInteraction.reply({
+                                    content: "Informações alteradas com sucesso!",
+                                    ephemeral: true,
+                                });
+                                interaction.message.edit({
+                                    embeds: embed
+                                })
+                            });
+                        };
 
-            switch (interaction.values[0]) {
-              case "editAtrPoints":
-                const modalData = {
-                  title: `Editar Pontos de Atributo`,
-                  custom_id: `editAtrPointsModal`,
-                  components: [
-                    {
-                      type: 1,
-                      components: [
-                        {
-                          type: 4,
-                          custom_id: `quantityAtrPoints`,
-                          label: "Quantidade:",
-                          placeholder: `Digite aqui a quantidade de pontos que você quer setar neste atributo.`,
-                          min_length: 1,
-                          max_length: 3,
-                          style: 1,
-                          required: true,
-                        },
-                      ],
-                    },
-                  ],
-                };
+                        switch (interaction.values[0]) {
+                            case "editAtrPoints":
 
-                await interaction.showModal(modalData);
+                                const modalData = {
+                                    title: `Editar Pontos de Atributo`,
+                                    custom_id: `editAtrPointsModal`,
+                                    components: [
+                                        {
+                                            type: 1,
+                                            components: [
+                                                {
+                                                    type: 4,
+                                                    custom_id: `quantityAtrPoints`,
+                                                    label: "Quantidade:",
+                                                    placeholder: `Digite aqui a quantidade de pontos que você quer setar neste atributo.`,
+                                                    min_length: 1,
+                                                    max_length: 3,
+                                                    style: 1,
+                                                    required: true
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                };
 
-                interaction
-                  .awaitModalSubmit({
-                    filter: (i) =>
-                      i.user.id === interaction.user.id &&
-                      i.customId === "editAtrPointsModal",
-                    time: 15 * 60_000,
-                  })
-                  .then(async (modalInteraction) => {
-                    const quantity = Number(
-                      modalInteraction.fields.getTextInputValue(
-                        "quantityAtrPoints",
-                      ),
-                    );
+                                await interaction.showModal(modalData);
+
+                                interaction.awaitModalSubmit({
+                                    filter: (i) =>
+                                        i.user.id === interaction.user.id &&
+                                        i.customId === "editAtrPointsModal",
+                                    time: 15 * 60_000,
+                                }).then(async (modalInteraction) => {
+                                    const quantity = Number(modalInteraction.fields.getTextInputValue("quantityAtrPoints"));
 
                                     const newInfo = await characterProfile.findOneAndUpdate(
                                         {
@@ -800,37 +780,37 @@ module.exports = {
                                         }
                                     ];
 
-                    modalInteraction.reply({
-                      content: "Informações alteradas com sucesso!",
-                      ephemeral: true,
-                    });
-                    interaction.message.edit({
-                      embeds: embed,
-                    });
-                  });
+                                    modalInteraction.reply({
+                                        content: "Informações alteradas com sucesso!",
+                                        ephemeral: true,
+                                    });
+                                    interaction.message.edit({
+                                        embeds: embed
+                                    })
+                                });
+                                break;
+                            case "editAtrCON":
+                                handleEditAtributo("Constituição", "CON", "atrCON");
+                                break;
+                            case "editAtrFOR":
+                                handleEditAtributo("Força", "FOR", "atrFOR");
+                                break;
+                            case "editAtrAGI":
+                                handleEditAtributo("Agilidade", "AGI", "atrAGI");
+                                break;
+                            case "editAtrINT":
+                                handleEditAtributo("Inteligência", "INT", "atrINT");
+                                break;
+                            case "editAtrSAB":
+                                handleEditAtributo("Sabedoria", "SAB", "atrSAB");
+                                break;
+                            case "editAtrCAR":
+                                handleEditAtributo("Carisma", "CAR", "atrCAR");
+                                break;
+                        }
+                    })
+                });
                 break;
-              case "editAtrCON":
-                handleEditAtributo("Constituição", "CON", "atrCON");
-                break;
-              case "editAtrFOR":
-                handleEditAtributo("Força", "FOR", "atrFOR");
-                break;
-              case "editAtrAGI":
-                handleEditAtributo("Agilidade", "AGI", "atrAGI");
-                break;
-              case "editAtrINT":
-                handleEditAtributo("Inteligência", "INT", "atrINT");
-                break;
-              case "editAtrSAB":
-                handleEditAtributo("Sabedoria", "SAB", "atrSAB");
-                break;
-              case "editAtrCAR":
-                handleEditAtributo("Carisma", "CAR", "atrCAR");
-                break;
-            }
-          });
-        });
-        break;
-    }
-  },
+        }
+    },
 };
