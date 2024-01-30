@@ -1,8 +1,9 @@
 //Modules
+//Modules
 const {
-    SlashCommandBuilder,
-    AttachmentBuilder,
-    ComponentType,
+  SlashCommandBuilder,
+  AttachmentBuilder,
+  ComponentType,
 } = require("discord.js");
 const { join } = require("path");
 //Models
@@ -12,13 +13,13 @@ const { createCard } = require("../../utils/createCard");
 const { getLifeInfo } = require("../../utils/rpInfo");
 
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName("status")
-        .setDescription("Retorna o perfil do personagem escolhido."),
-    run: async ({ interaction }) => {
-        await interaction.deferReply();
+  data: new SlashCommandBuilder()
+    .setName("status")
+    .setDescription("Retorna o perfil do personagem escolhido."),
+  run: async ({ interaction }) => {
+    await interaction.deferReply();
 
-        const { user } = interaction;
+    const { user } = interaction;
 
         const charactersFromUser = await characterDB.find({ userID: user.id });
         const userCharactersList = charactersFromUser.map((data) => ({
@@ -371,10 +372,10 @@ module.exports = {
                             return;
                         }
 
-                        const updateFields = {
-                            "stats.atrPoints": atrPoints,
-                            [`stats.${attributeInfo.atrField}`]: quantity,
-                        };
+            const updateFields = {
+              "stats.atrPoints": atrPoints,
+              [`stats.${attributeInfo.atrField}`]: quantity,
+            };
 
                         const newInfo = await characterDB.findOneAndUpdate(
                             {
