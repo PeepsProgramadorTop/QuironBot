@@ -14,8 +14,6 @@ const characterProfile = mongoose.Schema({
     banner: { type: "String" }, //Banner - imagem que normalmente representa o personagem, utilizada no status, pode ser alterada. (Não é obrigatório.)
     money: { type: Number, default: 200 }, //Dólares - Moeda utilizada na economia do servidor.
     dracmas: { type: Number, default: 50 }, //Dracmas - Moeda utilizada na economia do servidor.
-    money: { type: Number, default: 200 }, //Dólares - Moeda utilizada na economia do servidor.
-    dracmas: { type: Number, default: 50 }, //Dracmas - Moeda utilizada na economia do servidor.
     xp: { type: Number, default: 0 },
     mana: {
       base: { type: Number, default: 100 }, //Mana Base
