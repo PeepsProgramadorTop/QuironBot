@@ -86,8 +86,8 @@ module.exports = {
         authorIcon
           ? { name: author.value, iconURL: authorIcon.url }
           : author
-          ? { name: author.value }
-          : null,
+            ? { name: author.value }
+            : null,
       )
       .setTitle(title ? title.value : null)
       .setDescription(description ? description.value : null)
@@ -98,8 +98,8 @@ module.exports = {
         footerIcon
           ? { text: footer.value, iconURL: footerIcon.url }
           : footer
-          ? { text: footer.value }
-          : null,
+            ? { text: footer.value }
+            : null,
       );
 
     channel.send({ embeds: [embed] });

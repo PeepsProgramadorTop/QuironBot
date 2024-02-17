@@ -66,9 +66,7 @@ async function createCard(characterInfo, user) {
   //Carregando informações...
   //-------------------------
   const banner = await loadImage(resizedBanner);
-  const profileBaseLayer = await loadImage(
-    "./src/images/profileBaseLayer.png",
-  );
+  const profileBaseLayer = await loadImage("./src/images/profileBaseLayer.png");
   const characterAvatar = await loadImage(resizedcharacterAvatar);
 
   //--------------------
@@ -78,55 +76,27 @@ async function createCard(characterInfo, user) {
   const poseidonCabin = await loadImage(
     "./src/images/secondLayer/poseidon.png",
   );
-  const demeterCabin = await loadImage(
-    "./src/images/secondLayer/demeter.png",
-  );
-  const hadesCabin = await loadImage(
-    "./src/images/secondLayer/hades.png",
-  );
+  const demeterCabin = await loadImage("./src/images/secondLayer/demeter.png");
+  const hadesCabin = await loadImage("./src/images/secondLayer/hades.png");
   const aresCabin = await loadImage("./src/images/secondLayer/ares.png");
-  const athenaCabin = await loadImage(
-    "./src/images/secondLayer/atena.png",
-  );
-  const apolloCabin = await loadImage(
-    "./src/images/secondLayer/apolo.png",
-  );
-  const arthemisCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
+  const athenaCabin = await loadImage("./src/images/secondLayer/atena.png");
+  const apolloCabin = await loadImage("./src/images/secondLayer/apolo.png");
+  const arthemisCabin = await loadImage("./src/images/secondLayer/empty.png");
   const hephaestusCabin = await loadImage(
     "./src/images/secondLayer/hefesto.png",
   );
   const aphroditeCabin = await loadImage(
     "./src/images/secondLayer/afrodite.png",
   );
-  const hermesCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const dionysusCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const irisCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const hypnosCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const nemesisCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const nikeCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const hebeCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const tycheCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
-  const hekateCabin = await loadImage(
-    "./src/images/secondLayer/empty.png",
-  );
+  const hermesCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const dionysusCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const irisCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const hypnosCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const nemesisCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const nikeCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const hebeCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const tycheCabin = await loadImage("./src/images/secondLayer/empty.png");
+  const hekateCabin = await loadImage("./src/images/secondLayer/empty.png");
 
   //-------------------
   //Desenhando o banner
@@ -187,7 +157,6 @@ async function createCard(characterInfo, user) {
   const magicLevel = Math.floor(magicXpPoints / 1000);
   const magicXpCurrent = magicXpPoints - magicLevel * 1000;
   const magicXpBase = 1000;
-
 
   //HP
   context.font = "20px 'GG Sans Medium'";
@@ -280,7 +249,9 @@ async function createCard(characterInfo, user) {
 
   context.font = "22px 'GG Sans Medium'";
   context.fillStyle = "#FFFFFF";
-  var textWidth = context.measureText(`${magicXpCurrent}/${magicXpBase}xp`).width;
+  var textWidth = context.measureText(
+    `${magicXpCurrent}/${magicXpBase}xp`,
+  ).width;
 
   context.fillText(
     `${magicXpCurrent}/${magicXpBase}xp`,
@@ -291,9 +262,10 @@ async function createCard(characterInfo, user) {
   context.font = "24px 'GG Sans Medium'";
   //Dracmas
   context.fillText(
-    `${characterInfo.info.dracmas} dracma${characterInfo.info.dracmas > 1 || characterInfo.info.dracmas == 0
-      ? "s"
-      : ""
+    `${characterInfo.info.dracmas} dracma${
+      characterInfo.info.dracmas > 1 || characterInfo.info.dracmas == 0
+        ? "s"
+        : ""
     }`,
     106,
     514,
@@ -302,7 +274,7 @@ async function createCard(characterInfo, user) {
   context.fillText(`$${characterInfo.info.money}`, 106, 586);
   //C.A
   context.fillText(
-    `${8+(2 * (Math.floor(characterInfo.stats.atrAGI / 2 - 5)))} C.A`,
+    `${8 + 2 * Math.floor(characterInfo.stats.atrAGI / 2 - 5)} C.A`,
     106,
     651,
   );
@@ -418,7 +390,7 @@ async function createCard(characterInfo, user) {
   var textWidth = context.measureText(`@${user.username}`).width;
   context.fillText(`@${user.username}`, canvas.width / 2 - textWidth / 2, 27);
 
-  return canvas.toBuffer();;
+  return canvas.toBuffer();
 }
 
 module.exports = { createCard };
